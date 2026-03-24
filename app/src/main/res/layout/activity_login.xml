@@ -191,7 +191,7 @@
                 android:layout_marginTop="16dp"
                 android:gravity="center"
                 android:maxWidth="300dp"
-                android:text="Diseno visual listo. Tu conectas la logica despues."
+                android:text="Derechos Reservados"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                 android:textColor="?attr/colorOnSurfaceVariant" />
 
