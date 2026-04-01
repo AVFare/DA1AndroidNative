@@ -40,17 +40,17 @@ public class LoginFragment extends Fragment {
             String username = mailEdit.getText().toString().trim();
             String password = passEdit.getText().toString().trim();
 
-            // TO-DO Adicionar Logica de Logueo con Retrofit.
+            // TODO: Adicionar Logica de Logueo con Retrofit.
 
             Bundle args = new Bundle();
 
-            // TO-DO Agregar a args las propiedades que se consideren necesarias desde la API
+            // TODO: Agregar a args las propiedades que se consideren necesarias desde la API
 
 
 
         });
 
-        // TO-DO Agregar la logica del boton de registro.
+        // TODO: Agregar la logica del boton de registro.
 
 
     }

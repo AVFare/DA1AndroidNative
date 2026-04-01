@@ -5,6 +5,6 @@
 
     <argument name="username" app:argType="string" android:defaultValue="" />
 
-    <!-- TO-DO Adicionar feature para navegacion a Home -->
+    <!-- TODO: Adicionar feature para navegacion a Home -->
 
 </navigation>
