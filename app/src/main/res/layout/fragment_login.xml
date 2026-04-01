@@ -172,6 +172,8 @@
                             android:background="?attr/colorOutlineVariant" />
                     </LinearLayout>
 
+                    <!-- TODO: Cambiar android:enable a true cuando se adiciona la funcionalidad de registro-->
+
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/registerButton"
                         style="@style/Widget.Material3.Button.OutlinedButton"
@@ -179,7 +181,8 @@
                         android:layout_height="52dp"
                         android:layout_marginTop="14dp"
                         android:text="Crear cuenta"
-                        android:textAllCaps="false" />
+                        android:textAllCaps="false"
+                        android:enabled="false"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 

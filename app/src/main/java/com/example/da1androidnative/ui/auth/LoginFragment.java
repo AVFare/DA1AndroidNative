@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.da1androidnative.R;
 
@@ -40,13 +41,13 @@ public class LoginFragment extends Fragment {
             String username = mailEdit.getText().toString().trim();
             String password = passEdit.getText().toString().trim();
 
+            Toast.makeText(getContext(), String.format("Hola Mundo %s, %s", username, password), Toast.LENGTH_SHORT).show();
+
             // TODO: Adicionar Logica de Logueo con Retrofit.
 
             Bundle args = new Bundle();
 
             // TODO: Agregar a args las propiedades que se consideren necesarias desde la API
-
-
 
         });
 
