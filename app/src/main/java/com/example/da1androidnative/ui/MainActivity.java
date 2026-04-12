@@ -12,6 +12,9 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.da1androidnative.R;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 
     private NavController navController;
