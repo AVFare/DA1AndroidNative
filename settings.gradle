@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "DA1 ANDROID NATIVE"
+rootProject.name = "DA1ANDROIDNATIVE"
 include ':app'
