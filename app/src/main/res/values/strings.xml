@@ -62,4 +62,6 @@
     <string name="otp_code_hint">Codigo OTP</string>
     <string name="otp_verify_button">Verificar codigo</string>
     <string name="otp_resend_button">Reenviar codigo</string>
+    <string name="request_login_otp_button">Ingresar con OTP</string>
+    <string name="request_recovery_otp_button">Recuperar acceso con OTP</string>
 </resources>
