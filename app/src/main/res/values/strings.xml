@@ -53,4 +53,13 @@
     </string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="otp_login_title">Ingresar con codigo</string>
+    <string name="otp_login_subtitle">Ingresa el codigo de 6 digitos generado para tu acceso.</string>
+    <string name="otp_recovery_title">Recuperar acceso</string>
+    <string name="otp_recovery_subtitle">Verifica el codigo de 6 digitos para recuperar el acceso a tu cuenta.</string>
+    <string name="otp_helper_text">En este entorno de desarrollo el codigo se muestra en la terminal del backend.</string>
+    <string name="otp_email_label">Codigo enviado a %1$s</string>
+    <string name="otp_code_hint">Codigo OTP</string>
+    <string name="otp_verify_button">Verificar codigo</string>
+    <string name="otp_resend_button">Reenviar codigo</string>
 </resources>
