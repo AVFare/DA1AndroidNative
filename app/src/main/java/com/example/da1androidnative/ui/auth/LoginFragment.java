@@ -65,6 +65,8 @@ public class LoginFragment extends Fragment {
             performLogin(email, password);
         });
 
+        // TODO: Realizar logica de recupero de acceso (contraseña) y pantalla de nueva contraseña.
+
         otpLoginButton.setOnClickListener(v -> requestOtp(mailEdit.getText().toString().trim(), OtpPurpose.LOGIN));
         otpRecoveryButton.setOnClickListener(v -> requestOtp(mailEdit.getText().toString().trim(), OtpPurpose.ACCESS_RECOVERY));
 
