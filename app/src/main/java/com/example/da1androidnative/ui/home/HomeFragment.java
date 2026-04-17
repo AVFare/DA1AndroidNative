@@ -19,6 +19,7 @@ import com.example.da1androidnative.data.network.ApiService;
 import com.example.da1androidnative.ui.home.adapter.ActivityAdapter;
 
 import java.util.List;
+import com.example.da1androidnative.data.model.PaginatedActivitiesResponse;
 
 import javax.inject.Inject;
 
@@ -34,14 +35,14 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     private ActivityAdapter adapter;
     private RecyclerView recyclerView;
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_home, container, false);
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         setupRecyclerView(view);
@@ -68,18 +69,22 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     }
 
     private void loadActivities() {
-        apiService.getAllActivities().enqueue(new Callback<List<ActivityResponse>>() {
+        apiService.getAllActivities().enqueue(new Callback<PaginatedActivitiesResponse>() {
             @Override
-            public void onResponse(@NonNull Call<List<ActivityResponse>> call, @NonNull Response<List<ActivityResponse>> response) {
+            public void onResponse(@NonNull Call<PaginatedActivitiesResponse> call, @NonNull Response<PaginatedActivitiesResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    adapter.setActivities(response.body());
+                    List<ActivityResponse> lista = response.body().getContent();
+                    android.util.Log.d("API_HOME", "Actividades extraídas del paginado: " + lista.size());
+                    adapter.setActivities(lista);
                 } else {
+                    android.util.Log.e("API_HOME", "Error en respuesta: " + response.code());
                     Toast.makeText(getContext(), "Error al cargar actividades", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<List<ActivityResponse>> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<PaginatedActivitiesResponse> call, @NonNull Throwable t) {
+                android.util.Log.e("API_HOME", "Fallo total: " + t.getMessage());
                 Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });

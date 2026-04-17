@@ -83,7 +83,7 @@ public class RegisterFragment extends Fragment {
 
                     // Ahora NavHostFragment debería ser reconocido por el import
                     NavHostFragment.findNavController(RegisterFragment.this)
-                            .navigate(R.id.home_nav_graph);
+                            .navigate(R.id.action_register_to_home);
                 } else {
                     Toast.makeText(getContext(), "Error al registrar: ¿El email ya existe?", Toast.LENGTH_LONG).show();
                 }

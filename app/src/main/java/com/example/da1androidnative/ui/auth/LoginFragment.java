@@ -83,7 +83,7 @@ public class LoginFragment extends Fragment {
 
                     // Navegar al Home
                     NavHostFragment.findNavController(LoginFragment.this)
-                            .navigate(R.id.home_nav_graph);
+                            .navigate(R.id.action_login_to_home);
                 } else {
                     Toast.makeText(getContext(), "Error: Credenciales inválidas", Toast.LENGTH_SHORT).show();
                 }

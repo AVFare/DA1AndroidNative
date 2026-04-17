@@ -3,9 +3,12 @@ package com.example.da1androidnative.data.network;
 import com.example.da1androidnative.data.model.AuthResponse;
 import com.example.da1androidnative.data.model.LoginRequest;
 import com.example.da1androidnative.data.model.RegisterRequest;
+import com.example.da1androidnative.data.model.ActivityResponse;
+import com.example.da1androidnative.data.model.PaginatedActivitiesResponse;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
+import retrofit2.http.GET;
 
 public interface ApiService {
     @POST("auth/login")
@@ -13,5 +16,5 @@ public interface ApiService {
     @POST("auth/register")
     Call<AuthResponse> register(@Body RegisterRequest request);
     @GET("activities")
-    Call<List<ActivityResponse>> getActivities();
+    Call<PaginatedActivitiesResponse> getAllActivities();
 }
