@@ -12,4 +12,6 @@ public interface ApiService {
     Call<AuthResponse> login(@Body LoginRequest loginRequest);
     @POST("auth/register")
     Call<AuthResponse> register(@Body RegisterRequest request);
+    @GET("activities")
+    Call<List<ActivityResponse>> getActivities();
 }
