@@ -5,29 +5,46 @@
     android:id="@+id/auth_nav_graph">
 
     <fragment
-    android:id="@+id/loginFragment"
-    android:name="com.example.da1androidnative.ui.auth.LoginFragment">
+        android:id="@+id/loginFragment"
+        android:name="com.example.da1androidnative.ui.auth.LoginFragment">
 
-    <action
-        android:id="@+id/action_login_to_home"
-        app:destination="@id/home_nav_graph" 
-        app:popUpTo="@id/auth_nav_graph"
-        app:popUpToInclusive="true" />
+        <!-- popUp + popUpToInclusive = true // Borra el Login del backstack -->
+        <action
+            android:id="@+id/action_login_to_home"
+            app:destination="@id/home_nav_graph"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true">
+        </action>
 
-    <action
-        android:id="@+id/action_login_to_register"
-        app:destination="@id/registerFragment" />
-</fragment>
+        <action
+            android:id="@+id/action_login_to_register"
+            app:destination="@id/registerFragment" />
 
-<fragment
-    android:id="@+id/registerFragment"
-    android:name="com.example.da1androidnative.ui.auth.RegisterFragment"
-    android:label="Register">
-    
-    <action
+        <action
+            android:id="@+id/action_login_to_otpVerificationFragment"
+            app:destination="@id/otpVerificationFragment" />
+    </fragment>
+
+   <fragment
+      android:id="@+id/registerFragment"
+      android:name="com.example.da1androidnative.ui.auth.RegisterFragment"
+      android:label="Register">
+
+      <action
         android:id="@+id/action_register_to_home"
         app:destination="@id/home_nav_graph"
         app:popUpTo="@id/auth_nav_graph"
         app:popUpToInclusive="true" />
-</fragment>
+    </fragment>
+
+    <fragment
+        android:id="@+id/otpVerificationFragment"
+        android:name="com.example.da1androidnative.ui.auth.OtpVerificationFragment"
+        android:label="OtpVerification">
+        <action
+            android:id="@+id/action_otpVerificationFragment_to_home_nav_graph"
+            app:destination="@id/home_nav_graph"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>
