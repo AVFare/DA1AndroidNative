@@ -21,7 +21,7 @@ public interface ApiService {
     Call<AuthResponse> register(@Body RegisterRequest request);
     @GET("activities")
     Call<PaginatedActivitiesResponse> getAllActivities();
-}
+
 
     @POST("auth/otp/request")
     Call<OtpChallengeResponse> requestOtp(@Body OtpRequest request);
