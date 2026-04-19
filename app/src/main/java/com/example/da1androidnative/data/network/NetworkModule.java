@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import javax.inject.Singleton;
+import okhttp3.OkHttpClient;
 
 @Module
 @InstallIn(SingletonComponent.class)
@@ -14,11 +15,25 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    public static ApiService provideApiService() {
+    public OkHttpClient provideOkHttpClient(AuthInterceptor authInterceptor) {
+        return new OkHttpClient.Builder()
+                .addInterceptor(authInterceptor)
+                .build();
+    }
+
+    @Provides
+    @Singleton
+    public Retrofit provideRetrofit(OkHttpClient okHttpClient) {
         return new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080/api/v1/") // 10.0.2.2 es el localhost para el emulador
+                .baseUrl("http://10.0.2.2:8080/api/v1/")
+                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(ApiService.class);
+                .build();
+    }
+
+    @Provides
+    @Singleton
+    public static ApiService provideApiService(Retrofit retrofit) {
+        return retrofit.create(ApiService.class);
     }
 }

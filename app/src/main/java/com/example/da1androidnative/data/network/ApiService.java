@@ -6,9 +6,12 @@ import com.example.da1androidnative.data.model.OtpChallengeResponse;
 import com.example.da1androidnative.data.model.OtpRequest;
 import com.example.da1androidnative.data.model.OtpVerifyRequest;
 import com.example.da1androidnative.data.model.RegisterRequest;
+import com.example.da1androidnative.data.model.ActivityResponse;
+import com.example.da1androidnative.data.model.PaginatedActivitiesResponse;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
+import retrofit2.http.GET;
 
 public interface ApiService {
     @POST("auth/login")
@@ -16,6 +19,9 @@ public interface ApiService {
 
     @POST("auth/register")
     Call<AuthResponse> register(@Body RegisterRequest request);
+    @GET("activities")
+    Call<PaginatedActivitiesResponse> getAllActivities();
+
 
     @POST("auth/otp/request")
     Call<OtpChallengeResponse> requestOtp(@Body OtpRequest request);
