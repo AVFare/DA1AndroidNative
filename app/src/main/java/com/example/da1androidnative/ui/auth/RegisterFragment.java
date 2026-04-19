@@ -54,12 +54,17 @@ public class RegisterFragment extends Fragment {
             String name = nameEdit.getText().toString().trim();
             String email = emailEdit.getText().toString().trim();
             String pass = passEdit.getText().toString().trim();
-            String confirm = confirmPassEdit.getText().toString();
+            String confirm = confirmPassEdit.getText().toString().trim();
             String lastName = lastNameEdit.getText().toString().trim();
             String phone = phoneEdit.getText().toString().trim();
 
             if (name.isEmpty() || email.isEmpty() || pass.isEmpty()) {
                 Toast.makeText(getContext(), "Completa todos los campos", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (pass.length() < 8) {
+                Toast.makeText(getContext(), "La contraseña debe tener al menos 8 caracteres", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -84,8 +89,19 @@ public class RegisterFragment extends Fragment {
                     // Ahora NavHostFragment debería ser reconocido por el import
                     NavHostFragment.findNavController(RegisterFragment.this)
                             .navigate(R.id.action_register_to_home);
-                } else {
-                    Toast.makeText(getContext(), "Error al registrar: ¿El email ya existe?", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    int code = response.code();
+
+                    if (code == 409) {
+                        Toast.makeText(getContext(), "El email ya está registrado", Toast.LENGTH_LONG).show();
+                    }
+                    else if (code == 400) {
+                        Toast.makeText(getContext(), "Datos inválidos. Verificá los campos", Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        Toast.makeText(getContext(), "Error inesperado: " + code, Toast.LENGTH_LONG).show();
+                    }
                 }
             }
 
