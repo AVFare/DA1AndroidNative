@@ -7,5 +7,14 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.da1androidnative.ui.home.HomeFragment"
-        android:label="Home" />
+        android:label="Home">
+        <action
+            android:id="@+id/action_home_to_reservas"
+            app:destination="@id/reservasFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/reservasFragment"
+        android:name="com.example.da1androidnative.ui.home.ReservasFragment"
+        android:label="Reservas" />
 </navigation>
