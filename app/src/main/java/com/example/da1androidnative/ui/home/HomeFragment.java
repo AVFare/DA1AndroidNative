@@ -59,8 +59,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
 
     private void setupButtons(View view) {
         view.findViewById(R.id.btnReservas).setOnClickListener(v -> 
-            Toast.makeText(getContext(), "Mis Reservas", Toast.LENGTH_SHORT).show());
-        
+            NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_home_to_reservas));
         view.findViewById(R.id.btnCalificaciones).setOnClickListener(v -> 
             Toast.makeText(getContext(), "Mis Calificaciones", Toast.LENGTH_SHORT).show());
             
