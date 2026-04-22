@@ -10,11 +10,17 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.da1androidnative.R;
+import com.example.da1androidnative.data.network.ApiService;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class ReservasFragment extends Fragment {
+
+    @Inject
+    ApiService apiService;
 
     @Nullable
     @Override
