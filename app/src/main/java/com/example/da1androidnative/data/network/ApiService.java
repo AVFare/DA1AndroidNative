@@ -23,7 +23,7 @@ public interface ApiService {
     @GET("activities")
     Call<PaginatedActivitiesResponse> getAllActivities();
 
-    @GET("reservas")
+    @GET("reservations/my")
     Call<PaginatedReservasResponse> getAllReservas();
 
     @POST("auth/otp/request")
