@@ -86,7 +86,7 @@
     <string name="reservation_item_status_completed">COMPLETED</string>
 
     <string name="reservation_detail_title">Detalle de reserva</string>
-    <string name="reservation_detail_subtitle">Revisa la información completa antes de confirmar o cancelar.</string>
+    <string name="reservation_detail_subtitle">Revisa la información completa de tu reserva.</string>
     <string name="reservation_detail_section_data">Datos de la reserva</string>
     <string name="reservation_detail_cancellation_policy">Política de cancelación</string>
     <string name="reservation_cancel_button">Cancelar reserva</string>
