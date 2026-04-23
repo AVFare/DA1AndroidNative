@@ -64,4 +64,67 @@
     <string name="otp_resend_button">Reenviar codigo</string>
     <string name="request_login_otp_button">Ingresar con OTP</string>
     <string name="request_recovery_otp_button">Recuperar acceso con OTP</string>
+
+    <string name="app_brand_title">XploreNow Argentina</string>
+    <string name="nav_reservas">Reservas</string>
+    <string name="nav_resenas">Reseñas</string>
+    <string name="nav_perfil">Perfil</string>
+
+    <string name="reservas_title">Mis reservas</string>
+    <string name="reservas_subtitle">Listado de las reservas realizadas por el usuario.</string>
+
+    <string name="reservation_item_activity_label">Actividad</string>
+    <string name="reservation_item_destination_label">Destino</string>
+    <string name="reservation_item_date_label">Fecha</string>
+    <string name="reservation_item_time_label">Hora</string>
+    <string name="reservation_item_participants_label">Participantes</string>
+    <string name="reservation_item_voucher_label">Voucher</string>
+    <string name="reservation_item_id_label">Reserva #%1$d</string>
+    <string name="reservation_item_status_pending">PENDING</string>
+    <string name="reservation_item_status_confirmed">CONFIRMED</string>
+    <string name="reservation_item_status_cancelled">CANCELLED</string>
+    <string name="reservation_item_status_completed">COMPLETED</string>
+
+    <string name="reservation_detail_title">Detalle de reserva</string>
+    <string name="reservation_detail_subtitle">Revisa la información completa de tu reserva.</string>
+    <string name="reservation_detail_section_data">Datos de la reserva</string>
+    <string name="reservation_detail_cancellation_policy">Política de cancelación</string>
+    <string name="reservation_cancel_button">Cancelar reserva</string>
+    <string name="reservation_confirm_button">Confirmar reserva</string>
+
+    <string name="activity_detail_title">Detalle de actividad</string>
+    <string name="activity_image_content_description">Imagen de la actividad</string>
+    <string name="destination_icon_content_description">Ubicación</string>
+    <string name="duration_icon_content_description">Duración</string>
+    <string name="description_label">Descripción</string>
+    <string name="meeting_point_label">Punto de encuentro</string>
+    <string name="guide_label">Guía</string>
+    <string name="language_label">Idioma</string>
+    <string name="inclusions_label">Incluye</string>
+    <string name="cancellation_policy_label">Política de cancelación</string>
+    <string name="available_schedules_label">Horarios disponibles</string>
+    <string name="select_schedule_button">Seleccioná un horario</string>
+
+    <string name="create_reservation_title">Confirmar reserva</string>
+    <string name="selected_schedule_label">Horario seleccionado</string>
+    <string name="participants_count_label">Cantidad de participantes</string>
+    <string name="remove_participant_content_description">Quitar participante</string>
+    <string name="add_participant_content_description">Agregar participante</string>
+    <string name="summary_label">Resumen</string>
+    <string name="summary_participants_label">Participantes</string>
+    <string name="summary_estimated_price_label">Precio estimado</string>
+    <string name="confirm_reservation_button">Confirmar reserva</string>
+
+    <string name="actividad_mock_1_title">Actividad #1</string>
+    <string name="actividad_mock_2_title">Actividad #2</string>
+    <string name="actividad_mock_3_title">Actividad #3</string>
+    <string name="actividad_mock_fecha">Fecha</string>
+    <string name="actividad_mock_horario">Horario</string>
+    <string name="actividad_mock_fecha_format">Fecha: %1$s</string>
+    <string name="actividad_mock_horario_format">Horario: %1$s</string>
+    <string name="estado_confirmada">Confirmada</string>
+    <string name="estado_cancelada">Cancelada</string>
+    <string name="estado_finalizada">Finalizada</string>
+    <string name="estado_label">Estado</string>
+    <string name="estado_label_format">Estado: %1$s</string>
 </resources>

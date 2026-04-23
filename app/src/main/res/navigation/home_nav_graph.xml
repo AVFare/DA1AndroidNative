@@ -7,5 +7,71 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.da1androidnative.ui.home.HomeFragment"
-        android:label="Home" />
+        android:label="Home">
+        <action
+            android:id="@+id/action_home_to_reservas"
+            app:destination="@id/reservasFragment" />
+
+        <action
+            android:id="@+id/action_home_to_activityDetalleFragment"
+            app:destination="@id/activityDetalleFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/reservasFragment"
+        android:name="com.example.da1androidnative.ui.home.ReservasFragment"
+        android:label="Reservas">
+        <action
+            android:id="@+id/action_reservas_to_reservaDetalleFragment"
+            app:destination="@id/reservaDetalleFragment">
+            <argument
+                android:name="reservationId"
+                app:argType="long"
+                android:defaultValue="-1L" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/activityDetalleFragment"
+        android:name="com.example.da1androidnative.ui.home.ActivityDetalleFragment"
+        android:label="Detalle de actividad">
+        <argument
+            android:name="activityId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+
+        <action
+            android:id="@+id/action_activityDetalle_to_createReservationFragment"
+            app:destination="@id/createReservationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createReservationFragment"
+        android:name="com.example.da1androidnative.ui.home.ActivityCreateReservationFragment"
+        android:label="Confirmar reserva">
+        <argument
+            android:name="activityId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+
+        <argument
+            android:name="scheduleId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+
+        <action
+            android:id="@+id/action_createReservationFragment_to_reservasFragment"
+            app:destination="@id/reservasFragment"
+            app:popUpTo="@id/homeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/reservaDetalleFragment"
+        android:name="com.example.da1androidnative.ui.home.ReservaDetalleFragment"
+        android:label="Detalle de reserva">
+        <argument
+            android:name="reservationId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+    </fragment>
 </navigation>
