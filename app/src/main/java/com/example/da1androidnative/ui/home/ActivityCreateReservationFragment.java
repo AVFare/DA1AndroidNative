@@ -7,20 +7,35 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.da1androidnative.R;
+import com.example.da1androidnative.data.model.AuthResponse;
+import com.example.da1androidnative.data.model.LoginRequest;
+import com.example.da1androidnative.data.model.ReservaDetalleResponse;
+import com.example.da1androidnative.data.model.ReservaRequest;
+import com.example.da1androidnative.data.network.ApiService;
+import com.example.da1androidnative.ui.auth.LoginFragment;
 
 import org.w3c.dom.Text;
 
+import javax.inject.Inject;
+
 import dagger.hilt.android.AndroidEntryPoint;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 @AndroidEntryPoint
 public class ActivityCreateReservationFragment extends Fragment {
 
+    @Inject
+    ApiService apiService;
     private long activityId;
     private long scheduleId;
     private String date;
@@ -103,6 +118,25 @@ public class ActivityCreateReservationFragment extends Fragment {
     }
 
     private void crearReserva() {
+        ReservaRequest reservaRequest = new ReservaRequest(activityId, scheduleId, currentParticipants);
+        apiService.reserveActivity(reservaRequest).enqueue(new Callback<ReservaRequest>() {
+            @Override
+            public void onResponse(@NonNull Call<ReservaRequest> call, @NonNull Response<ReservaRequest> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Toast.makeText(getContext(), "Reserva Creada con Exito!", Toast.LENGTH_SHORT).show();
+
+                    NavHostFragment.findNavController(ActivityCreateReservationFragment.this)
+                            .navigate(R.id.action_createReservationFragment_to_reservasFragment);
+                } else {
+                    Toast.makeText(getContext(), "Error: Error Creando la Reserva", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ReservaRequest> call, @NonNull Throwable t) {
+                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
 
     }
 }
