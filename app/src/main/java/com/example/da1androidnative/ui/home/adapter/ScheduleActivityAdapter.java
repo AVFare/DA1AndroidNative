@@ -11,90 +11,76 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.ReservaResponse;
+import com.example.da1androidnative.data.model.ScheduleResponse;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScheduleActivityAdapter {
+public class ScheduleActivityAdapter extends RecyclerView.Adapter<ScheduleActivityAdapter.ScheduleViewHolder> {
 
     public static class ScheduleViewHolder extends RecyclerView.ViewHolder {
 
-        TextView reservationActivityName;
-        TextView reservationStatus;
-        TextView reservationDestination;
-        TextView reservationDate;
-        TextView reservationTime;
-        TextView reservationParticipants;
-        TextView reservationVoucherCode;
-        TextView reservationId;
+        TextView scheduleDateText;
+        TextView scheduleTimeText;
+        TextView availableSpotsText;
         MaterialCardView cardView;
 
-        public ReservasViewHolder(@NonNull View itemView) {
+        public ScheduleViewHolder(@NonNull View itemView) {
             super(itemView);
-            reservationActivityName = itemView.findViewById(R.id.reservationActivityName);
-            reservationStatus = itemView.findViewById(R.id.reservationStatus);
-            reservationDestination = itemView.findViewById(R.id.reservationDestination);
-            reservationDate = itemView.findViewById(R.id.reservationDate);
-            reservationTime = itemView.findViewById(R.id.reservationTime);
-            reservationParticipants = itemView.findViewById(R.id.reservationParticipants);
-            reservationVoucherCode = itemView.findViewById(R.id.reservationVoucherCode);
-            reservationId = itemView.findViewById(R.id.reservationId);
-            cardView = itemView.findViewById(R.id.reservationCard);
+            scheduleDateText = itemView.findViewById(R.id.scheduleDateText);
+            scheduleTimeText = itemView.findViewById(R.id.scheduleTimeText);
+            availableSpotsText = itemView.findViewById(R.id.availableSpotsText);
+            cardView = itemView.findViewById(R.id.scheduleCard);
         }
 
     }
 
-    private List<ReservaResponse> reservas = new ArrayList<>();
+    private List<ScheduleResponse> horarios = new ArrayList<>();
 
     private final Context context;
 
-    private ReservasAdapter.OnReservaClickListener listener;
+    private ScheduleActivityAdapter.OnScheduleClickListener listener;
 
-    public interface OnReservaClickListener {
-        void onReservaClick(long reservationId);
+    public interface OnScheduleClickListener {
+        void onScheduleClick(long scheduleId);
 
     }
 
-    public ReservasAdapter(Context context, ReservasAdapter.OnReservaClickListener listener) {
+    public ScheduleActivityAdapter(Context context, ScheduleActivityAdapter.OnScheduleClickListener listener) {
         this.context = context;
         this.listener = listener;
     }
-    public void setReservas(List<ReservaResponse> reservas) {
-        this.reservas = reservas;
+    public void setSchedules(List<ScheduleResponse> horarios) {
+        this.horarios = horarios;
         notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
-        return reservas.size();
+        return horarios.size();
     }
 
     @NonNull
     @Override
-    public ReservasAdapter.ReservasViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_reserva, parent, false);
-        return new ReservasAdapter.ReservasViewHolder(view);
+    public ScheduleActivityAdapter.ScheduleViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_schedule, parent, false);
+        return new ScheduleActivityAdapter.ScheduleViewHolder(view);
 
     }
 
     @Override
-    public void onBindViewHolder(ReservasAdapter.ReservasViewHolder holder, int position) {
+    public void onBindViewHolder(ScheduleActivityAdapter.ScheduleViewHolder holder, int position) {
 
-        ReservaResponse reserva = reservas.get(position);
+        ScheduleResponse horario = horarios.get(position);
 
-        holder.reservationActivityName.setText(reserva.getActivityName());
-        holder.reservationStatus.setText(reserva.getStatus());
-        holder.reservationDestination.setText(reserva.getDestination());
-        holder.reservationDate.setText(reserva.getDate().toString());
-        holder.reservationTime.setText(reserva.getTime());
-        holder.reservationParticipants.setText(String.format("Cantidad de Participantes: %d", reserva.getParticipantsCount()));
-        holder.reservationVoucherCode.setText(reserva.getVoucherCode());
-        holder.reservationId.setText(String.format("ID Reserva: %d", reserva.getReservationId()));
+        holder.scheduleDateText.setText(horario.getDate().toString());
+        holder.scheduleTimeText.setText(horario.getTime().toString());
+        holder.availableSpotsText.setText(String.format("Lugares Disponibles: %d", horario.getAvailableSpots()));
 
         holder.cardView.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onReservaClick(reserva.getReservationId());
+                listener.onScheduleClick(horario.getScheduleId());
             }
         });
     }
