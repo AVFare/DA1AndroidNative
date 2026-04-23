@@ -9,10 +9,13 @@ import com.example.da1androidnative.data.model.PaginatedReservasResponse;
 import com.example.da1androidnative.data.model.RegisterRequest;
 import com.example.da1androidnative.data.model.ActivityResponse;
 import com.example.da1androidnative.data.model.PaginatedActivitiesResponse;
+import com.example.da1androidnative.data.model.ReservaDetalleResponse;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 
 public interface ApiService {
     @POST("auth/login")
@@ -25,6 +28,9 @@ public interface ApiService {
 
     @GET("reservations/my")
     Call<PaginatedReservasResponse> getAllReservas();
+
+    @GET("reservations/{reservationId}")
+    Call<ReservaDetalleResponse> getDetalleReserva(@Path("reservationId") long reservationId);
 
     @POST("auth/otp/request")
     Call<OtpChallengeResponse> requestOtp(@Body OtpRequest request);
