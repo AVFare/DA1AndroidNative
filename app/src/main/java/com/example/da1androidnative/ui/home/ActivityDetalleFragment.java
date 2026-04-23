@@ -43,6 +43,8 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
     @Inject
     ApiService apiService;
 
+    private ActivityDetalleResponse currentDetalle;
+
     private ScheduleActivityAdapter scheduleActivityAdapter;
     private RecyclerView recyclerView;
 
@@ -61,6 +63,14 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
     private TextView cancellationPolicyText;
     private Button btnReservar;
 
+
+    public ActivityDetalleResponse getCurrentDetalle() {
+        return currentDetalle;
+    }
+
+    public void setCurrentDetalle(ActivityDetalleResponse currentDetalle) {
+        this.currentDetalle = currentDetalle;
+    }
 
     @Nullable
     @Override
@@ -118,6 +128,7 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
                     ActivityDetalleResponse detalle = response.body();
                     android.util.Log.d("API_HOME", "Detalle de Actividad Recibido");
                     bindDetalle(detalle);
+                    setCurrentDetalle(detalle);
                 } else {
                     android.util.Log.e("API_HOME", "Error en respuesta: " + response.code());
                     Toast.makeText(getContext(), "Error al cargar detalle de actividad", Toast.LENGTH_SHORT).show();
@@ -165,7 +176,7 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
         categoryBadgeText.setText(detalle.getCategory());
         destinationText.setText(detalle.getDestination());
         durationText.setText(String.format("Duracion en Minutos: %d", detalle.getDurationMinutes()));
-        priceText.setText(String.format("Precio Base: %d", detalle.getBasePrice()));
+        priceText.setText(String.format("Precio Base: %f", detalle.getBasePrice()));
         fullDescriptionText.setText(detalle.getFullDescription());
         meetingPointText.setText(detalle.getMeetingPoint());
         guideNameText.setText(detalle.getGuideName());
@@ -187,10 +198,14 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
 
 
     @Override
-    public void onScheduleClick(long scheduleId) {
+    public void onScheduleClick(long scheduleId, String date, String time, int availableSpots) {
         Bundle args = new Bundle();
         args.putLong("activityId", activityId);
         args.putLong("scheduleId", scheduleId);
+        args.putString("date", date);
+        args.putString("time", time);
+        args.putInt("availableSpots", availableSpots);
+        args.putDouble("precioBase", getCurrentDetalle().getBasePrice());
         NavHostFragment.findNavController(this).navigate(R.id.action_activityDetalle_to_createReservationFragment, args);
     }
 }

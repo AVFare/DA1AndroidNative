@@ -4,8 +4,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class ActivityResponse {
-    @SerializedName("id")
-    private long id;
+    @SerializedName("activityId")
+    private long activityId;
     @SerializedName("name")
     private String name;
     @SerializedName("destination")
@@ -28,7 +28,7 @@ public class ActivityResponse {
     }
 
     public long getId() {
-        return id;
+        return activityId;
     }
 
     public String getName() {

@@ -8,7 +8,7 @@ public class ScheduleResponse {
     @SerializedName("scheduleId")
     private long scheduleId;
     @SerializedName("date")
-    private Date date;
+    private String date;
     @SerializedName("time")
     private String time;
     @SerializedName("availableSpots")
@@ -20,7 +20,7 @@ public class ScheduleResponse {
         return scheduleId;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 

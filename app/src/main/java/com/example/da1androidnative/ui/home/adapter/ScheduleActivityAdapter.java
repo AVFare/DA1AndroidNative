@@ -43,7 +43,7 @@ public class ScheduleActivityAdapter extends RecyclerView.Adapter<ScheduleActivi
     private ScheduleActivityAdapter.OnScheduleClickListener listener;
 
     public interface OnScheduleClickListener {
-        void onScheduleClick(long scheduleId);
+        void onScheduleClick(long scheduleId, String date, String time, int availableSpots);
 
     }
 
@@ -80,7 +80,7 @@ public class ScheduleActivityAdapter extends RecyclerView.Adapter<ScheduleActivi
 
         holder.cardView.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onScheduleClick(horario.getScheduleId());
+                listener.onScheduleClick(horario.getScheduleId(), horario.getDate(), horario.getTime(), horario.getAvailableSpots());
             }
         });
     }

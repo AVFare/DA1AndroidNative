@@ -51,7 +51,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
         holder.activityDestination.setText(String.format("Destino: %s", activity.getName()));
         holder.activityCategory.setText(String.format("Categoria: %s", activity.getCategory()));
         holder.activityDuration.setText(String.format("Duracion en Minutos: %d", activity.getDurationMinutes()));
-        holder.activityPrice.setText(String.format("Precio Base: %d", activity.getBasePrice()));
+        holder.activityPrice.setText(String.format("Precio Base: %f", activity.getBasePrice()));
         holder.activitySpots.setText(String.format("Lugares Disponibles: %d", activity.getAvailableSpots()));
 
         Glide.with(context)
