@@ -11,6 +11,10 @@
         <action
             android:id="@+id/action_home_to_reservas"
             app:destination="@id/reservasFragment" />
+
+        <action
+            android:id="@+id/action_home_to_activityDetalleFragment"
+            app:destination="@id/activityDetalleFragment" />
     </fragment>
 
     <fragment
@@ -25,6 +29,35 @@
                 app:argType="long"
                 android:defaultValue="-1L" />
         </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/activityDetalleFragment"
+        android:name="com.example.da1androidnative.ui.home.ActivityDetalleFragment"
+        android:label="Detalle de actividad">
+        <argument
+            android:name="activityId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+
+        <action
+            android:id="@+id/action_activityDetalle_to_createReservationFragment"
+            app:destination="@id/createReservationFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createReservationFragment"
+        android:name="com.example.da1androidnative.ui.home.ActivityCreateReservationFragment"
+        android:label="Confirmar reserva">
+        <argument
+            android:name="activityId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+
+        <argument
+            android:name="scheduleId"
+            app:argType="long"
+            android:defaultValue="-1L" />
     </fragment>
 
     <fragment

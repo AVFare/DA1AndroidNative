@@ -92,6 +92,29 @@
     <string name="reservation_cancel_button">Cancelar reserva</string>
     <string name="reservation_confirm_button">Confirmar reserva</string>
 
+    <string name="activity_detail_title">Detalle de actividad</string>
+    <string name="activity_image_content_description">Imagen de la actividad</string>
+    <string name="destination_icon_content_description">Ubicación</string>
+    <string name="duration_icon_content_description">Duración</string>
+    <string name="description_label">Descripción</string>
+    <string name="meeting_point_label">Punto de encuentro</string>
+    <string name="guide_label">Guía</string>
+    <string name="language_label">Idioma</string>
+    <string name="inclusions_label">Incluye</string>
+    <string name="cancellation_policy_label">Política de cancelación</string>
+    <string name="available_schedules_label">Horarios disponibles</string>
+    <string name="select_schedule_button">Seleccioná un horario</string>
+
+    <string name="create_reservation_title">Confirmar reserva</string>
+    <string name="selected_schedule_label">Horario seleccionado</string>
+    <string name="participants_count_label">Cantidad de participantes</string>
+    <string name="remove_participant_content_description">Quitar participante</string>
+    <string name="add_participant_content_description">Agregar participante</string>
+    <string name="summary_label">Resumen</string>
+    <string name="summary_participants_label">Participantes</string>
+    <string name="summary_estimated_price_label">Precio estimado</string>
+    <string name="confirm_reservation_button">Confirmar reserva</string>
+
     <string name="actividad_mock_1_title">Actividad #1</string>
     <string name="actividad_mock_2_title">Actividad #2</string>
     <string name="actividad_mock_3_title">Actividad #3</string>
