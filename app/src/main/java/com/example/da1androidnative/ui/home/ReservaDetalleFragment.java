@@ -11,8 +11,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.da1androidnative.R;
+import com.example.da1androidnative.data.model.ReservaCancelledResponse;
 import com.example.da1androidnative.data.model.ReservaDetalleResponse;
 import com.example.da1androidnative.data.network.ApiService;
 
@@ -126,9 +128,29 @@ public class ReservaDetalleFragment extends Fragment {
 
     private void cancelReserva () {
 
+        if (this.reservationId == -1L) {
+            Toast.makeText(getContext(), "Reserva inválida", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        apiService.cancelReserva(reservationId).enqueue(new Callback<ReservaCancelledResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ReservaCancelledResponse> call, @NonNull Response<ReservaCancelledResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    android.util.Log.d("API_HOME", "Reserva Cancelada con Exito");
+                    NavHostFragment.findNavController(ReservaDetalleFragment.this).navigateUp();
+                } else {
+                    android.util.Log.e("API_HOME", "Error en respuesta: " + response.code());
+                    Toast.makeText(getContext(), "Error al cancelar reserva reserva", Toast.LENGTH_SHORT).show();
+                }
+            }
 
-
+            @Override
+            public void onFailure(@NonNull Call<ReservaCancelledResponse> call, @NonNull Throwable t) {
+                android.util.Log.e("API_HOME", "Fallo total: " + t.getMessage());
+                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void bindDetalle(ReservaDetalleResponse detalle) {

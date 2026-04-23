@@ -56,6 +56,14 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
         loadReservas();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (reservasAdapter != null) {
+            loadReservas();
+        }
+    }
+
     private void setupRecyclerView(View view) {
         recyclerView = view.findViewById(R.id.reservasRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
