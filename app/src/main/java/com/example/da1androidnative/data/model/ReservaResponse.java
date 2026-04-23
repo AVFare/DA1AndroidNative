@@ -1,19 +1,29 @@
 package com.example.da1androidnative.data.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 
 public class ReservaResponse {
 
-    private int reservationId;
+    @SerializedName("reservationId")
+    private Long reservationId;
+    @SerializedName("activityName")
     private String activityName;
+    @SerializedName("destination")
     private String destination;
+    @SerializedName("date")
     private Date date;
+    @SerializedName("time")
     private String time;
+    @SerializedName("participantsCount")
     private int participantsCount;
+    @SerializedName("status")
     private String status;
+    @SerializedName("voucherCode")
     private String voucherCode;
 
-    public int getReservationId() {
+    public Long getReservationId() {
         return reservationId;
     }
 
