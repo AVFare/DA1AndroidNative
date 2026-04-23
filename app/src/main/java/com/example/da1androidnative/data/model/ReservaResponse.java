@@ -7,7 +7,7 @@ import java.util.Date;
 public class ReservaResponse {
 
     @SerializedName("reservationId")
-    private Long reservationId;
+    private long reservationId;
     @SerializedName("activityName")
     private String activityName;
     @SerializedName("destination")
@@ -23,7 +23,7 @@ public class ReservaResponse {
     @SerializedName("voucherCode")
     private String voucherCode;
 
-    public Long getReservationId() {
+    public long getReservationId() {
         return reservationId;
     }
 

@@ -51,7 +51,7 @@ public class ReservasAdapter extends RecyclerView.Adapter<ReservasAdapter.Reserv
     private OnReservaClickListener listener;
 
     public interface OnReservaClickListener {
-        void onReservaClick(Long reservationId);
+        void onReservaClick(long reservationId);
 
     }
 
