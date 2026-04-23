@@ -13,6 +13,7 @@ import com.example.da1androidnative.data.model.ActivityResponse;
 import com.example.da1androidnative.data.model.PaginatedActivitiesResponse;
 import com.example.da1androidnative.data.model.ReservaCancelledResponse;
 import com.example.da1androidnative.data.model.ReservaDetalleResponse;
+import com.example.da1androidnative.data.model.ReservaRequest;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -41,6 +42,9 @@ public interface ApiService {
 
     @GET("reservations/{reservationId}")
     Call<ReservaDetalleResponse> getDetalleReserva(@Path("reservationId") long reservationId);
+
+    @POST("reservations")
+    Call<ReservaRequest> reserveActivity(@Body ReservaRequest reservaRequest);
 
     @DELETE("reservations/{reservationId}")
     Call<ReservaCancelledResponse> cancelReserva(@Path("reservationId") long reservationId);
