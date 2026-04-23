@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -47,6 +48,8 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
 
     private ScheduleActivityAdapter scheduleActivityAdapter;
     private RecyclerView recyclerView;
+
+    private Toolbar toolbar;
 
     private long activityId;
     private ImageView activityImageView;
@@ -99,12 +102,15 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
         languageText = view.findViewById(R.id.languageText);;
         inclusionsText = view.findViewById(R.id.inclusionsText);;
         cancellationPolicyText = view.findViewById(R.id.cancellationPolicyText);;
+        toolbar = view.findViewById(R.id.toolbar);
         btnReservar = view.findViewById(R.id.btnReservar);;
         btnReservar.setEnabled(false);
 
         setupRecyclerView(view);
         loadDetalleActividad();
         loadHorarios();
+
+        toolbar.setNavigationOnClickListener(v -> NavHostFragment.findNavController(this).navigateUp());
 
     }
 
