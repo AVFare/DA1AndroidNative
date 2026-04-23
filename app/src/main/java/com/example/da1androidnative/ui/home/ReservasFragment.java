@@ -95,9 +95,11 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
     }
 
     @Override
-    public void onReservaClick(Long reservationId) {
-        Toast.makeText(getContext(), "ID Reserva: " + reservationId, Toast.LENGTH_SHORT).show();
-        //TODO: Navegacion hacia detalle de reserva
+    public void onReservaClick(long reservationId) {
+        Bundle args = new Bundle();
+        args.putLong("ReservationId", reservationId);
+        this.setArguments(args);
+        NavHostFragment.findNavController(this).navigate(R.id.action_reservas_to_reservaDetalleFragment, args);
     }
 }
 
