@@ -5,6 +5,7 @@ import com.example.da1androidnative.data.model.LoginRequest;
 import com.example.da1androidnative.data.model.OtpChallengeResponse;
 import com.example.da1androidnative.data.model.OtpRequest;
 import com.example.da1androidnative.data.model.OtpVerifyRequest;
+import com.example.da1androidnative.data.model.PaginatedReservasResponse;
 import com.example.da1androidnative.data.model.RegisterRequest;
 import com.example.da1androidnative.data.model.ActivityResponse;
 import com.example.da1androidnative.data.model.PaginatedActivitiesResponse;
@@ -22,6 +23,8 @@ public interface ApiService {
     @GET("activities")
     Call<PaginatedActivitiesResponse> getAllActivities();
 
+    @GET("reservas")
+    Call<PaginatedReservasResponse> getAllReservas();
 
     @POST("auth/otp/request")
     Call<OtpChallengeResponse> requestOtp(@Body OtpRequest request);
