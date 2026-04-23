@@ -84,7 +84,7 @@
             android:background="@drawable/bg_circle_primary_outline"
             android:contentDescription="@string/remove_participant_content_description"
             android:src="@drawable/ic_remove"
-            android:tint="?attr/colorPrimary" />
+            app:tint="?attr/colorPrimary" />
 
         <TextView
             android:id="@+id/participantsCountText"
@@ -104,7 +104,7 @@
             android:background="@drawable/bg_circle_primary_outline"
             android:contentDescription="@string/add_participant_content_description"
             android:src="@drawable/ic_add"
-            android:tint="?attr/colorPrimary" />
+            app:tint="?attr/colorPrimary" />
     </LinearLayout>
 
     <TextView

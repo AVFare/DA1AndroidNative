@@ -19,7 +19,7 @@
             app:scrimAnimationDuration="300"
             app:title="@string/activity_detail_title"
             app:expandedTitleTextAppearance="@style/TextAppearance.MaterialComponents.Headline5"
-            app:collapsedTitleTextAppearance="@style/TextAppearance.MaterialComponents.Toolbar.Title">
+            app:collapsedTitleTextAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
 
             <ImageView
                 android:id="@+id/activityImageView"
@@ -87,7 +87,7 @@
                     android:layout_height="16dp"
                     android:contentDescription="@string/destination_icon_content_description"
                     android:src="@drawable/ic_location_on"
-                    android:tint="@color/gray_600" />
+                    app:tint="@color/gray_600" />
 
                 <TextView
                     android:id="@+id/destinationText"
@@ -110,7 +110,7 @@
                     android:layout_height="16dp"
                     android:contentDescription="@string/duration_icon_content_description"
                     android:src="@drawable/ic_schedule"
-                    android:tint="@color/gray_600" />
+                    app:tint="@color/gray_600" />
 
                 <TextView
                     android:id="@+id/durationText"
@@ -252,7 +252,6 @@
                 android:layout_marginTop="8dp"
                 android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:orientation="horizontal"
                 tools:itemCount="4"
                 tools:listitem="@layout/item_schedule" />
 

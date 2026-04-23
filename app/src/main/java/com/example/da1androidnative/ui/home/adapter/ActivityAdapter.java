@@ -47,14 +47,18 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
     public void onBindViewHolder(@NonNull ActivityViewHolder holder, int position) {
         ActivityResponse activity = activities.get(position);
 
-        holder.titleText.setText(activity.getName());
-        holder.descriptionText.setText(activity.getShortDescription());
+        holder.activityTitle.setText(activity.getName());
+        holder.activityDestination.setText(String.format("Destino: %s", activity.getName()));
+        holder.activityCategory.setText(String.format("Categoria: %s", activity.getCategory()));
+        holder.activityDuration.setText(String.format("Duracion en Minutos: %d", activity.getDurationMinutes()));
+        holder.activityPrice.setText(String.format("Precio Base: %d", activity.getBasePrice()));
+        holder.activitySpots.setText(String.format("Lugares Disponibles: %d", activity.getAvailableSpots()));
 
         Glide.with(context)
                 .load(activity.getFirstImageUrl())
                 .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_launcher_background)
-                .into(holder.imageView);
+                .into(holder.activityImage);
 
         holder.cardView.setOnClickListener(v -> {
             if (listener != null) {
@@ -70,16 +74,24 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
 
     public static class ActivityViewHolder extends RecyclerView.ViewHolder {
         MaterialCardView cardView;
-        ImageView imageView;
-        TextView titleText;
-        TextView descriptionText;
+        ImageView activityImage;
+        TextView activityTitle;
+        TextView activityDestination;
+        TextView activityCategory;
+        TextView activityDuration;
+        TextView activityPrice;
+        TextView activitySpots;
 
         public ActivityViewHolder(@NonNull View itemView) {
             super(itemView);
             cardView = itemView.findViewById(R.id.activityCard);
-            imageView = itemView.findViewById(R.id.activityImage);
-            titleText = itemView.findViewById(R.id.activityTitle);
-            descriptionText = itemView.findViewById(R.id.activityDescription);
+            activityImage = itemView.findViewById(R.id.activityImage);
+            activityTitle = itemView.findViewById(R.id.activityTitle);
+            activityDestination = itemView.findViewById(R.id.activityDestination);
+            activityCategory = itemView.findViewById(R.id.activityCategory);
+            activityDuration = itemView.findViewById(R.id.activityDuration);
+            activityPrice = itemView.findViewById(R.id.activityPrice);
+            activitySpots = itemView.findViewById(R.id.activitySpots);
         }
     }
 }

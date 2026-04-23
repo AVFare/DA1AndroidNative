@@ -16,6 +16,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.ActivityDetalleResponse;
 import com.example.da1androidnative.data.model.PaginatedReservasResponse;
@@ -81,7 +82,7 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
         categoryBadgeText = view.findViewById(R.id.categoryBadgeText);;
         destinationText = view.findViewById(R.id.destinationText);;
         durationText = view.findViewById(R.id.durationText);;
-        priceText = view.findViewById(R.id.priceText);;
+        priceText = view.findViewById(R.id.priceText);
         fullDescriptionText = view.findViewById(R.id.fullDescriptionText);;
         meetingPointText = view.findViewById(R.id.meetingPointText);;
         guideNameText = view.findViewById(R.id.guideNameText);;
@@ -160,7 +161,6 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
     }
 
     private void bindDetalle(ActivityDetalleResponse detalle) {
-        //activityImageView.setImageURI(detalle.getImages().get(1));
         activityNameText.setText(detalle.getName());
         categoryBadgeText.setText(detalle.getCategory());
         destinationText.setText(detalle.getDestination());
@@ -172,6 +172,17 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
         languageText.setText(detalle.getLanguage());
         inclusionsText.setText(detalle.getInclusions());
         cancellationPolicyText.setText(detalle.getCancellationPolicy());
+
+        String imageUrl = null;
+        if (detalle.getImages() != null && !detalle.getImages().isEmpty()) {
+            imageUrl = detalle.getFirstImageUrl();
+        }
+
+        Glide.with(this).load(imageUrl)
+                .placeholder(R.drawable.ic_launcher_background)
+                .error(R.drawable.ic_launcher_background)
+                .centerCrop()
+                .into(activityImageView);
     }
 
 
