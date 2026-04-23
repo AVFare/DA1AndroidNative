@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -51,6 +52,7 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
         super.onViewCreated(view, savedInstanceState);
 
         setupRecyclerView(view);
+        setupButtons(view);
         loadReservas();
     }
 
@@ -59,6 +61,14 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         reservasAdapter = new ReservasAdapter(getContext(), this);
         recyclerView.setAdapter(reservasAdapter);
+    }
+
+    private void setupButtons(View view) {
+        //TODO: Agregar Redirecciones a "Mis calificaciones" y "Mis Datos"
+        view.findViewById(R.id.btnCalificaciones).setOnClickListener(v ->
+                Toast.makeText(getContext(), "Mis Calificaciones", Toast.LENGTH_SHORT).show());
+        view.findViewById(R.id.btnMisDatos).setOnClickListener(v ->
+                Toast.makeText(getContext(), "Mis Datos", Toast.LENGTH_SHORT).show());
     }
 
 
