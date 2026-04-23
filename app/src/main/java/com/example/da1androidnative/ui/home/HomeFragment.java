@@ -91,8 +91,13 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
 
     @Override
     public void onActivityClick(Long activityId) {
-        Toast.makeText(getContext(), "ID Actividad: " + activityId, Toast.LENGTH_SHORT).show();
-        
-        // TODO: NavHostFragment.findNavController(this).navigate(R.id.action_home_to_detail, bundle);
+        if (activityId == null) {
+            Toast.makeText(getContext(), "Actividad inválida", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Bundle args = new Bundle();
+        args.putLong("activityId", activityId);
+        NavHostFragment.findNavController(this).navigate(R.id.action_home_to_activityDetalleFragment, args);
     }
 }
