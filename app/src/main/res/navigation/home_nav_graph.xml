@@ -16,5 +16,24 @@
     <fragment
         android:id="@+id/reservasFragment"
         android:name="com.example.da1androidnative.ui.home.ReservasFragment"
-        android:label="Reservas" />
+        android:label="Reservas">
+        <action
+            android:id="@+id/action_reservas_to_reservaDetalleFragment"
+            app:destination="@id/reservaDetalleFragment">
+            <argument
+                android:name="reservationId"
+                app:argType="long"
+                android:defaultValue="-1" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/reservaDetalleFragment"
+        android:name="com.example.da1androidnative.ui.home.ReservaDetalleFragment"
+        android:label="Detalle de reserva">
+        <argument
+            android:name="reservationId"
+            app:argType="long"
+            android:defaultValue="-1" />
+    </fragment>
 </navigation>
