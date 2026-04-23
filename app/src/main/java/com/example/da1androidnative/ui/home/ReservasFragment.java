@@ -97,7 +97,7 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
     @Override
     public void onReservaClick(long reservationId) {
         Bundle args = new Bundle();
-        args.putLong("ReservationId", reservationId);
+        args.putLong("reservationId", reservationId);
         this.setArguments(args);
         NavHostFragment.findNavController(this).navigate(R.id.action_reservas_to_reservaDetalleFragment, args);
     }
