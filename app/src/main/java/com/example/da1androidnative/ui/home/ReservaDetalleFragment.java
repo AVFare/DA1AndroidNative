@@ -138,6 +138,7 @@ public class ReservaDetalleFragment extends Fragment {
             public void onResponse(@NonNull Call<ReservaCancelledResponse> call, @NonNull Response<ReservaCancelledResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     android.util.Log.d("API_HOME", "Reserva Cancelada con Exito");
+                    Toast.makeText(getContext(), "Reserva Cancelada con Exito", Toast.LENGTH_SHORT).show();
                     NavHostFragment.findNavController(ReservaDetalleFragment.this).navigateUp();
                 } else {
                     android.util.Log.e("API_HOME", "Error en respuesta: " + response.code());

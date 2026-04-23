@@ -10,7 +10,7 @@ public class ReservaCancelledResponse {
     @SerializedName("status")
     private String status;
     @SerializedName("cancelledAt")
-    private Date cancelledAt;
+    private String cancelledAt;
     @SerializedName("message")
     private String message;
 
@@ -22,7 +22,7 @@ public class ReservaCancelledResponse {
         return status;
     }
 
-    public Date getCancelledAt() {
+    public String getCancelledAt() {
         return cancelledAt;
     }
 
