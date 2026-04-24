@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- Permiso para Android 9 (API 28) o superior -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+
+    <!-- Permiso para Android 8.1 (API 27) o inferior -->
+    <uses-permission android:name="android.permission.USE_FINGERPRINT"
+        android:maxSdkVersion="27" />
 
     <application
-        android:name="com.example.da1androidnative.XploreNowApp"
+        android:name=".XploreNowApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,7 +20,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"  android:theme="@style/Theme.DA1ANDROIDNATIVE">
+        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.DA1ANDROIDNATIVE"
+        tools:targetApi="31">
+
         <activity
             android:name=".ui.MainActivity"
             android:exported="true">
