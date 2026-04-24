@@ -63,10 +63,11 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
     }
 
     private void setupButtons(View view) {
-        view.findViewById(R.id.btnCalificaciones).setOnClickListener(v ->
-                Toast.makeText(getContext(), "Mis Calificaciones", Toast.LENGTH_SHORT).show());
+        view.findViewById(R.id.btnFavoritos).setOnClickListener(v ->
+                NavHostFragment.findNavController(this).navigate(R.id.action_reservas_to_favoritesFragment));
+        
         view.findViewById(R.id.btnMisDatos).setOnClickListener(v ->
-                Toast.makeText(getContext(), "Mis Datos", Toast.LENGTH_SHORT).show());
+                Toast.makeText(getContext(), R.string.nav_perfil, Toast.LENGTH_SHORT).show());
     }
 
     private void loadReservas() {
