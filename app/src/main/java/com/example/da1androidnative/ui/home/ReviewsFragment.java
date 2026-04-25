@@ -139,6 +139,13 @@ public class ReviewsFragment extends Fragment implements ReviewableReservationsA
 
     @Override
     public void onReviewClick(ReviewableReservationResponse reservation) {
-        Toast.makeText(getContext(), "Formulario de calificacion pendiente", Toast.LENGTH_SHORT).show();
+        Bundle args = new Bundle();
+        args.putLong("reservationId", reservation.getReservationId());
+        args.putString("activityName", reservation.getActivityName());
+        args.putString("destination", reservation.getDestination());
+        args.putString("guideName", reservation.getGuideName());
+        args.putString("activityDate", reservation.getActivityDate());
+        args.putString("reviewDeadline", reservation.getReviewDeadline());
+        NavHostFragment.findNavController(this).navigate(R.id.action_reviewsFragment_to_reviewCreateFragment, args);
     }
 }

@@ -42,7 +42,41 @@
     <fragment
         android:id="@+id/reviewsFragment"
         android:name="com.example.da1androidnative.ui.home.ReviewsFragment"
-        android:label="Reseñas" />
+        android:label="Reseñas">
+        <action
+            android:id="@+id/action_reviewsFragment_to_reviewCreateFragment"
+            app:destination="@id/reviewCreateFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/reviewCreateFragment"
+        android:name="com.example.da1androidnative.ui.home.ReviewCreateFragment"
+        android:label="Calificar experiencia">
+        <argument
+            android:name="reservationId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="activityName"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="destination"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="guideName"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="activityDate"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="reviewDeadline"
+            app:argType="string"
+            android:defaultValue="" />
+    </fragment>
 
     <fragment
         android:id="@+id/activityDetalleFragment"
