@@ -45,10 +45,9 @@
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1"
                     android:text="@string/nav_reservas"
-                    android:textColor="@android:color/white"
-                    app:backgroundTint="@color/teal_700"
+                    android:textColor="@color/teal_700"
                     app:icon="@android:drawable/ic_menu_agenda"
-                    app:iconTint="@android:color/white" />
+                    app:iconTint="@color/teal_700" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnFavoritos"
@@ -58,9 +57,10 @@
                     android:layout_marginHorizontal="4dp"
                     android:layout_weight="1"
                     android:text="@string/nav_favoritos"
-                    android:textColor="@color/teal_700"
+                    android:textColor="@android:color/white"
+                    app:backgroundTint="@color/teal_700"
                     app:icon="@drawable/ic_favorite_filled"
-                    app:iconTint="@color/teal_700" />
+                    app:iconTint="@android:color/white" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnMisDatos"
@@ -82,7 +82,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
-        android:text="@string/reservas_title"
+        android:text="@string/favorites_title"
         android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
         android:textColor="?attr/colorOnSurface" />
 
@@ -91,12 +91,12 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="4dp"
-        android:text="@string/reservas_subtitle"
+        android:text="@string/favorites_subtitle"
         android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
         android:textColor="?attr/colorOnSurfaceVariant" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/reservasRecyclerView"
+        android:id="@+id/favoritesRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"

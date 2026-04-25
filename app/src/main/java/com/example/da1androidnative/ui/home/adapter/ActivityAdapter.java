@@ -4,12 +4,14 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.da1androidnative.R;
+import com.example.da1androidnative.data.local.FavoritesManager;
 import com.example.da1androidnative.data.model.ActivityResponse;
 import com.google.android.material.card.MaterialCardView;
 
@@ -20,14 +22,17 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
 
     private final Context context;
     private List<ActivityResponse> activities = new ArrayList<>();
-    private OnActivityClickListener listener; 
+    private final OnActivityClickListener listener;
+    private final FavoritesManager favoritesManager;
 
     public interface OnActivityClickListener {
         void onActivityClick(Long activityId);
+        void onFavoriteClick(ActivityResponse activity);
     }
 
-    public ActivityAdapter(Context context, OnActivityClickListener listener) {
+    public ActivityAdapter(Context context, FavoritesManager favoritesManager, OnActivityClickListener listener) {
         this.context = context;
+        this.favoritesManager = favoritesManager;
         this.listener = listener;
     }
 
@@ -60,9 +65,20 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
                 .error(R.drawable.ic_launcher_background)
                 .into(holder.activityImage);
 
+        // Update heart icon based on favorite status
+        boolean isFav = favoritesManager.isFavorite(activity.getId());
+        holder.btnFavorite.setImageResource(isFav ? R.drawable.ic_favorite_filled : R.drawable.ic_favorite_border);
+
         holder.cardView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onActivityClick(activity.getId());
+            }
+        });
+
+        holder.btnFavorite.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onFavoriteClick(activity);
+                notifyItemChanged(position);
             }
         });
     }
@@ -75,6 +91,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
     public static class ActivityViewHolder extends RecyclerView.ViewHolder {
         MaterialCardView cardView;
         ImageView activityImage;
+        ImageButton btnFavorite;
         TextView activityTitle;
         TextView activityDestination;
         TextView activityCategory;
@@ -86,6 +103,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
             super(itemView);
             cardView = itemView.findViewById(R.id.activityCard);
             activityImage = itemView.findViewById(R.id.activityImage);
+            btnFavorite = itemView.findViewById(R.id.btnFavorite);
             activityTitle = itemView.findViewById(R.id.activityTitle);
             activityDestination = itemView.findViewById(R.id.activityDestination);
             activityCategory = itemView.findViewById(R.id.activityCategory);

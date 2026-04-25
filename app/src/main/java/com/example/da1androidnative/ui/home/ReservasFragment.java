@@ -9,7 +9,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -32,25 +31,19 @@ import retrofit2.Response;
 @AndroidEntryPoint
 public class ReservasFragment extends Fragment implements ReservasAdapter.OnReservaClickListener {
 
-    @Inject
-    ApiService apiService;
-
+    @Inject ApiService apiService;
     private ReservasAdapter reservasAdapter;
-
     private RecyclerView recyclerView;
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_reservas, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         setupRecyclerView(view);
         setupButtons(view);
         loadReservas();
@@ -59,9 +52,7 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
     @Override
     public void onResume() {
         super.onResume();
-        if (reservasAdapter != null) {
-            loadReservas();
-        }
+        loadReservas();
     }
 
     private void setupRecyclerView(View view) {
@@ -72,13 +63,12 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
     }
 
     private void setupButtons(View view) {
-        //TODO: Agregar Redirecciones a "Mis calificaciones" y "Mis Datos"
-        view.findViewById(R.id.btnCalificaciones).setOnClickListener(v ->
-                Toast.makeText(getContext(), "Mis Calificaciones", Toast.LENGTH_SHORT).show());
+        view.findViewById(R.id.btnFavoritos).setOnClickListener(v ->
+                NavHostFragment.findNavController(this).navigate(R.id.action_reservas_to_favoritesFragment));
+        
         view.findViewById(R.id.btnMisDatos).setOnClickListener(v ->
-                Toast.makeText(getContext(), "Mis Datos", Toast.LENGTH_SHORT).show());
+                Toast.makeText(getContext(), R.string.nav_perfil, Toast.LENGTH_SHORT).show());
     }
-
 
     private void loadReservas() {
         apiService.getAllReservas().enqueue(new Callback<PaginatedReservasResponse>() {
@@ -86,17 +76,14 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
             public void onResponse(@NonNull Call<PaginatedReservasResponse> call, @NonNull Response<PaginatedReservasResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<ReservaResponse> listaReservas = response.body().getContent();
-                    android.util.Log.d("API_HOME", "Reservas extraídas del paginado: " + listaReservas.size());
                     reservasAdapter.setReservas(listaReservas);
                 } else {
-                    android.util.Log.e("API_HOME", "Error en respuesta: " + response.code());
-                    Toast.makeText(getContext(), "Error al cargar reservas", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Error al cargar reservas: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<PaginatedReservasResponse> call, Throwable t) {
-                android.util.Log.e("API_HOME", "Fallo total: " + t.getMessage());
+            public void onFailure(@NonNull Call<PaginatedReservasResponse> call, @NonNull Throwable t) {
                 Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
@@ -104,10 +91,10 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
 
     @Override
     public void onReservaClick(long reservationId) {
+        if (reservationId == -1L) return;
+        
         Bundle args = new Bundle();
         args.putLong("reservationId", reservationId);
-        this.setArguments(args);
         NavHostFragment.findNavController(this).navigate(R.id.action_reservas_to_reservaDetalleFragment, args);
     }
 }
-
