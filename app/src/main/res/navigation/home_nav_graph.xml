@@ -15,6 +15,10 @@
         <action
             android:id="@+id/action_home_to_activityDetalleFragment"
             app:destination="@id/activityDetalleFragment" />
+			
+		<action
+			android:id="@+id/action_home_to_profileFragment"
+			app:destination="@id/profileFragment" />
     </fragment>
 
     <fragment
@@ -74,4 +78,9 @@
             app:argType="long"
             android:defaultValue="-1L" />
     </fragment>
+	
+	<fragment
+    android:id="@+id/profileFragment"
+    android:name="com.example.da1androidnative.ui.profile.ProfileFragment"
+    android:label="Perfil" />
 </navigation>
