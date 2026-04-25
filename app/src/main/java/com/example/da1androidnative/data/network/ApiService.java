@@ -7,6 +7,8 @@ import com.example.da1androidnative.data.model.OtpChallengeResponse;
 import com.example.da1androidnative.data.model.OtpRequest;
 import com.example.da1androidnative.data.model.OtpVerifyRequest;
 import com.example.da1androidnative.data.model.PaginatedReservasResponse;
+import com.example.da1androidnative.data.model.PaginatedReviewableReservationsResponse;
+import com.example.da1androidnative.data.model.PaginatedReviewsResponse;
 import com.example.da1androidnative.data.model.PaginatedSchedulesResponse;
 import com.example.da1androidnative.data.model.RegisterRequest;
 import com.example.da1androidnative.data.model.ActivityResponse;
@@ -14,6 +16,8 @@ import com.example.da1androidnative.data.model.PaginatedActivitiesResponse;
 import com.example.da1androidnative.data.model.ReservaCancelledResponse;
 import com.example.da1androidnative.data.model.ReservaDetalleResponse;
 import com.example.da1androidnative.data.model.ReservaRequest;
+import com.example.da1androidnative.data.model.ReviewRequest;
+import com.example.da1androidnative.data.model.ReviewResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -57,4 +61,13 @@ public interface ApiService {
 
     @POST("auth/otp/verify")
     Call<AuthResponse> verifyOtp(@Body OtpVerifyRequest request);
+
+    @GET("reviews/eligible")
+    Call<PaginatedReviewableReservationsResponse> getReviewableReservations();
+
+    @GET("reviews/my")
+    Call<PaginatedReviewsResponse> getMyReviews();
+
+    @POST("reviews/reservations/{reservationId}")
+    Call<ReviewResponse> createReview(@Path("reservationId") long reservationId, @Body ReviewRequest request);
 }
