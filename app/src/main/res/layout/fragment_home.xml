@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/backgroundSurface">
+    android:background="?attr/colorSurface">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        app:cardBackgroundColor="@color/purple_500"
+        app:cardBackgroundColor="?attr/colorPrimary"
         app:cardCornerRadius="0dp"
         app:cardElevation="8dp">
 
@@ -23,11 +23,11 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="XploreNow Argentina"
-                android:textColor="@android:color/white"
+                android:layout_marginBottom="16dp"
+                android:text="@string/app_brand_title"
+                android:textColor="?attr/colorOnPrimary"
                 android:textSize="22sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="16dp"/>
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -42,9 +42,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="4dp"
-                    android:text="Reservas"
-                    android:textColor="@color/teal_700"
-                    app:iconTint="@color/teal_700"
+                    android:text="@string/nav_reservas"
                     app:icon="@android:drawable/ic_menu_agenda"/>
 
                 <com.google.android.material.button.MaterialButton
@@ -54,9 +52,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginHorizontal="4dp"
-                    android:text="Reseñas"
-                    android:textColor="@color/teal_700"
-                    app:iconTint="@color/teal_700"
+                    android:text="@string/nav_resenas"
                     app:icon="@android:drawable/btn_star"/>
 
                 <com.google.android.material.button.MaterialButton
@@ -66,11 +62,20 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="4dp"
-                    android:text="Perfil"
-                    android:textColor="@color/teal_700"
-                    app:iconTint="@color/teal_700"
+                    android:text="@string/nav_perfil"
                     app:icon="@android:drawable/ic_menu_myplaces"/>
             </LinearLayout>
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/biometricSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/biometric_switch_label"
+                android:textColor="?attr/colorOnPrimary"
+                app:thumbTint="?attr/colorOnPrimary"
+                app:trackTint="?attr/colorSecondaryContainer" />
+
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
