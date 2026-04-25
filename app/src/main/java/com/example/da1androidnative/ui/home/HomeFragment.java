@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.da1androidnative.R;
+import com.example.da1androidnative.data.local.FavoritesManager;
 import com.example.da1androidnative.data.local.TokenManager;
 import com.example.da1androidnative.data.model.ActivityResponse;
 import com.example.da1androidnative.data.model.PaginatedActivitiesResponse;
@@ -45,6 +46,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
 
     @Inject ApiService apiService;
     @Inject TokenManager tokenManager;
+    @Inject FavoritesManager favoritesManager;
     
     private ActivityAdapter adapter;
     private SwitchMaterial biometricSwitch;
@@ -77,8 +79,8 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         view.findViewById(R.id.btnReservas).setOnClickListener(v -> 
             NavHostFragment.findNavController(this).navigate(R.id.action_home_to_reservas));
         
-        view.findViewById(R.id.btnCalificaciones).setOnClickListener(v -> 
-            Toast.makeText(getContext(), R.string.nav_resenas, Toast.LENGTH_SHORT).show());
+        view.findViewById(R.id.btnFavoritos).setOnClickListener(v ->
+            NavHostFragment.findNavController(this).navigate(R.id.action_home_to_favorites));
             
         view.findViewById(R.id.btnMisDatos).setOnClickListener(v -> 
             Toast.makeText(getContext(), R.string.nav_perfil, Toast.LENGTH_SHORT).show());
@@ -156,7 +158,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     private void setupRecyclerView(View view) {
         RecyclerView recyclerView = view.findViewById(R.id.activitiesRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new ActivityAdapter(getContext(), this);
+        adapter = new ActivityAdapter(getContext(), favoritesManager, this);
         recyclerView.setAdapter(adapter);
     }
 
@@ -179,5 +181,13 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         Bundle args = new Bundle();
         args.putLong("activityId", activityId);
         NavHostFragment.findNavController(this).navigate(R.id.action_home_to_activityDetalleFragment, args);
+    }
+
+    @Override
+    public void onFavoriteClick(ActivityResponse activity) {
+        favoritesManager.toggleFavorite(activity.getId());
+        Toast.makeText(getContext(), 
+            favoritesManager.isFavorite(activity.getId()) ? "Agregado a favoritos" : "Quitado de favoritos", 
+            Toast.LENGTH_SHORT).show();
     }
 }

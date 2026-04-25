@@ -15,6 +15,10 @@
         <action
             android:id="@+id/action_home_to_activityDetalleFragment"
             app:destination="@id/activityDetalleFragment" />
+
+        <action
+            android:id="@+id/action_home_to_favorites"
+            app:destination="@id/favoritesFragment" />
     </fragment>
 
     <fragment
@@ -23,12 +27,24 @@
         android:label="Reservas">
         <action
             android:id="@+id/action_reservas_to_reservaDetalleFragment"
-            app:destination="@id/reservaDetalleFragment">
-            <argument
-                android:name="reservationId"
-                app:argType="long"
-                android:defaultValue="-1L" />
-        </action>
+            app:destination="@id/reservaDetalleFragment" />
+        <action
+            android:id="@+id/action_reservas_to_favoritesFragment"
+            app:destination="@id/favoritesFragment"
+            app:popUpTo="@id/homeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/favoritesFragment"
+        android:name="com.example.da1androidnative.ui.home.FavoritesFragment"
+        android:label="Mis Favoritos">
+        <action
+            android:id="@+id/action_favorites_to_activityDetalleFragment"
+            app:destination="@id/activityDetalleFragment" />
+        <action
+            android:id="@+id/action_favorites_to_reservasFragment"
+            app:destination="@id/reservasFragment"
+            app:popUpTo="@id/homeFragment" />
     </fragment>
 
     <fragment

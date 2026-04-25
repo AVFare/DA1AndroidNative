@@ -1,31 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?attr/colorSurface">
+    android:background="?attr/colorSurface"
+    android:orientation="vertical">
 
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        app:cardBackgroundColor="?attr/colorPrimary"
+        app:cardBackgroundColor="@color/purple_500"
         app:cardCornerRadius="0dp"
         app:cardElevation="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="vertical"
-            android:padding="20dp"
-            android:gravity="center">
+            android:padding="20dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:text="@string/app_brand_title"
-                android:textColor="?attr/colorOnPrimary"
+                android:textColor="@android:color/white"
                 android:textSize="22sp"
                 android:textStyle="bold" />
 
@@ -43,17 +45,21 @@
                     android:layout_weight="1"
                     android:layout_marginEnd="4dp"
                     android:text="@string/nav_reservas"
-                    app:icon="@android:drawable/ic_menu_agenda"/>
+                    android:textColor="@color/teal_700"
+                    app:icon="@android:drawable/ic_menu_agenda"
+                    app:iconTint="@color/teal_700"/>
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnCalificaciones"
+                    android:id="@+id/btnFavoritos"
                     style="@style/Widget.Material3.Button.TonalButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginHorizontal="4dp"
-                    android:text="@string/nav_resenas"
-                    app:icon="@android:drawable/btn_star"/>
+                    android:text="@string/nav_favoritos"
+                    android:textColor="@color/teal_700"
+                    app:icon="@drawable/ic_favorite_filled"
+                    app:iconTint="@color/teal_700"/>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnMisDatos"
@@ -63,7 +69,9 @@
                     android:layout_weight="1"
                     android:layout_marginStart="4dp"
                     android:text="@string/nav_perfil"
-                    app:icon="@android:drawable/ic_menu_myplaces"/>
+                    android:textColor="@color/teal_700"
+                    app:icon="@android:drawable/ic_menu_myplaces"
+                    app:iconTint="@color/teal_700"/>
             </LinearLayout>
 
             <com.google.android.material.switchmaterial.SwitchMaterial
@@ -72,9 +80,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="@string/biometric_switch_label"
-                android:textColor="?attr/colorOnPrimary"
-                app:thumbTint="?attr/colorOnPrimary"
-                app:trackTint="?attr/colorSecondaryContainer" />
+                android:textColor="@android:color/white"
+                app:thumbTint="@android:color/white"
+                app:trackTint="@color/teal_200" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
