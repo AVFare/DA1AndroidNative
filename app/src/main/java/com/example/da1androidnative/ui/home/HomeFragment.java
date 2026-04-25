@@ -61,7 +61,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         view.findViewById(R.id.btnReservas).setOnClickListener(v -> 
             NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_home_to_reservas));
         view.findViewById(R.id.btnCalificaciones).setOnClickListener(v -> 
-            Toast.makeText(getContext(), "Mis Calificaciones", Toast.LENGTH_SHORT).show());
+            NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_home_to_reviewsFragment));
             
         view.findViewById(R.id.btnMisDatos).setOnClickListener(v -> 
             Toast.makeText(getContext(), "Mis Datos", Toast.LENGTH_SHORT).show());

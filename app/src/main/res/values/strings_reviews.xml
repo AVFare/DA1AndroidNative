@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reviews_title">Mis reseñas</string>
+    <string name="reviewable_section_title">Pendientes por calificar</string>
+    <string name="reviewable_section_subtitle">Actividades finalizadas disponibles durante las 48 horas posteriores.</string>
+    <string name="reviewable_empty">No tenés actividades pendientes de calificación.</string>
+    <string name="reviewable_button">Calificar experiencia</string>
+    <string name="my_reviews_section_title">Historial de calificaciones</string>
+    <string name="my_reviews_empty">Todavía no dejaste calificaciones.</string>
+</resources>

@@ -9,7 +9,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -72,9 +71,8 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
     }
 
     private void setupButtons(View view) {
-        //TODO: Agregar Redirecciones a "Mis calificaciones" y "Mis Datos"
         view.findViewById(R.id.btnCalificaciones).setOnClickListener(v ->
-                Toast.makeText(getContext(), "Mis Calificaciones", Toast.LENGTH_SHORT).show());
+                NavHostFragment.findNavController(this).navigate(R.id.action_reservas_to_reviewsFragment));
         view.findViewById(R.id.btnMisDatos).setOnClickListener(v ->
                 Toast.makeText(getContext(), "Mis Datos", Toast.LENGTH_SHORT).show());
     }

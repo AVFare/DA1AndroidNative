@@ -15,6 +15,10 @@
         <action
             android:id="@+id/action_home_to_activityDetalleFragment"
             app:destination="@id/activityDetalleFragment" />
+
+        <action
+            android:id="@+id/action_home_to_reviewsFragment"
+            app:destination="@id/reviewsFragment" />
     </fragment>
 
     <fragment
@@ -29,7 +33,16 @@
                 app:argType="long"
                 android:defaultValue="-1L" />
         </action>
+
+        <action
+            android:id="@+id/action_reservas_to_reviewsFragment"
+            app:destination="@id/reviewsFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/reviewsFragment"
+        android:name="com.example.da1androidnative.ui.home.ReviewsFragment"
+        android:label="Reseñas" />
 
     <fragment
         android:id="@+id/activityDetalleFragment"
