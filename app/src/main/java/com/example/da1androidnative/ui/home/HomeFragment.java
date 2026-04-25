@@ -31,7 +31,6 @@ import com.example.da1androidnative.data.network.ApiService;
 import com.example.da1androidnative.ui.home.adapter.ActivityAdapter;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
-import java.util.List;
 import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
@@ -168,10 +167,14 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
             public void onResponse(@NonNull Call<PaginatedActivitiesResponse> call, @NonNull Response<PaginatedActivitiesResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     adapter.setActivities(response.body().getContent());
+                } else {
+                    Toast.makeText(getContext(), "Error al obtener actividades", Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
-            public void onFailure(@NonNull Call<PaginatedActivitiesResponse> call, @NonNull Throwable t) {}
+            public void onFailure(@NonNull Call<PaginatedActivitiesResponse> call, @NonNull Throwable t) {
+                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
