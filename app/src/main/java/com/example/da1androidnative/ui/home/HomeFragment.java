@@ -13,9 +13,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.biometric.BiometricManager;
-import androidx.biometric.BiometricManager.Authenticators;
-import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
@@ -48,20 +45,8 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     @Inject FavoritesManager favoritesManager;
 
     private ActivityAdapter adapter;
-    private SwitchMaterial biometricSwitch;
-    private Executor executor;
-    private BiometricPrompt biometricPrompt;
-    private BiometricPrompt.PromptInfo promptInfo;
 
-    private final ActivityResultLauncher<String> requestPermissionLauncher =
-            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                if (isGranted) {
-                    checkBiometricHardware();
-                } else {
-                    Toast.makeText(getContext(), R.string.biometric_permission_denied, Toast.LENGTH_SHORT).show();
-                    biometricSwitch.setChecked(false);
-                }
-            });
+    private Executor executor;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,7 +58,6 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         super.onViewCreated(view, savedInstanceState);
 
         setupRecyclerView(view);
-        setupBiometricSwitch(view);
         loadActivities();
 
         view.findViewById(R.id.btnReservas).setOnClickListener(v ->
@@ -84,75 +68,6 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
 
         view.findViewById(R.id.btnMisDatos).setOnClickListener(v ->
                 NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_home_to_profileFragment));
-    }
-
-    private void setupBiometricSwitch(View view) {
-        biometricSwitch = view.findViewById(R.id.biometricSwitch);
-        biometricSwitch.setChecked(tokenManager.isBiometricEnabled());
-
-        biometricSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                String permission = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
-                        ? Manifest.permission.USE_BIOMETRIC : Manifest.permission.USE_FINGERPRINT;
-                requestPermissionLauncher.launch(permission);
-            } else {
-                tokenManager.setBiometricEnabled(false);
-                tokenManager.clearCredentials();
-                Toast.makeText(getContext(), R.string.biometric_disabled_msg, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void checkBiometricHardware() {
-        BiometricManager manager = BiometricManager.from(requireContext());
-        int canAuth = manager.canAuthenticate(Authenticators.BIOMETRIC_STRONG | Authenticators.DEVICE_CREDENTIAL);
-
-        switch (canAuth) {
-            case BiometricManager.BIOMETRIC_SUCCESS:
-                showBiometricPromptToEnable();
-                break;
-            case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
-                Toast.makeText(getContext(), R.string.biometric_error_not_available, Toast.LENGTH_SHORT).show();
-                biometricSwitch.setChecked(false);
-                break;
-            case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    final Intent enrollIntent = new Intent(Settings.ACTION_BIOMETRIC_ENROLL);
-                    enrollIntent.putExtra(Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED, Authenticators.BIOMETRIC_STRONG);
-                    startActivity(enrollIntent);
-                }
-                biometricSwitch.setChecked(false);
-                break;
-            default:
-                biometricSwitch.setChecked(false);
-                break;
-        }
-    }
-
-    private void showBiometricPromptToEnable() {
-        executor = ContextCompat.getMainExecutor(requireContext());
-        biometricPrompt = new BiometricPrompt(this, executor, new BiometricPrompt.AuthenticationCallback() {
-            @Override
-            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
-                super.onAuthenticationSucceeded(result);
-                tokenManager.setBiometricEnabled(true);
-                Toast.makeText(getContext(), R.string.biometric_enabled_msg, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
-                super.onAuthenticationError(errorCode, errString);
-                biometricSwitch.setChecked(false);
-            }
-        });
-
-        promptInfo = new BiometricPrompt.PromptInfo.Builder()
-                .setTitle(getString(R.string.biometric_prompt_title))
-                .setSubtitle(getString(R.string.biometric_prompt_subtitle))
-                .setAllowedAuthenticators(Authenticators.BIOMETRIC_STRONG | Authenticators.DEVICE_CREDENTIAL)
-                .build();
-
-        biometricPrompt.authenticate(promptInfo);
     }
 
     private void setupRecyclerView(View view) {
