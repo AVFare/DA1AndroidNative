@@ -1,6 +1,7 @@
 package com.example.da1androidnative.data.network;
 
 import com.example.da1androidnative.data.model.ActivityDetalleResponse;
+import com.example.da1androidnative.data.model.ActivityHistoryResponse;
 import com.example.da1androidnative.data.model.AuthResponse;
 import com.example.da1androidnative.data.model.LoginRequest;
 import com.example.da1androidnative.data.model.OtpChallengeResponse;
@@ -15,12 +16,15 @@ import com.example.da1androidnative.data.model.ReservaCancelledResponse;
 import com.example.da1androidnative.data.model.ReservaDetalleResponse;
 import com.example.da1androidnative.data.model.ReservaRequest;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.POST;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ApiService {
     @POST("auth/login")
@@ -57,4 +61,12 @@ public interface ApiService {
 
     @POST("auth/otp/verify")
     Call<AuthResponse> verifyOtp(@Body OtpVerifyRequest request);
+
+    @GET("activities/history")
+    Call<List<ActivityHistoryResponse>> getActivityHistory(
+            @Query("userId") long userId,
+            @Query("destination") String destination,
+            @Query("startDate") String startDate,
+            @Query("endDate") String endDate
+    );
 }
