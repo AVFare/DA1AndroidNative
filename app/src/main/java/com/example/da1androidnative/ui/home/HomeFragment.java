@@ -82,6 +82,9 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         view.findViewById(R.id.btnFavoritos).setOnClickListener(v ->
             NavHostFragment.findNavController(this).navigate(R.id.action_home_to_favorites));
             
+        view.findViewById(R.id.btnHistorial).setOnClickListener(v ->
+            NavHostFragment.findNavController(this).navigate(R.id.action_home_to_activityHistory));
+
         view.findViewById(R.id.btnMisDatos).setOnClickListener(v -> 
             Toast.makeText(getContext(), R.string.nav_perfil, Toast.LENGTH_SHORT).show());
     }
