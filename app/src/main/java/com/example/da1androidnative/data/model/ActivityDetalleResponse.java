@@ -1,8 +1,9 @@
 package com.example.da1androidnative.data.model;
 
 import com.google.gson.annotations.SerializedName;
+import java.util.List;
 
-public class ActivityDetalleResponse extends  ActivityResponse{
+public class ActivityDetalleResponse extends ActivityResponse {
 
     @SerializedName("shortDescription")
     private String shortDescription;
@@ -14,13 +15,18 @@ public class ActivityDetalleResponse extends  ActivityResponse{
     private String language;
     @SerializedName("meetingPoint")
     private String meetingPoint;
+    @SerializedName("meetingPointLatitude")
+    private Double meetingPointLatitude;
+    @SerializedName("meetingPointLongitude")
+    private Double meetingPointLongitude;
     @SerializedName("inclusions")
     private String inclusions;
     @SerializedName("cancellationPolicy")
     private String cancellationPolicy;
     @SerializedName("currency")
     private String currency;
-
+    @SerializedName("itineraries")
+    private List<ItineraryResponse> itineraries;
 
     public String getFullDescription() {
         return fullDescription;
@@ -37,6 +43,14 @@ public class ActivityDetalleResponse extends  ActivityResponse{
         return meetingPoint;
     }
 
+    public Double getMeetingPointLatitude() {
+        return meetingPointLatitude;
+    }
+
+    public Double getMeetingPointLongitude() {
+        return meetingPointLongitude;
+    }
+
     public String getInclusions() {
         return inclusions;
     }
@@ -51,5 +65,9 @@ public class ActivityDetalleResponse extends  ActivityResponse{
 
     public String getShortDescription() {
         return shortDescription;
+    }
+
+    public List<ItineraryResponse> getItineraries() {
+        return itineraries;
     }
 }

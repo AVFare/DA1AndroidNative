@@ -10,6 +10,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.biometric.BiometricManager.Authenticators;
+import androidx.biometric.BiometricPrompt;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -22,6 +25,8 @@ import com.example.da1androidnative.data.model.OtpPurpose;
 import com.example.da1androidnative.data.model.OtpRequest;
 import com.example.da1androidnative.data.network.ApiService;
 
+import java.util.concurrent.Executor;
+
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -33,8 +38,11 @@ import retrofit2.Response;
 public class LoginFragment extends Fragment {
 
     @Inject ApiService apiService;
-    @Inject
-    TokenManager tokenManager;
+    @Inject TokenManager tokenManager;
+
+    private Executor executor;
+    private BiometricPrompt biometricPrompt;
+    private BiometricPrompt.PromptInfo promptInfo;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -49,31 +57,55 @@ public class LoginFragment extends Fragment {
         EditText mailEdit = view.findViewById(R.id.emailEditText);
         EditText passEdit = view.findViewById(R.id.passwordEditText);
         Button loginBtn = view.findViewById(R.id.loginButton);
-        Button otpLoginButton = view.findViewById(R.id.otpLoginButton);
-        Button otpRecoveryButton = view.findViewById(R.id.otpRecoveryButton);
-        Button registerBtn = view.findViewById(R.id.registerButton);
 
         loginBtn.setOnClickListener(v1 -> {
             String email = mailEdit.getText().toString().trim();
             String password = passEdit.getText().toString().trim();
-
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(getContext(), "Completa los campos", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.invalid_username, Toast.LENGTH_SHORT).show();
                 return;
             }
-
             performLogin(email, password);
         });
 
-        // TODO: Realizar logica de recupero de acceso (contraseña) y pantalla de nueva contraseña.
+        view.findViewById(R.id.otpLoginButton).setOnClickListener(v -> requestOtp(mailEdit.getText().toString().trim(), OtpPurpose.LOGIN));
+        view.findViewById(R.id.registerButton).setOnClickListener(v -> 
+            NavHostFragment.findNavController(this).navigate(R.id.action_login_to_register));
 
-        otpLoginButton.setOnClickListener(v -> requestOtp(mailEdit.getText().toString().trim(), OtpPurpose.LOGIN));
-        otpRecoveryButton.setOnClickListener(v -> requestOtp(mailEdit.getText().toString().trim(), OtpPurpose.ACCESS_RECOVERY));
+        setupBiometrics();
+        
+        if (tokenManager.isBiometricEnabled()) {
+            biometricPrompt.authenticate(promptInfo);
+        }
+    }
 
-        registerBtn.setOnClickListener(v -> {
-            NavHostFragment.findNavController(this)
-                    .navigate(R.id.action_login_to_register);
+    private void setupBiometrics() {
+        executor = ContextCompat.getMainExecutor(requireContext());
+        biometricPrompt = new BiometricPrompt(this, executor, new BiometricPrompt.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                super.onAuthenticationSucceeded(result);
+                String savedEmail = tokenManager.getSavedEmail();
+                String savedPass = tokenManager.getSavedPassword();
+                
+                if (savedEmail != null && savedPass != null) {
+                    performLogin(savedEmail, savedPass);
+                } else {
+                    Toast.makeText(getContext(), R.string.biometric_credentials_not_found, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                super.onAuthenticationError(errorCode, errString);
+            }
         });
+
+        promptInfo = new BiometricPrompt.PromptInfo.Builder()
+                .setTitle(getString(R.string.biometric_prompt_title))
+                .setSubtitle(getString(R.string.biometric_prompt_subtitle))
+                .setAllowedAuthenticators(Authenticators.BIOMETRIC_STRONG | Authenticators.DEVICE_CREDENTIAL)
+                .build();
     }
 
     private void performLogin(String email, String password) {
@@ -82,20 +114,14 @@ public class LoginFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<AuthResponse> call, @NonNull Response<AuthResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    String token = response.body().getToken();
-                    
-                    // Guardo el token usando TokenManager
-                    tokenManager.saveToken(token);
-                    Toast.makeText(getContext(), "Bienvenido!", Toast.LENGTH_SHORT).show();
-
-                    // Navegar al Home
-                    NavHostFragment.findNavController(LoginFragment.this)
-                            .navigate(R.id.action_login_to_home);
+                    tokenManager.saveToken(response.body().getToken());
+                    tokenManager.saveCredentials(email, password);
+                    Toast.makeText(getContext(), R.string.welcome, Toast.LENGTH_SHORT).show();
+                    NavHostFragment.findNavController(LoginFragment.this).navigate(R.id.action_login_to_home);
                 } else {
-                    Toast.makeText(getContext(), "Error: Credenciales inválidas", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Error: Credenciales invalidas", Toast.LENGTH_SHORT).show();
                 }
             }
-
             @Override
             public void onFailure(@NonNull Call<AuthResponse> call, @NonNull Throwable t) {
                 Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
@@ -105,30 +131,24 @@ public class LoginFragment extends Fragment {
 
     private void requestOtp(String email, OtpPurpose purpose) {
         if (email.isEmpty()) {
-            Toast.makeText(getContext(), "Ingresa un email para solicitar el codigo", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Ingresa un email", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        OtpRequest request = new OtpRequest(email, purpose);
-        apiService.requestOtp(request).enqueue(new Callback<OtpChallengeResponse>() {
+        apiService.requestOtp(new OtpRequest(email, purpose)).enqueue(new Callback<OtpChallengeResponse>() {
             @Override
             public void onResponse(@NonNull Call<OtpChallengeResponse> call, @NonNull Response<OtpChallengeResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(getContext(), "Codigo generado. Revisa la terminal del backend.", Toast.LENGTH_LONG).show();
+                if (response.isSuccessful()) {
                     NavHostFragment.findNavController(LoginFragment.this).navigate(
                             R.id.action_login_to_otpVerificationFragment,
                             OtpVerificationFragment.createArgs(email, purpose)
                     );
-                } else if (response.code() == 404) {
-                    Toast.makeText(getContext(), "No existe una cuenta registrada con ese email", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(getContext(), "No se pudo generar el codigo OTP", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "No se pudo solicitar el codigo OTP", Toast.LENGTH_SHORT).show();
                 }
             }
-
             @Override
             public void onFailure(@NonNull Call<OtpChallengeResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Error de conexion: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -17,12 +17,16 @@ public class AuthInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        String token = tokenManager.getToken();
-        Request.Builder requestBuilder = chain.request().newBuilder();
+        Request request = chain.request();
+        Request.Builder requestBuilder = request.newBuilder();
 
-        // Si tenemos un token, lo agregamos al header Authorization
-        if (token != null) {
-            requestBuilder.addHeader("Authorization", "Bearer " + token);
+        // NO agregamos el token si la ruta es de autenticacion (login, register, otp)
+        // Esto evita errores 403 por tokens viejos persistidos en el dispositivo
+        if (!request.url().encodedPath().contains("/auth/")) {
+            String token = tokenManager.getToken();
+            if (token != null) {
+                requestBuilder.addHeader("Authorization", "Bearer " + token);
+            }
         }
 
         return chain.proceed(requestBuilder.build());

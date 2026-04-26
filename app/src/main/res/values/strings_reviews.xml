@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="nav_resenas">Reseñas</string>
     <string name="reviews_title">Mis reseñas</string>
     <string name="reviewable_section_title">Pendientes por calificar</string>
     <string name="reviewable_section_subtitle">Actividades finalizadas disponibles durante las 48 horas posteriores.</string>

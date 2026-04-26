@@ -18,12 +18,15 @@ import com.example.da1androidnative.data.model.ReservaDetalleResponse;
 import com.example.da1androidnative.data.model.ReservaRequest;
 import com.example.da1androidnative.data.model.ReviewRequest;
 import com.example.da1androidnative.data.model.ReviewResponse;
+import com.example.da1androidnative.data.model.UserProfileResponse;
+import com.example.da1androidnative.data.model.UpdateUserProfileRequest;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.POST;
 import retrofit2.http.GET;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public interface ApiService {
@@ -70,4 +73,10 @@ public interface ApiService {
 
     @POST("reviews/reservations/{reservationId}")
     Call<ReviewResponse> createReview(@Path("reservationId") long reservationId, @Body ReviewRequest request);
+
+    @GET("profile/me")
+    Call<UserProfileResponse> getMyProfile();
+
+    @PUT("profile/me")
+    Call<UserProfileResponse> updateMyProfile(@Body UpdateUserProfileRequest request);
 }
