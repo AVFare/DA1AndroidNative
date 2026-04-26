@@ -1,6 +1,7 @@
 package com.example.da1androidnative.data.network;
 
 import com.example.da1androidnative.data.model.ActivityDetalleResponse;
+import com.example.da1androidnative.data.model.ActivityHistoryResponse;
 import com.example.da1androidnative.data.model.AuthResponse;
 import com.example.da1androidnative.data.model.ConfirmEmailChangeRequest;
 import com.example.da1androidnative.data.model.InitiateEmailChangeRequest;
@@ -23,6 +24,8 @@ import com.example.da1androidnative.data.model.ReviewResponse;
 import com.example.da1androidnative.data.model.UserProfileResponse;
 import com.example.da1androidnative.data.model.UpdateUserProfileRequest;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -30,6 +33,7 @@ import retrofit2.http.POST;
 import retrofit2.http.GET;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ApiService {
     @POST("auth/login")
@@ -75,6 +79,14 @@ public interface ApiService {
 
     @POST("reviews/reservations/{reservationId}")
     Call<ReviewResponse> createReview(@Path("reservationId") long reservationId, @Body ReviewRequest request);
+
+    @GET("activities/history")
+    Call<List<ActivityHistoryResponse>> getActivityHistory(
+            @Query("userId") long userId,
+            @Query("destination") String destination,
+            @Query("startDate") String startDate,
+            @Query("endDate") String endDate
+    );
 
     @GET("profile/me")
     Call<UserProfileResponse> getMyProfile();

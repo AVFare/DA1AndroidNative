@@ -26,6 +26,10 @@
         <action
             android:id="@+id/action_home_to_favorites"
             app:destination="@id/favoritesFragment" />
+
+        <action
+            android:id="@+id/action_home_to_activityHistory"
+            app:destination="@id/activityHistoryFragment" />
     </fragment>
 
     <fragment
@@ -44,6 +48,9 @@
             android:id="@+id/action_reservas_to_favoritesFragment"
             app:destination="@id/favoritesFragment"
             app:popUpTo="@id/homeFragment" />
+        <action
+            android:id="@+id/action_reservas_to_activityHistory"
+            app:destination="@id/activityHistoryFragment" />
     </fragment>
 
     <fragment
@@ -141,6 +148,16 @@
             app:argType="long"
             android:defaultValue="-1L" />
     </fragment>
+
+    <fragment
+        android:id="@+id/activityHistoryFragment"
+        android:name="com.example.da1androidnative.ui.home.ActivityHistoryFragment"
+        android:label="Historial de Actividades">
+        <action
+            android:id="@+id/action_activityHistory_to_activityDetalleFragment"
+            app:destination="@id/activityDetalleFragment" />
+    </fragment>
+
 	<fragment
     android:id="@+id/profileEditFragment"
     android:name="com.example.da1androidnative.ui.profile.ProfileEditFragment"
