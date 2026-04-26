@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nav_resenas">Reseñas</string>
+    <string name="reviews_title">Mis reseñas</string>
+    <string name="reviewable_section_title">Pendientes por calificar</string>
+    <string name="reviewable_section_subtitle">Actividades finalizadas disponibles durante las 48 horas posteriores.</string>
+    <string name="reviewable_empty">No tenés actividades pendientes de calificación.</string>
+    <string name="reviewable_button">Calificar experiencia</string>
+    <string name="my_reviews_section_title">Historial de calificaciones</string>
+    <string name="my_reviews_empty">Todavía no dejaste calificaciones.</string>
+    <string name="review_form_title">Calificar experiencia</string>
+    <string name="review_activity_rating_label">Calificación de la actividad</string>
+    <string name="review_guide_rating_label">Calificación del guía</string>
+    <string name="review_comment_label">Comentario opcional</string>
+    <string name="review_comment_hint">Contá cómo fue la experiencia</string>
+    <string name="review_comment_counter_format">%1$d/%2$d</string>
+    <string name="review_submit_button">Enviar calificación</string>
+    <string name="review_rating_required">Seleccioná estrellas para la actividad y el guía.</string>
+    <string name="review_submit_success">Calificación guardada.</string>
+    <string name="review_submit_error">No se pudo guardar la calificación.</string>
+</resources>

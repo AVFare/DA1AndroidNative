@@ -63,9 +63,11 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
     }
 
     private void setupButtons(View view) {
+        view.findViewById(R.id.btnCalificaciones).setOnClickListener(v ->
+                NavHostFragment.findNavController(this).navigate(R.id.action_reservas_to_reviewsFragment));
         view.findViewById(R.id.btnFavoritos).setOnClickListener(v ->
                 NavHostFragment.findNavController(this).navigate(R.id.action_reservas_to_favoritesFragment));
-        
+
         view.findViewById(R.id.btnMisDatos).setOnClickListener(v ->
                 Toast.makeText(getContext(), R.string.nav_perfil, Toast.LENGTH_SHORT).show());
     }
@@ -92,7 +94,7 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
     @Override
     public void onReservaClick(long reservationId) {
         if (reservationId == -1L) return;
-        
+
         Bundle args = new Bundle();
         args.putLong("reservationId", reservationId);
         NavHostFragment.findNavController(this).navigate(R.id.action_reservas_to_reservaDetalleFragment, args);

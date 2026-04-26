@@ -69,6 +69,9 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         view.findViewById(R.id.btnHistorial).setOnClickListener(v ->
             NavHostFragment.findNavController(this).navigate(R.id.action_home_to_activityHistory));
 
+        view.findViewById(R.id.btnCalificaciones).setOnClickListener(v ->
+            NavHostFragment.findNavController(this).navigate(R.id.action_home_to_reviewsFragment));
+
         view.findViewById(R.id.btnMisDatos).setOnClickListener(v ->
                 NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_home_to_profileFragment));
     }
@@ -79,7 +82,6 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         adapter = new ActivityAdapter(getContext(), favoritesManager, this);
         recyclerView.setAdapter(adapter);
     }
-
 
     private void loadActivities() {
         apiService.getAllActivities().enqueue(new Callback<PaginatedActivitiesResponse>() {

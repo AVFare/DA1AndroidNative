@@ -16,6 +16,10 @@
             android:id="@+id/action_home_to_activityDetalleFragment"
             app:destination="@id/activityDetalleFragment" />
 
+        <action
+            android:id="@+id/action_home_to_reviewsFragment"
+            app:destination="@id/reviewsFragment" />
+
 		<action
 			android:id="@+id/action_home_to_profileFragment"
 			app:destination="@id/profileViewFragment" />
@@ -35,6 +39,11 @@
         <action
             android:id="@+id/action_reservas_to_reservaDetalleFragment"
             app:destination="@id/reservaDetalleFragment" />
+
+        <action
+            android:id="@+id/action_reservas_to_reviewsFragment"
+            app:destination="@id/reviewsFragment" />
+
         <action
             android:id="@+id/action_reservas_to_favoritesFragment"
             app:destination="@id/favoritesFragment"
@@ -42,6 +51,45 @@
         <action
             android:id="@+id/action_reservas_to_activityHistory"
             app:destination="@id/activityHistoryFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/reviewsFragment"
+        android:name="com.example.da1androidnative.ui.home.ReviewsFragment"
+        android:label="Reseñas">
+        <action
+            android:id="@+id/action_reviewsFragment_to_reviewCreateFragment"
+            app:destination="@id/reviewCreateFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/reviewCreateFragment"
+        android:name="com.example.da1androidnative.ui.home.ReviewCreateFragment"
+        android:label="Calificar experiencia">
+        <argument
+            android:name="reservationId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="activityName"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="destination"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="guideName"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="activityDate"
+            app:argType="string"
+            android:defaultValue="" />
+        <argument
+            android:name="reviewDeadline"
+            app:argType="string"
+            android:defaultValue="" />
     </fragment>
 
     <fragment
@@ -114,7 +162,7 @@
     android:id="@+id/profileEditFragment"
     android:name="com.example.da1androidnative.ui.profile.ProfileEditFragment"
     android:label="Perfil" />
-	
+
 	<fragment
     android:id="@+id/profileViewFragment"
     android:name="com.example.da1androidnative.ui.profile.ProfileViewFragment"
