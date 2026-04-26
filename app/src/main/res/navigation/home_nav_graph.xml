@@ -16,6 +16,9 @@
             android:id="@+id/action_home_to_activityDetalleFragment"
             app:destination="@id/activityDetalleFragment" />
 
+		<action
+			android:id="@+id/action_home_to_profileFragment"
+			app:destination="@id/profileFragment" />
         <action
             android:id="@+id/action_home_to_favorites"
             app:destination="@id/favoritesFragment" />
@@ -106,4 +109,9 @@
             android:id="@+id/action_activityHistory_to_activityDetalleFragment"
             app:destination="@id/activityDetalleFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.da1androidnative.ui.profile.ProfileFragment"
+        android:label="Perfil" />
 </navigation>

@@ -2,14 +2,24 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="geo" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="google.navigation" />
+        </intent>
+    </queries>
+
     <uses-permission android:name="android.permission.INTERNET"/>
-
-    <!-- Permiso para Android 9 (API 28) o superior -->
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
-
-    <!-- Permiso para Android 8.1 (API 27) o inferior -->
     <uses-permission android:name="android.permission.USE_FINGERPRINT"
         android:maxSdkVersion="27" />
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".XploreNowApp"
@@ -23,6 +33,10 @@
         android:usesCleartextTraffic="true"
         android:theme="@style/Theme.DA1ANDROIDNATIVE"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDyzKLG9_zLXMmLPn0MMks8DQ7gphRM-w8" />
 
         <activity
             android:name=".ui.MainActivity"

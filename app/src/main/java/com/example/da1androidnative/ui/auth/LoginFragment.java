@@ -145,10 +145,14 @@ public class LoginFragment extends Fragment {
                             R.id.action_login_to_otpVerificationFragment,
                             OtpVerificationFragment.createArgs(email, purpose)
                     );
+                } else {
+                    Toast.makeText(getContext(), "No se pudo solicitar el codigo OTP", Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
-            public void onFailure(@NonNull Call<OtpChallengeResponse> call, @NonNull Throwable t) {}
+            public void onFailure(@NonNull Call<OtpChallengeResponse> call, @NonNull Throwable t) {
+                Toast.makeText(getContext(), "Error de conexion: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 }

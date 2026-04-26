@@ -31,7 +31,6 @@ import com.example.da1androidnative.data.network.ApiService;
 import com.example.da1androidnative.ui.home.adapter.ActivityAdapter;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
-import java.util.List;
 import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
@@ -47,7 +46,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     @Inject ApiService apiService;
     @Inject TokenManager tokenManager;
     @Inject FavoritesManager favoritesManager;
-    
+
     private ActivityAdapter adapter;
     private SwitchMaterial biometricSwitch;
     private Executor executor;
@@ -72,21 +71,22 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         setupRecyclerView(view);
         setupBiometricSwitch(view);
         loadActivities();
-        
-        view.findViewById(R.id.btnReservas).setOnClickListener(v -> 
+
+        view.findViewById(R.id.btnReservas).setOnClickListener(v ->
             NavHostFragment.findNavController(this).navigate(R.id.action_home_to_reservas));
-        
+
         view.findViewById(R.id.btnFavoritos).setOnClickListener(v ->
             NavHostFragment.findNavController(this).navigate(R.id.action_home_to_favorites));
             
         view.findViewById(R.id.btnHistorial).setOnClickListener(v ->
             NavHostFragment.findNavController(this).navigate(R.id.action_home_to_activityHistory));
 
-        view.findViewById(R.id.btnMisDatos).setOnClickListener(v -> 
-            Toast.makeText(getContext(), R.string.nav_perfil, Toast.LENGTH_SHORT).show());
+        view.findViewById(R.id.btnMisDatos).setOnClickListener(v ->
+                NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_home_to_profileFragment));
     }
 
     private void setupBiometricSwitch(View view) {
@@ -95,7 +95,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
 
         biometricSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                String permission = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) 
+                String permission = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P)
                         ? Manifest.permission.USE_BIOMETRIC : Manifest.permission.USE_FINGERPRINT;
                 requestPermissionLauncher.launch(permission);
             } else {
@@ -165,16 +165,22 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         recyclerView.setAdapter(adapter);
     }
 
+
     private void loadActivities() {
         apiService.getAllActivities().enqueue(new Callback<PaginatedActivitiesResponse>() {
             @Override
             public void onResponse(@NonNull Call<PaginatedActivitiesResponse> call, @NonNull Response<PaginatedActivitiesResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     adapter.setActivities(response.body().getContent());
+                } else {
+                    Toast.makeText(getContext(), "Error al obtener actividades", Toast.LENGTH_SHORT).show();
                 }
             }
+
             @Override
-            public void onFailure(@NonNull Call<PaginatedActivitiesResponse> call, @NonNull Throwable t) {}
+            public void onFailure(@NonNull Call<PaginatedActivitiesResponse> call, @NonNull Throwable t) {
+                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -189,8 +195,8 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     @Override
     public void onFavoriteClick(ActivityResponse activity) {
         favoritesManager.toggleFavorite(activity.getId());
-        Toast.makeText(getContext(), 
-            favoritesManager.isFavorite(activity.getId()) ? "Agregado a favoritos" : "Quitado de favoritos", 
+        Toast.makeText(getContext(),
+            favoritesManager.isFavorite(activity.getId()) ? "Agregado a favoritos" : "Quitado de favoritos",
             Toast.LENGTH_SHORT).show();
     }
 }

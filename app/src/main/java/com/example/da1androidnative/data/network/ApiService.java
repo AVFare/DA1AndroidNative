@@ -15,6 +15,8 @@ import com.example.da1androidnative.data.model.PaginatedActivitiesResponse;
 import com.example.da1androidnative.data.model.ReservaCancelledResponse;
 import com.example.da1androidnative.data.model.ReservaDetalleResponse;
 import com.example.da1androidnative.data.model.ReservaRequest;
+import com.example.da1androidnative.data.model.UserProfileResponse;
+import com.example.da1androidnative.data.model.UpdateUserProfileRequest;
 
 import java.util.List;
 
@@ -23,6 +25,7 @@ import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.POST;
 import retrofit2.http.GET;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -69,4 +72,10 @@ public interface ApiService {
             @Query("startDate") String startDate,
             @Query("endDate") String endDate
     );
+
+    @GET("profile/me")
+    Call<UserProfileResponse> getMyProfile();
+
+    @PUT("profile/me")
+    Call<UserProfileResponse> updateMyProfile(@Body UpdateUserProfileRequest request);
 }
