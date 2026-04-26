@@ -3,6 +3,8 @@ package com.example.da1androidnative.data.network;
 import com.example.da1androidnative.data.model.ActivityDetalleResponse;
 import com.example.da1androidnative.data.model.ActivityHistoryResponse;
 import com.example.da1androidnative.data.model.AuthResponse;
+import com.example.da1androidnative.data.model.ConfirmEmailChangeRequest;
+import com.example.da1androidnative.data.model.InitiateEmailChangeRequest;
 import com.example.da1androidnative.data.model.LoginRequest;
 import com.example.da1androidnative.data.model.OtpChallengeResponse;
 import com.example.da1androidnative.data.model.OtpRequest;
@@ -78,4 +80,13 @@ public interface ApiService {
 
     @PUT("profile/me")
     Call<UserProfileResponse> updateMyProfile(@Body UpdateUserProfileRequest request);
+
+    @DELETE("profile/me")
+    Call<Void> deleteAccount();
+
+    @POST("profile/me/email-change/initiate")
+    Call<Void> initiateEmailChange(@Body InitiateEmailChangeRequest request);
+
+    @POST("profile/me/email-change/confirm")
+    Call<Void> confirmEmailChange(@Body ConfirmEmailChangeRequest request);
 }

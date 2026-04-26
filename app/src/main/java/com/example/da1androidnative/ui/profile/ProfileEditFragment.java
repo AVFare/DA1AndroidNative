@@ -16,8 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.UpdateUserProfileRequest;
 import com.example.da1androidnative.databinding.FragmentProfileBinding;
 
@@ -30,7 +30,7 @@ import java.util.List;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class ProfileFragment extends Fragment {
+public class ProfileEditFragment extends Fragment {
 
     private FragmentProfileBinding binding;
     private ProfileViewModel viewModel;
@@ -71,8 +71,6 @@ public class ProfileFragment extends Fragment {
             binding.etLastName.setText(profile.getLastName());
             binding.etEmail.setText(profile.getEmail());
             binding.etPhone.setText(profile.getPhone());
-            binding.tvReservedCount.setText(String.valueOf(profile.getReservedActivitiesCount()));
-            binding.tvCompletedCount.setText(String.valueOf(profile.getCompletedActivitiesCount()));
 
             if (profile.getProfilePhoto() != null && !profile.getProfilePhoto().isEmpty()) {
                 currentPhotoBase64 = profile.getProfilePhoto();
@@ -101,6 +99,7 @@ public class ProfileFragment extends Fragment {
         viewModel.getUpdateSuccess().observe(getViewLifecycleOwner(), success -> {
             if (success != null && success) {
                 Toast.makeText(requireContext(), "Perfil actualizado", Toast.LENGTH_SHORT).show();
+                NavHostFragment.findNavController(ProfileEditFragment.this).navigateUp();
             }
         });
     }
@@ -128,6 +127,8 @@ public class ProfileFragment extends Fragment {
 
             viewModel.updateProfile(request);
         });
+        binding.btnCancelEdit.setOnClickListener(v ->
+                NavHostFragment.findNavController(ProfileEditFragment.this).navigateUp());
     }
 
     private void handleImageSelected(Uri uri) {
