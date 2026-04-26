@@ -66,6 +66,9 @@ public class ProfileViewFragment extends Fragment {
         binding.btnEditProfile.setOnClickListener(v ->
                 NavHostFragment.findNavController(this)
                         .navigate(R.id.action_profileViewFragment_to_profileEditFragment));
+
+        binding.btnBack.setOnClickListener(v ->
+                NavHostFragment.findNavController(this).navigateUp());
     }
 
     private void observeViewModel() {
