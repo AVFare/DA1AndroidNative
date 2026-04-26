@@ -115,6 +115,9 @@ public class LoginFragment extends Fragment {
             public void onResponse(@NonNull Call<AuthResponse> call, @NonNull Response<AuthResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     tokenManager.saveToken(response.body().getToken());
+                    if (response.body().getUserId() != null) {
+                        tokenManager.saveUserId(response.body().getUserId());
+                    }
                     tokenManager.saveCredentials(email, password);
                     Toast.makeText(getContext(), R.string.welcome, Toast.LENGTH_SHORT).show();
                     NavHostFragment.findNavController(LoginFragment.this).navigate(R.id.action_login_to_home);

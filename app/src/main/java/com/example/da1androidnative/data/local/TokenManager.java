@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 public class TokenManager {
     private static final String PREF_NAME = "XploreNowPrefs";
     private static final String KEY_TOKEN = "jwt_token";
+    private static final String KEY_USER_ID = "user_id";
     private static final String KEY_BIOMETRIC_ENABLED = "biometric_enabled";
     private static final String KEY_SAVED_EMAIL = "saved_email";
     private static final String KEY_SAVED_PASSWORD = "saved_password";
@@ -29,8 +30,16 @@ public class TokenManager {
         return sharedPreferences.getString(KEY_TOKEN, null);
     }
 
+    public void saveUserId(long userId) {
+        sharedPreferences.edit().putLong(KEY_USER_ID, userId).apply();
+    }
+
+    public long getUserId() {
+        return sharedPreferences.getLong(KEY_USER_ID, -1L);
+    }
+
     public void clearToken() {
-        sharedPreferences.edit().remove(KEY_TOKEN).apply();
+        sharedPreferences.edit().remove(KEY_TOKEN).remove(KEY_USER_ID).apply();
     }
 
     public void setBiometricEnabled(boolean enabled) {
