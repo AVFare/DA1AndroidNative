@@ -66,4 +66,7 @@ public interface ApiService {
 
     @PUT("profile/me")
     Call<UserProfileResponse> updateMyProfile(@Body UpdateUserProfileRequest request);
+
+    @DELETE("profile/me")
+    Call<Void> deleteAccount();
 }

@@ -106,6 +106,40 @@
 		<action
 			android:id="@+id/action_profileViewFragment_to_profileEditFragment"
 			app:destination="@id/profileEditFragment" />
+		<action
+			android:id="@+id/action_profileViewFragment_to_accessSettingsFragment"
+			app:destination="@id/accessSettingsFragment" />
+	</fragment>
+	
+	<fragment
+    android:id="@+id/accessSettingsFragment"
+    android:name="com.example.da1androidnative.ui.profile.AccessSettingsFragment"
+    android:label="Configuración de acceso">
+		<action
+			android:id="@+id/action_accessSettings_to_changeEmailFragment"
+			app:destination="@id/changeEmailFragment" />
 	</fragment>
 
+	<fragment
+		android:id="@+id/changeEmailFragment"
+		android:name="com.example.da1androidnative.ui.profile.ChangeEmailFragment"
+		android:label="Cambiar correo electrónico">
+		<action
+			android:id="@+id/action_changeEmail_to_otpVerificationFragment"
+			app:destination="@id/otpVerificationFragment" />
+		<action
+			android:id="@+id/action_changeEmail_to_otpEmailChangeFragment"
+			app:destination="@id/otpEmailChangeFragment" />
+	</fragment>
+	
+	<fragment
+		android:id="@+id/otpEmailChangeFragment"
+		android:name="com.example.da1androidnative.ui.profile.OtpEmailChangeFragment"
+		android:label="Verificar nuevo correo">
+		<action
+			android:id="@+id/action_otpEmailChange_to_profileViewFragment"
+			app:destination="@id/profileViewFragment"
+			app:popUpTo="@id/profileViewFragment"
+			app:popUpToInclusive="true" />
+	</fragment>
 </navigation>

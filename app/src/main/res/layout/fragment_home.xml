@@ -74,16 +74,6 @@
                     app:iconTint="@color/teal_700"/>
             </LinearLayout>
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/biometricSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="@string/biometric_switch_label"
-                android:textColor="@android:color/white"
-                app:thumbTint="@android:color/white"
-                app:trackTint="@color/teal_200" />
-
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
