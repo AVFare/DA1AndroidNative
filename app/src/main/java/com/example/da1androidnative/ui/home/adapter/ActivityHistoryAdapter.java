@@ -28,7 +28,7 @@ public class ActivityHistoryAdapter extends RecyclerView.Adapter<ActivityHistory
     }
 
     public void setActivities(List<ActivityHistoryResponse> activities) {
-        this.activities = activities;
+        this.activities = activities != null ? activities : new ArrayList<>();
         notifyDataSetChanged();
     }
 

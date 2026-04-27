@@ -8,6 +8,7 @@ import com.example.da1androidnative.data.model.ActivityHistoryResponse;
 import com.example.da1androidnative.data.model.PaginatedActivityHistoryResponse;
 import com.example.da1androidnative.data.repository.ActivityHistoryRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -45,7 +46,8 @@ public class ActivityHistoryViewModel extends ViewModel {
             public void onResponse(Call<PaginatedActivityHistoryResponse> call, Response<PaginatedActivityHistoryResponse> response) {
                 _isLoading.setValue(false);
                 if (response.isSuccessful() && response.body() != null) {
-                    _activities.setValue(response.body().getContent());
+                    List<ActivityHistoryResponse> content = response.body().getContent();
+                    _activities.setValue(content != null ? content : new ArrayList<>());
                 } else {
                     _error.setValue("Error al cargar el historial: " + response.code());
                 }
