@@ -1,5 +1,6 @@
 package com.example.da1androidnative.data;
 
+import com.example.da1androidnative.data.model.UpdateUserPreferencesRequest;
 import com.example.da1androidnative.data.model.UpdateUserProfileRequest;
 import com.example.da1androidnative.data.model.UserProfileResponse;
 import com.example.da1androidnative.data.network.ApiService;
@@ -25,5 +26,9 @@ public class ProfileRepository {
 
     public Call<UserProfileResponse> updateMyProfile(UpdateUserProfileRequest request) {
         return apiService.updateMyProfile(request);
+    }
+
+    public Call<UserProfileResponse> updateMyPreferences(UpdateUserPreferencesRequest request) {
+        return apiService.updateMyPreferences(request);
     }
 }

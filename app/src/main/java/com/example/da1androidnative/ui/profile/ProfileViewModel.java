@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.da1androidnative.data.ProfileRepository;
+import com.example.da1androidnative.data.model.UpdateUserPreferencesRequest;
 import com.example.da1androidnative.data.model.UpdateUserProfileRequest;
 import com.example.da1androidnative.data.model.UserProfileResponse;
 
@@ -56,8 +57,9 @@ public class ProfileViewModel extends ViewModel {
         });
     }
 
-    public void updateProfile(UpdateUserProfileRequest request) {
+    public void updateProfile(UpdateUserProfileRequest request, UpdateUserPreferencesRequest preferencesRequest) {
         isLoading.setValue(true);
+
         profileRepository.updateMyProfile(request).enqueue(new Callback<UserProfileResponse>() {
             @Override
             public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
@@ -76,5 +78,26 @@ public class ProfileViewModel extends ViewModel {
                 errorMessage.setValue("Error de conexión");
             }
         });
+
+        if (preferencesRequest != null) {
+            profileRepository.updateMyPreferences(preferencesRequest).enqueue(new Callback<UserProfileResponse>() {
+                @Override
+                public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
+                    isLoading.setValue(false);
+                    if (response.isSuccessful() && response.body() != null) {
+                        profileData.setValue(response.body());
+                        updateSuccess.setValue(true);
+                    } else {
+                        errorMessage.setValue("Error al actualizar preferencias");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UserProfileResponse> call, Throwable t) {
+                    isLoading.setValue(false);
+                    errorMessage.setValue("Error de conexión");
+                }
+            });
+        }
     }
 }

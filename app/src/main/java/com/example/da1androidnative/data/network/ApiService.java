@@ -21,6 +21,7 @@ import com.example.da1androidnative.data.model.ReservaDetalleResponse;
 import com.example.da1androidnative.data.model.ReservaRequest;
 import com.example.da1androidnative.data.model.ReviewRequest;
 import com.example.da1androidnative.data.model.ReviewResponse;
+import com.example.da1androidnative.data.model.UpdateUserPreferencesRequest;
 import com.example.da1androidnative.data.model.UserProfileResponse;
 import com.example.da1androidnative.data.model.UpdateUserProfileRequest;
 
@@ -88,13 +89,16 @@ public interface ApiService {
             @Query("endDate") String endDate
     );
 
-    @GET("profile/me")
+    @GET("profile")
     Call<UserProfileResponse> getMyProfile();
 
-    @PUT("profile/me")
+    @PUT("profile")
     Call<UserProfileResponse> updateMyProfile(@Body UpdateUserProfileRequest request);
 
-    @DELETE("profile/me")
+    @PUT("profile/preferences")
+    Call<UserProfileResponse> updateMyPreferences(@Body UpdateUserPreferencesRequest request);
+
+    @DELETE("profile")
     Call<Void> deleteAccount();
 
     @POST("profile/me/email-change/initiate")

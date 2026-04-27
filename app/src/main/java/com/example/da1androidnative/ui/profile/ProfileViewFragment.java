@@ -86,13 +86,13 @@ public class ProfileViewFragment extends Fragment {
             binding.tvReservedCountView.setText(String.valueOf(profile.getReservedActivitiesCount()));
             binding.tvCompletedCountView.setText(String.valueOf(profile.getCompletedActivitiesCount()));
 
-            if (profile.getProfilePhoto() != null && !profile.getProfilePhoto().isEmpty()) {
-                loadBase64Image(profile.getProfilePhoto());
+            if (profile.getProfilePictureUrl() != null && !profile.getProfilePictureUrl().isEmpty()) {
+                loadBase64Image(profile.getProfilePictureUrl());
             }
 
             binding.chipGroupPreferences.removeAllViews();
-            if (profile.getPreferences() != null) {
-                for (String pref : profile.getPreferences()) {
+            if (profile.getTravelPreferences() != null) {
+                for (String pref : profile.getTravelPreferences()) {
                     Chip chip = new Chip(requireContext());
                     chip.setText(PREFERENCE_LABELS.containsKey(pref) ? PREFERENCE_LABELS.get(pref) : pref);
                     chip.setClickable(false);
