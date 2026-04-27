@@ -11,8 +11,6 @@ import com.example.da1androidnative.data.model.OtpRequest;
 import com.example.da1androidnative.data.model.OtpVerifyRequest;
 import com.example.da1androidnative.data.model.PaginatedActivityHistoryResponse;
 import com.example.da1androidnative.data.model.PaginatedReservasResponse;
-import com.example.da1androidnative.data.model.PaginatedReviewableReservationsResponse;
-import com.example.da1androidnative.data.model.PaginatedReviewsResponse;
 import com.example.da1androidnative.data.model.PaginatedSchedulesResponse;
 import com.example.da1androidnative.data.model.RegisterRequest;
 import com.example.da1androidnative.data.model.ActivityResponse;
@@ -76,9 +74,6 @@ public interface ApiService {
 
     @GET("ratings/pending")
     Call<List<ReviewableReservationResponse>> getReviewableReservations();
-
-//    @GET("reviews/my")
-//    Call<PaginatedReviewsResponse> getMyReviews();
 
     @POST("ratings")
     Call<ReviewResponse> createReview(@Body ReviewRequest request);
