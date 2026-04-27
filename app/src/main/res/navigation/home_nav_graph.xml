@@ -75,19 +75,11 @@
             app:argType="string"
             android:defaultValue="" />
         <argument
-            android:name="destination"
+            android:name="completedAt"
             app:argType="string"
             android:defaultValue="" />
         <argument
-            android:name="guideName"
-            app:argType="string"
-            android:defaultValue="" />
-        <argument
-            android:name="activityDate"
-            app:argType="string"
-            android:defaultValue="" />
-        <argument
-            android:name="reviewDeadline"
+            android:name="expiresAt"
             app:argType="string"
             android:defaultValue="" />
     </fragment>

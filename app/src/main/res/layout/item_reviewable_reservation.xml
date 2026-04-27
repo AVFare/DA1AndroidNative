@@ -26,31 +26,13 @@
             tools:text="Free Tour Centro Historico" />
 
         <TextView
-            android:id="@+id/reviewableDestinationText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            tools:text="Destino: Buenos Aires" />
-
-        <TextView
-            android:id="@+id/reviewableGuideText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            tools:text="Guia: Lucia Fernandez" />
-
-        <TextView
             android:id="@+id/reviewableDateText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             android:textColor="?attr/colorOnSurfaceVariant"
-            tools:text="Fecha: 2026-04-20" />
+            tools:text="Finalizada: 2026-04-20 12:00" />
 
         <TextView
             android:id="@+id/reviewableDeadlineText"

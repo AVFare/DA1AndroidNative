@@ -81,10 +81,8 @@ public class ReviewCreateFragment extends Fragment {
 
         reservationId = args.getLong("reservationId", -1L);
         ((TextView) view.findViewById(R.id.reviewCreateActivityText)).setText(args.getString("activityName", ""));
-        ((TextView) view.findViewById(R.id.reviewCreateDestinationText)).setText("Destino: " + args.getString("destination", ""));
-        ((TextView) view.findViewById(R.id.reviewCreateGuideText)).setText("Guia: " + args.getString("guideName", ""));
-        ((TextView) view.findViewById(R.id.reviewCreateDateText)).setText("Fecha: " + args.getString("activityDate", ""));
-        ((TextView) view.findViewById(R.id.reviewCreateDeadlineText)).setText("Disponible hasta: " + args.getString("reviewDeadline", ""));
+        ((TextView) view.findViewById(R.id.reviewCreateDateText)).setText("Finalizada: " + formatDateTime(args.getString("completedAt", "")));
+        ((TextView) view.findViewById(R.id.reviewCreateDeadlineText)).setText("Disponible hasta: " + formatDateTime(args.getString("expiresAt", "")));
 
         if (reservationId == -1L) {
             Toast.makeText(getContext(), "Reserva invalida", Toast.LENGTH_SHORT).show();
@@ -148,5 +146,12 @@ public class ReviewCreateFragment extends Fragment {
                 Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private String formatDateTime(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return "-";
+        }
+        return value.replace("T", " ");
     }
 }
