@@ -56,7 +56,7 @@ public class ActivityHistoryViewModelTest {
 
         Call<List<ActivityHistoryResponse>> mockCall = mock(Call.class);
         // Usar nullable(String.class) para permitir nulls
-        when(repository.getActivityHistory(anyLong(), nullable(String.class), nullable(String.class), nullable(String.class)))
+        when(repository.getActivityHistory(nullable(String.class), nullable(String.class), nullable(String.class)))
                 .thenReturn(mockCall);
 
         // Act
@@ -79,7 +79,7 @@ public class ActivityHistoryViewModelTest {
         // Arrange
         when(tokenManager.getUserId()).thenReturn(1L);
         Call<List<ActivityHistoryResponse>> mockCall = mock(Call.class);
-        when(repository.getActivityHistory(anyLong(), nullable(String.class), nullable(String.class), nullable(String.class)))
+        when(repository.getActivityHistory(nullable(String.class), nullable(String.class), nullable(String.class)))
                 .thenReturn(mockCall);
 
         // Act

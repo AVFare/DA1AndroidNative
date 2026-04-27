@@ -38,7 +38,7 @@ public class ActivityHistoryViewModel extends ViewModel {
         this.tokenManager = tokenManager;
     }
 
-    public void loadHistory(String destination, String startDate, String endDate) {
+    public void loadHistory(String startDate, String endDate, String destination) {
         long userId = tokenManager.getUserId();
         if (userId == -1L) {
             _error.setValue("Usuario no identificado");
@@ -48,7 +48,7 @@ public class ActivityHistoryViewModel extends ViewModel {
         _isLoading.setValue(true);
         _error.setValue(null);
 
-        repository.getActivityHistory(userId, destination, startDate, endDate).enqueue(new Callback<List<ActivityHistoryResponse>>() {
+        repository.getActivityHistory(startDate, endDate, destination).enqueue(new Callback<List<ActivityHistoryResponse>>() {
             @Override
             public void onResponse(Call<List<ActivityHistoryResponse>> call, Response<List<ActivityHistoryResponse>> response) {
                 _isLoading.setValue(false);
