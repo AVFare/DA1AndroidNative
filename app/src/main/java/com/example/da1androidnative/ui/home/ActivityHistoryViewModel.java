@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.da1androidnative.data.local.TokenManager;
 import com.example.da1androidnative.data.model.ActivityHistoryResponse;
+import com.example.da1androidnative.data.model.PaginatedActivityHistoryResponse;
 import com.example.da1androidnative.data.repository.ActivityHistoryRepository;
 
 import java.util.List;
@@ -48,19 +49,19 @@ public class ActivityHistoryViewModel extends ViewModel {
         _isLoading.setValue(true);
         _error.setValue(null);
 
-        repository.getActivityHistory(startDate, endDate, destination).enqueue(new Callback<List<ActivityHistoryResponse>>() {
+        repository.getActivityHistory(startDate, endDate, destination).enqueue(new Callback<PaginatedActivityHistoryResponse>() {
             @Override
-            public void onResponse(Call<List<ActivityHistoryResponse>> call, Response<List<ActivityHistoryResponse>> response) {
+            public void onResponse(Call<PaginatedActivityHistoryResponse> call, Response<PaginatedActivityHistoryResponse> response) {
                 _isLoading.setValue(false);
                 if (response.isSuccessful() && response.body() != null) {
-                    _activities.setValue(response.body());
+                    _activities.setValue(response.body().getContent());
                 } else {
                     _error.setValue("Error al cargar el historial: " + response.code());
                 }
             }
 
             @Override
-            public void onFailure(Call<List<ActivityHistoryResponse>> call, Throwable t) {
+            public void onFailure(Call<PaginatedActivityHistoryResponse> call, Throwable t) {
                 _isLoading.setValue(false);
                 _error.setValue("Error de red: " + t.getMessage());
             }
