@@ -9,6 +9,7 @@ import com.example.da1androidnative.data.model.LoginRequest;
 import com.example.da1androidnative.data.model.OtpChallengeResponse;
 import com.example.da1androidnative.data.model.OtpRequest;
 import com.example.da1androidnative.data.model.OtpVerifyRequest;
+import com.example.da1androidnative.data.model.PaginatedActivityHistoryResponse;
 import com.example.da1androidnative.data.model.PaginatedReservasResponse;
 import com.example.da1androidnative.data.model.PaginatedReviewableReservationsResponse;
 import com.example.da1androidnative.data.model.PaginatedReviewsResponse;
@@ -21,6 +22,7 @@ import com.example.da1androidnative.data.model.ReservaDetalleResponse;
 import com.example.da1androidnative.data.model.ReservaRequest;
 import com.example.da1androidnative.data.model.ReviewRequest;
 import com.example.da1androidnative.data.model.ReviewResponse;
+import com.example.da1androidnative.data.model.ReviewableReservationResponse;
 import com.example.da1androidnative.data.model.UpdateUserPreferencesRequest;
 import com.example.da1androidnative.data.model.UserProfileResponse;
 import com.example.da1androidnative.data.model.UpdateUserProfileRequest;
@@ -72,22 +74,17 @@ public interface ApiService {
     @POST("auth/otp/verify")
     Call<AuthResponse> verifyOtp(@Body OtpVerifyRequest request);
 
-    @GET("reviews/eligible")
-    Call<PaginatedReviewableReservationsResponse> getReviewableReservations();
+    @GET("ratings/pending")
+    Call<List<ReviewableReservationResponse>> getReviewableReservations();
 
-    @GET("reviews/my")
-    Call<PaginatedReviewsResponse> getMyReviews();
+//    @GET("reviews/my")
+//    Call<PaginatedReviewsResponse> getMyReviews();
 
-    @POST("reviews/reservations/{reservationId}")
-    Call<ReviewResponse> createReview(@Path("reservationId") long reservationId, @Body ReviewRequest request);
+    @POST("ratings")
+    Call<ReviewResponse> createReview(@Body ReviewRequest request);
 
     @GET("activities/history")
-    Call<List<ActivityHistoryResponse>> getActivityHistory(
-            @Query("userId") long userId,
-            @Query("destination") String destination,
-            @Query("startDate") String startDate,
-            @Query("endDate") String endDate
-    );
+    Call<PaginatedActivityHistoryResponse> getActivityHistory(@Query("startDate") String startDate, @Query("endDate") String endDate, @Query("destination") String destination);
 
     @GET("profile")
     Call<UserProfileResponse> getMyProfile();
@@ -98,12 +95,12 @@ public interface ApiService {
     @PUT("profile/preferences")
     Call<UserProfileResponse> updateMyPreferences(@Body UpdateUserPreferencesRequest request);
 
-    @DELETE("profile")
-    Call<Void> deleteAccount();
-
-    @POST("profile/me/email-change/initiate")
-    Call<Void> initiateEmailChange(@Body InitiateEmailChangeRequest request);
-
-    @POST("profile/me/email-change/confirm")
-    Call<Void> confirmEmailChange(@Body ConfirmEmailChangeRequest request);
+//    @DELETE("profile")
+//    Call<Void> deleteAccount();
+//
+//    @POST("profile/me/email-change/initiate")
+//    Call<Void> initiateEmailChange(@Body InitiateEmailChangeRequest request);
+//
+//    @POST("profile/me/email-change/confirm")
+//    Call<Void> confirmEmailChange(@Body ConfirmEmailChangeRequest request);
 }

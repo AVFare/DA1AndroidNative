@@ -7,16 +7,10 @@ public class ReviewableReservationResponse {
     private long reservationId;
     @SerializedName("activityName")
     private String activityName;
-    @SerializedName("destination")
-    private String destination;
-    @SerializedName("guideName")
-    private String guideName;
-    @SerializedName("activityDate")
-    private String activityDate;
-    @SerializedName("finishedAt")
-    private String finishedAt;
-    @SerializedName("reviewDeadline")
-    private String reviewDeadline;
+    @SerializedName("completedAt")
+    private String completedAt;
+    @SerializedName("expiresAt")
+    private String expiresAt;
 
     public long getReservationId() {
         return reservationId;
@@ -26,23 +20,11 @@ public class ReviewableReservationResponse {
         return activityName;
     }
 
-    public String getDestination() {
-        return destination;
+    public String getCompletedAt() {
+        return completedAt;
     }
 
-    public String getGuideName() {
-        return guideName;
-    }
-
-    public String getActivityDate() {
-        return activityDate;
-    }
-
-    public String getFinishedAt() {
-        return finishedAt;
-    }
-
-    public String getReviewDeadline() {
-        return reviewDeadline;
+    public String getExpiresAt() {
+        return expiresAt;
     }
 }
