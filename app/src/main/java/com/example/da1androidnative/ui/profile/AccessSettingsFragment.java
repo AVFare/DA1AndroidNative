@@ -80,6 +80,7 @@ public class AccessSettingsFragment extends Fragment {
 
         view.findViewById(R.id.btnLogout).setOnClickListener(v -> confirmLogout());
 
+
         view.findViewById(R.id.btnDeleteAccount).setOnClickListener(v -> confirmDeleteAccount());
     }
 
@@ -176,6 +177,7 @@ public class AccessSettingsFragment extends Fragment {
 
     // — Eliminar cuenta —
 
+
     private void confirmDeleteAccount() {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Eliminar cuenta")
@@ -184,6 +186,8 @@ public class AccessSettingsFragment extends Fragment {
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
+
+
 
     private void performDeleteAccount() {
         apiService.deleteAccount().enqueue(new Callback<Void>() {

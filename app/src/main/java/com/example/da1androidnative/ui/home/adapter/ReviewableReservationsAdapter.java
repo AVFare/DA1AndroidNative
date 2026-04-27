@@ -45,12 +45,18 @@ public class ReviewableReservationsAdapter extends RecyclerView.Adapter<Reviewab
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
+        //TODO: Implementar  el destino y el nombre del guia
+
         ReviewableReservationResponse reservation = reservations.get(position);
         holder.activityNameText.setText(reservation.getActivityName());
-        holder.destinationText.setText("Destino: " + reservation.getDestination());
-        holder.guideText.setText("Guia: " + reservation.getGuideName());
-        holder.dateText.setText("Fecha: " + reservation.getActivityDate());
-        holder.deadlineText.setText("Disponible hasta: " + reservation.getReviewDeadline());
+//        holder.destinationText.setText("Destino: " + reservation.getDestination());
+        holder.destinationText.setText("Aca iria el destino");
+//        holder.guideText.setText("Guia: " + reservation.getGuideName());
+        holder.guideText.setText("Aca iria el nombre de la guia");
+
+        holder.dateText.setText("Fecha: " + reservation.getCompletedAt());
+        holder.deadlineText.setText("Disponible hasta: " + reservation.getExpiresAt());
         holder.reviewButton.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onReviewClick(reservation);

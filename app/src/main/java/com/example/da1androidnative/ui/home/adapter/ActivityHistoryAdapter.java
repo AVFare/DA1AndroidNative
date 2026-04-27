@@ -66,13 +66,14 @@ public class ActivityHistoryAdapter extends RecyclerView.Adapter<ActivityHistory
         }
 
         public void bind(ActivityHistoryResponse activity, OnActivityClickListener listener) {
-            tvName.setText(activity.getName());
+            tvName.setText(activity.getActivityName());
             tvDestination.setText(activity.getDestination());
             tvDate.setText("📅 " + activity.getDate());
             tvGuide.setText("👤 Guía: " + activity.getGuideName());
             tvDuration.setText("🕒 " + formatDuration(activity.getDurationMinutes()));
 
-            itemView.setOnClickListener(v -> listener.onActivityClick(activity.getActivityId()));
+            //TODO: cambiar a ActivityID
+            itemView.setOnClickListener(v -> listener.onActivityClick(activity.getReservationId()));
         }
 
         private String formatDuration(Integer minutes) {

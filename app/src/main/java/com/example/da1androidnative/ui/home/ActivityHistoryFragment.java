@@ -69,9 +69,9 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
             String end = etEndDate.getText().toString().trim();
             
             viewModel.loadHistory(
-                destination.isEmpty() ? null : destination,
                 start.isEmpty() ? null : start,
-                end.isEmpty() ? null : end
+                end.isEmpty() ? null : end,
+                destination.isEmpty() ? null : destination
             );
         });
     }

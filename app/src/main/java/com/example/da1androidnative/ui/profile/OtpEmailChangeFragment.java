@@ -75,6 +75,7 @@ public class OtpEmailChangeFragment extends Fragment {
         view.findViewById(R.id.btnResend).setOnClickListener(v -> resendCode());
     }
 
+
     private void confirmEmailChange(String code) {
         apiService.confirmEmailChange(new ConfirmEmailChangeRequest(newEmail, code))
                 .enqueue(new Callback<Void>() {

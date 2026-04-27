@@ -3,25 +3,32 @@ package com.example.da1androidnative.data.model;
 import com.google.gson.annotations.SerializedName;
 
 public class ReviewRequest {
-    @SerializedName("activityRating")
-    private int activityRating;
-    @SerializedName("guideRating")
-    private int guideRating;
+    @SerializedName("reservationId")
+    private long reservationId;
+    @SerializedName("activityStars")
+    private int activityStars;
+    @SerializedName("guideStars")
+    private int guideStars;
     @SerializedName("comment")
     private String comment;
 
-    public ReviewRequest(int activityRating, int guideRating, String comment) {
-        this.activityRating = activityRating;
-        this.guideRating = guideRating;
+    public ReviewRequest(long reservationId, int activityStars, int guideStars, String comment) {
+        this.reservationId = reservationId;
+        this.activityStars = activityStars;
+        this.guideStars = guideStars;
         this.comment = comment;
     }
 
-    public int getActivityRating() {
-        return activityRating;
+    public long getReservationId() {
+        return reservationId;
     }
 
-    public int getGuideRating() {
-        return guideRating;
+    public int getActivityStars() {
+        return activityStars;
+    }
+
+    public int getGuideStars() {
+        return guideStars;
     }
 
     public String getComment() {

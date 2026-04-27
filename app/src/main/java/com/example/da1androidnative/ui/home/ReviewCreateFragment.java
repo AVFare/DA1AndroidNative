@@ -129,8 +129,8 @@ public class ReviewCreateFragment extends Fragment {
         }
 
         submitButton.setEnabled(false);
-        ReviewRequest request = new ReviewRequest(activityRating, guideRating, comment);
-        apiService.createReview(reservationId, request).enqueue(new Callback<ReviewResponse>() {
+        ReviewRequest request = new ReviewRequest(reservationId, activityRating, guideRating, comment);
+        apiService.createReview(request).enqueue(new Callback<ReviewResponse>() {
             @Override
             public void onResponse(@NonNull Call<ReviewResponse> call, @NonNull Response<ReviewResponse> response) {
                 submitButton.setEnabled(true);

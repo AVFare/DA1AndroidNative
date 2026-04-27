@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.da1androidnative.data.model.UpdateUserPreferencesRequest;
 import com.example.da1androidnative.data.model.UpdateUserProfileRequest;
 import com.example.da1androidnative.databinding.FragmentProfileBinding;
 
@@ -72,17 +73,17 @@ public class ProfileEditFragment extends Fragment {
             binding.etEmail.setText(profile.getEmail());
             binding.etPhone.setText(profile.getPhone());
 
-            if (profile.getProfilePhoto() != null && !profile.getProfilePhoto().isEmpty()) {
-                currentPhotoBase64 = profile.getProfilePhoto();
-                loadBase64Image(profile.getProfilePhoto());
+            if (profile.getProfilePictureUrl() != null && !profile.getProfilePictureUrl().isEmpty()) {
+                currentPhotoBase64 = profile.getProfilePictureUrl();
+                loadBase64Image(profile.getProfilePictureUrl());
             }
 
-            if (profile.getPreferences() != null) {
-                binding.cbAventura.setChecked(profile.getPreferences().contains("AVENTURA"));
-                binding.cbCultura.setChecked(profile.getPreferences().contains("CULTURA"));
-                binding.cbGastronomia.setChecked(profile.getPreferences().contains("GASTRONOMIA"));
-                binding.cbNaturaleza.setChecked(profile.getPreferences().contains("NATURALEZA"));
-                binding.cbRelax.setChecked(profile.getPreferences().contains("RELAX"));
+            if (profile.getTravelPreferences() != null) {
+                binding.cbAventura.setChecked(profile.getTravelPreferences().contains("AVENTURA"));
+                binding.cbCultura.setChecked(profile.getTravelPreferences().contains("CULTURA"));
+                binding.cbGastronomia.setChecked(profile.getTravelPreferences().contains("GASTRONOMIA"));
+                binding.cbNaturaleza.setChecked(profile.getTravelPreferences().contains("NATURALEZA"));
+                binding.cbRelax.setChecked(profile.getTravelPreferences().contains("RELAX"));
             }
         });
 
@@ -123,9 +124,11 @@ public class ProfileEditFragment extends Fragment {
             if (binding.cbRelax.isChecked()) preferences.add("RELAX");
 
             UpdateUserProfileRequest request = new UpdateUserProfileRequest(
-                    firstName, lastName, phone, currentPhotoBase64, preferences);
+                    firstName, lastName, phone, currentPhotoBase64);
 
-            viewModel.updateProfile(request);
+            UpdateUserPreferencesRequest preferencesRequest = new UpdateUserPreferencesRequest(preferences);
+
+            viewModel.updateProfile(request, preferencesRequest);
         });
         binding.btnCancelEdit.setOnClickListener(v ->
                 NavHostFragment.findNavController(ProfileEditFragment.this).navigateUp());

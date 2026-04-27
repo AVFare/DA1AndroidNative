@@ -1,6 +1,7 @@
 package com.example.da1androidnative.data.repository;
 
 import com.example.da1androidnative.data.model.ActivityHistoryResponse;
+import com.example.da1androidnative.data.model.PaginatedActivityHistoryResponse;
 import com.example.da1androidnative.data.network.ApiService;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class ActivityHistoryRepository {
         this.apiService = apiService;
     }
 
-    public Call<List<ActivityHistoryResponse>> getActivityHistory(long userId, String destination, String startDate, String endDate) {
-        return apiService.getActivityHistory(userId, destination, startDate, endDate);
+    public Call<PaginatedActivityHistoryResponse> getActivityHistory(String startDate, String endDate, String destination) {
+        return apiService.getActivityHistory(startDate, endDate, destination);
     }
 }

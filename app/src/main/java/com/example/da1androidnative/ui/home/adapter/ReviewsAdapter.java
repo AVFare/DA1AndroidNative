@@ -38,13 +38,18 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        //TODO: Resolver los PlaceHolders
         ReviewResponse review = reviews.get(position);
-        holder.activityNameText.setText(review.getActivityName());
-        holder.destinationText.setText("Destino: " + review.getDestination());
-        holder.guideText.setText("Guia: " + review.getGuideName());
-        holder.dateText.setText("Fecha: " + review.getActivityDate());
-        holder.activityRatingText.setText(String.format("Actividad: %d/5", review.getActivityRating()));
-        holder.guideRatingText.setText(String.format("Guia: %d/5", review.getGuideRating()));
+        //holder.activityNameText.setText(review.getActivityName());
+        holder.activityNameText.setText("Aca iria el nombre de la actividad");
+        //holder.destinationText.setText("Destino: " + review.getDestination());
+        holder.destinationText.setText("Aca iria el destino");
+        //holder.guideText.setText("Guia: " + review.getGuideName());
+        holder.guideText.setText("Aca iria el nombre de la guia");
+
+        holder.dateText.setText("Fecha: " + review.getCreatedAt());
+        holder.activityRatingText.setText(String.format("Actividad: %d/5", review.getActivityStars()));
+        holder.guideRatingText.setText(String.format("Guia: %d/5", review.getGuideStars()));
 
         String comment = review.getComment();
         if (comment == null || comment.trim().isEmpty()) {

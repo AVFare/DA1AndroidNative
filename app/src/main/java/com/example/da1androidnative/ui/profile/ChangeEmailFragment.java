@@ -55,9 +55,12 @@ public class ChangeEmailFragment extends Fragment {
                 return;
             }
 
+
             initiateEmailChange(newEmail);
         });
     }
+
+
 
     private void initiateEmailChange(String newEmail) {
         apiService.initiateEmailChange(new InitiateEmailChangeRequest(newEmail))
