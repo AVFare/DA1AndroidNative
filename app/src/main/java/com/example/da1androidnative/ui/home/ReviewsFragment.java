@@ -71,7 +71,8 @@ public class ReviewsFragment extends Fragment implements ReviewableReservationsA
         super.onResume();
         if (reviewableAdapter != null && reviewsAdapter != null) {
             loadReviewableReservations();
-            loadMyReviews();
+            //TODO: Reimplementar loadMyReviews()
+            //loadMyReviews();
         }
     }
 
@@ -90,13 +91,13 @@ public class ReviewsFragment extends Fragment implements ReviewableReservationsA
     }
 
     private void loadReviewableReservations() {
-        apiService.getReviewableReservations().enqueue(new Callback<PaginatedReviewableReservationsResponse>() {
+        apiService.getReviewableReservations().enqueue(new Callback<List<ReviewableReservationResponse>>() {
             @Override
-            public void onResponse(@NonNull Call<PaginatedReviewableReservationsResponse> call,
-                                   @NonNull Response<PaginatedReviewableReservationsResponse> response) {
+            public void onResponse(@NonNull Call<List<ReviewableReservationResponse>> call,
+                                   @NonNull Response<List<ReviewableReservationResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<ReviewableReservationResponse> items = response.body().getContent();
-                    if (items == null) {
+                    List<ReviewableReservationResponse> items = response.body();
+                    if (items.isEmpty()) {
                         items = new ArrayList<>();
                     }
                     reviewableAdapter.setReservations(items);
@@ -107,45 +108,48 @@ public class ReviewsFragment extends Fragment implements ReviewableReservationsA
             }
 
             @Override
-            public void onFailure(@NonNull Call<PaginatedReviewableReservationsResponse> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<List<ReviewableReservationResponse>> call, @NonNull Throwable t) {
                 Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    private void loadMyReviews() {
-        apiService.getMyReviews().enqueue(new Callback<PaginatedReviewsResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<PaginatedReviewsResponse> call,
-                                   @NonNull Response<PaginatedReviewsResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<ReviewResponse> items = response.body().getContent();
-                    if (items == null) {
-                        items = new ArrayList<>();
-                    }
-                    reviewsAdapter.setReviews(items);
-                    emptyReviewsText.setVisibility(items.isEmpty() ? View.VISIBLE : View.GONE);
-                } else {
-                    Toast.makeText(getContext(), "Error al cargar calificaciones", Toast.LENGTH_SHORT).show();
-                }
-            }
+    //TODO: Reimplementar endpoint de myReviews
 
-            @Override
-            public void onFailure(@NonNull Call<PaginatedReviewsResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
-    }
+//    private void loadMyReviews() {
+//        apiService.getMyReviews().enqueue(new Callback<PaginatedReviewsResponse>() {
+//            @Override
+//            public void onResponse(@NonNull Call<PaginatedReviewsResponse> call,
+//                                   @NonNull Response<PaginatedReviewsResponse> response) {
+//                if (response.isSuccessful() && response.body() != null) {
+//                    List<ReviewResponse> items = response.body().getContent();
+//                    if (items == null) {
+//                        items = new ArrayList<>();
+//                    }
+//                    reviewsAdapter.setReviews(items);
+//                    emptyReviewsText.setVisibility(items.isEmpty() ? View.VISIBLE : View.GONE);
+//                } else {
+//                    Toast.makeText(getContext(), "Error al cargar calificaciones", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(@NonNull Call<PaginatedReviewsResponse> call, @NonNull Throwable t) {
+//                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
+//            }
+//        });
+//    }
 
     @Override
     public void onReviewClick(ReviewableReservationResponse reservation) {
         Bundle args = new Bundle();
         args.putLong("reservationId", reservation.getReservationId());
         args.putString("activityName", reservation.getActivityName());
-        args.putString("destination", reservation.getDestination());
-        args.putString("guideName", reservation.getGuideName());
-        args.putString("activityDate", reservation.getActivityDate());
-        args.putString("reviewDeadline", reservation.getReviewDeadline());
+        //TODO: Implementar los demas campos
+//        args.putString("destination", reservation.getDestination());
+//        args.putString("guideName", reservation.getGuideName());
+//        args.putString("activityDate", reservation.getActivityDate());
+//        args.putString("reviewDeadline", reservation.getReviewDeadline());
         NavHostFragment.findNavController(this).navigate(R.id.action_reviewsFragment_to_reviewCreateFragment, args);
     }
 }

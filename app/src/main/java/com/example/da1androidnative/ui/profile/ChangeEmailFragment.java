@@ -54,32 +54,35 @@ public class ChangeEmailFragment extends Fragment {
                 Toast.makeText(getContext(), "Ingresá un email válido", Toast.LENGTH_SHORT).show();
                 return;
             }
+            //TODO: Implementar la opcion para cambiar de mail
 
-            initiateEmailChange(newEmail);
+            //initiateEmailChange(newEmail);
         });
     }
 
-    private void initiateEmailChange(String newEmail) {
-        apiService.initiateEmailChange(new InitiateEmailChangeRequest(newEmail))
-                .enqueue(new Callback<Void>() {
-                    @Override
-                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-                        if (response.isSuccessful()) {
-                            Bundle args = new Bundle();
-                            args.putString("newEmail", newEmail);
-                            NavHostFragment.findNavController(ChangeEmailFragment.this)
-                                    .navigate(R.id.action_changeEmail_to_otpEmailChangeFragment, args);
-                        } else if (response.code() == 409) {
-                            Toast.makeText(getContext(), "Ese correo ya está registrado", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getContext(), "No se pudo enviar el código", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+    //TODO: Implementar la opcion para cambiar de mail
 
-                    @Override
-                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                        Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
+//    private void initiateEmailChange(String newEmail) {
+//        apiService.initiateEmailChange(new InitiateEmailChangeRequest(newEmail))
+//                .enqueue(new Callback<Void>() {
+//                    @Override
+//                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+//                        if (response.isSuccessful()) {
+//                            Bundle args = new Bundle();
+//                            args.putString("newEmail", newEmail);
+//                            NavHostFragment.findNavController(ChangeEmailFragment.this)
+//                                    .navigate(R.id.action_changeEmail_to_otpEmailChangeFragment, args);
+//                        } else if (response.code() == 409) {
+//                            Toast.makeText(getContext(), "Ese correo ya está registrado", Toast.LENGTH_SHORT).show();
+//                        } else {
+//                            Toast.makeText(getContext(), "No se pudo enviar el código", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+//                        Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//    }
 }
