@@ -128,9 +128,9 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
     }
 
     @Override
-    public void onActivityClick(long activityId) {
+    public void onActivityClick(long reservationId) {
         Bundle args = new Bundle();
-        args.putLong("activityId", activityId);
-        NavHostFragment.findNavController(this).navigate(R.id.action_activityHistory_to_activityDetalleFragment, args);
+        args.putLong("reservationId", reservationId);
+        NavHostFragment.findNavController(this).navigate(R.id.action_activityHistory_to_activityHistoryDetailFragment, args);
     }
 }
