@@ -69,58 +69,56 @@ public class OtpEmailChangeFragment extends Fragment {
                 return;
             }
 
-            //TODO: Reimplementar el cambio de mail
-            //confirmEmailChange(code);
+            confirmEmailChange(code);
         });
 
-        //view.findViewById(R.id.btnResend).setOnClickListener(v -> resendCode());
+        view.findViewById(R.id.btnResend).setOnClickListener(v -> resendCode());
     }
 
-    //TODO: Reimplementar el cambio de mail
 
-//    private void confirmEmailChange(String code) {
-//        apiService.confirmEmailChange(new ConfirmEmailChangeRequest(newEmail, code))
-//                .enqueue(new Callback<Void>() {
-//                    @Override
-//                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-//                        if (response.isSuccessful()) {
-//                            Toast.makeText(getContext(), "Correo actualizado. Iniciá sesión con tu nuevo correo.", Toast.LENGTH_LONG).show();
-//                            tokenManager.clearToken();
-//                            tokenManager.clearCredentials();
-//                            NavHostFragment.findNavController(OtpEmailChangeFragment.this)
-//                                    .navigate(R.id.action_global_to_auth);
-//                        } else if (response.code() == 400) {
-//                            Toast.makeText(getContext(), "Código inválido o expirado", Toast.LENGTH_SHORT).show();
-//                        } else if (response.code() == 409) {
-//                            Toast.makeText(getContext(), "Ese correo ya está registrado", Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            Toast.makeText(getContext(), "No se pudo actualizar el correo", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-//                        Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//    }
-//
-//    private void resendCode() {
-//        apiService.initiateEmailChange(new InitiateEmailChangeRequest(newEmail))
-//                .enqueue(new Callback<Void>() {
-//                    @Override
-//                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-//                        if (response.isSuccessful()) {
-//                            Toast.makeText(getContext(), "Se reenvió el código. Revisá la terminal del backend.", Toast.LENGTH_LONG).show();
-//                        } else {
-//                            Toast.makeText(getContext(), "No se pudo reenviar el código", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-//                        Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-//                    }
-//                });
-//    }
+    private void confirmEmailChange(String code) {
+        apiService.confirmEmailChange(new ConfirmEmailChangeRequest(newEmail, code))
+                .enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(getContext(), "Correo actualizado. Iniciá sesión con tu nuevo correo.", Toast.LENGTH_LONG).show();
+                            tokenManager.clearToken();
+                            tokenManager.clearCredentials();
+                            NavHostFragment.findNavController(OtpEmailChangeFragment.this)
+                                    .navigate(R.id.action_global_to_auth);
+                        } else if (response.code() == 400) {
+                            Toast.makeText(getContext(), "Código inválido o expirado", Toast.LENGTH_SHORT).show();
+                        } else if (response.code() == 409) {
+                            Toast.makeText(getContext(), "Ese correo ya está registrado", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getContext(), "No se pudo actualizar el correo", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                        Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void resendCode() {
+        apiService.initiateEmailChange(new InitiateEmailChangeRequest(newEmail))
+                .enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            Toast.makeText(getContext(), "Se reenvió el código. Revisá la terminal del backend.", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getContext(), "No se pudo reenviar el código", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                        Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
 }
