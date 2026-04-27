@@ -79,9 +79,9 @@ public class AccessSettingsFragment extends Fragment {
                         .navigate(R.id.action_accessSettings_to_changeEmailFragment));
 
         view.findViewById(R.id.btnLogout).setOnClickListener(v -> confirmLogout());
-        //TODO: implementar la opcion de borrado de cuenta
 
-        //view.findViewById(R.id.btnDeleteAccount).setOnClickListener(v -> confirmDeleteAccount());
+
+        view.findViewById(R.id.btnDeleteAccount).setOnClickListener(v -> confirmDeleteAccount());
     }
 
     // — Biometría (movida de HomeFragment) —
@@ -176,38 +176,38 @@ public class AccessSettingsFragment extends Fragment {
     }
 
     // — Eliminar cuenta —
-    //TODO: implementar la opcion de borrado de cuenta
-
-//    private void confirmDeleteAccount() {
-//        new AlertDialog.Builder(requireContext())
-//                .setTitle("Eliminar cuenta")
-//                .setMessage("Esta acción es permanente. Se eliminarán todos tus datos y reservas. ¿Querés continuar?")
-//                .setPositiveButton("Eliminar", (dialog, which) -> performDeleteAccount())
-//                .setNegativeButton("Cancelar", null)
-//                .show();
-//    }
 
 
-    //TODO: implementar la opcion de borrado de cuenta
-//    private void performDeleteAccount() {
-//        apiService.deleteAccount().enqueue(new Callback<Void>() {
-//            @Override
-//            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
-//                if (response.isSuccessful()) {
-//                    tokenManager.clearToken();
-//                    tokenManager.clearCredentials();
-//                    tokenManager.setBiometricEnabled(false);
-//                    NavHostFragment.findNavController(AccessSettingsFragment.this)
-//                            .navigate(R.id.action_global_to_auth);
-//                } else {
-//                    Toast.makeText(getContext(), "No se pudo eliminar la cuenta", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-//                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
+    private void confirmDeleteAccount() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Eliminar cuenta")
+                .setMessage("Esta acción es permanente. Se eliminarán todos tus datos y reservas. ¿Querés continuar?")
+                .setPositiveButton("Eliminar", (dialog, which) -> performDeleteAccount())
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+
+
+    private void performDeleteAccount() {
+        apiService.deleteAccount().enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (response.isSuccessful()) {
+                    tokenManager.clearToken();
+                    tokenManager.clearCredentials();
+                    tokenManager.setBiometricEnabled(false);
+                    NavHostFragment.findNavController(AccessSettingsFragment.this)
+                            .navigate(R.id.action_global_to_auth);
+                } else {
+                    Toast.makeText(getContext(), "No se pudo eliminar la cuenta", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }

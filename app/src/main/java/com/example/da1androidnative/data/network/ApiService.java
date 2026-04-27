@@ -95,12 +95,12 @@ public interface ApiService {
     @PUT("profile/preferences")
     Call<UserProfileResponse> updateMyPreferences(@Body UpdateUserPreferencesRequest request);
 
-//    @DELETE("profile")
-//    Call<Void> deleteAccount();
-//
-//    @POST("profile/me/email-change/initiate")
-//    Call<Void> initiateEmailChange(@Body InitiateEmailChangeRequest request);
-//
-//    @POST("profile/me/email-change/confirm")
-//    Call<Void> confirmEmailChange(@Body ConfirmEmailChangeRequest request);
+    @DELETE("profile/me")
+    Call<Void> deleteAccount();
+
+    @POST("profile/me/email-change/initiate")
+    Call<Void> initiateEmailChange(@Body InitiateEmailChangeRequest request);
+
+    @POST("profile/me/email-change/confirm")
+    Call<Void> confirmEmailChange(@Body ConfirmEmailChangeRequest request);
 }
