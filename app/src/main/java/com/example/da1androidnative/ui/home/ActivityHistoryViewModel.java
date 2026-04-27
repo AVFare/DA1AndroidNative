@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.da1androidnative.data.local.TokenManager;
 import com.example.da1androidnative.data.model.ActivityHistoryResponse;
 import com.example.da1androidnative.data.model.PaginatedActivityHistoryResponse;
 import com.example.da1androidnative.data.repository.ActivityHistoryRepository;
@@ -22,7 +21,6 @@ import retrofit2.Response;
 public class ActivityHistoryViewModel extends ViewModel {
 
     private final ActivityHistoryRepository repository;
-    private final TokenManager tokenManager;
 
     private final MutableLiveData<List<ActivityHistoryResponse>> _activities = new MutableLiveData<>();
     public LiveData<List<ActivityHistoryResponse>> activities = _activities;
@@ -34,22 +32,15 @@ public class ActivityHistoryViewModel extends ViewModel {
     public LiveData<String> error = _error;
 
     @Inject
-    public ActivityHistoryViewModel(ActivityHistoryRepository repository, TokenManager tokenManager) {
+    public ActivityHistoryViewModel(ActivityHistoryRepository repository) {
         this.repository = repository;
-        this.tokenManager = tokenManager;
     }
 
-    public void loadHistory(String startDate, String endDate, String destination) {
-        long userId = tokenManager.getUserId();
-        if (userId == -1L) {
-            _error.setValue("Usuario no identificado");
-            return;
-        }
-
+    public void loadHistory(String fromDate, String toDate, Long destinationId) {
         _isLoading.setValue(true);
         _error.setValue(null);
 
-        repository.getActivityHistory(startDate, endDate, destination).enqueue(new Callback<PaginatedActivityHistoryResponse>() {
+        repository.getActivityHistory(fromDate, toDate, destinationId).enqueue(new Callback<PaginatedActivityHistoryResponse>() {
             @Override
             public void onResponse(Call<PaginatedActivityHistoryResponse> call, Response<PaginatedActivityHistoryResponse> response) {
                 _isLoading.setValue(false);

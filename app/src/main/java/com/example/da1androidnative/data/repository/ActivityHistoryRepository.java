@@ -1,10 +1,7 @@
 package com.example.da1androidnative.data.repository;
 
-import com.example.da1androidnative.data.model.ActivityHistoryResponse;
 import com.example.da1androidnative.data.model.PaginatedActivityHistoryResponse;
 import com.example.da1androidnative.data.network.ApiService;
-
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -20,7 +17,7 @@ public class ActivityHistoryRepository {
         this.apiService = apiService;
     }
 
-    public Call<PaginatedActivityHistoryResponse> getActivityHistory(String startDate, String endDate, String destination) {
-        return apiService.getActivityHistory(startDate, endDate, destination);
+    public Call<PaginatedActivityHistoryResponse> getActivityHistory(String fromDate, String toDate, Long destinationId) {
+        return apiService.getActivityHistory(fromDate, toDate, destinationId);
     }
 }

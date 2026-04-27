@@ -67,13 +67,29 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
             String destination = etDestination.getText().toString().trim();
             String start = etStartDate.getText().toString().trim();
             String end = etEndDate.getText().toString().trim();
+            Long destinationId = parseDestinationId(destination);
+            if (!destination.isEmpty() && destinationId == null) {
+                return;
+            }
             
             viewModel.loadHistory(
                 start.isEmpty() ? null : start,
                 end.isEmpty() ? null : end,
-                destination.isEmpty() ? null : destination
+                destinationId
             );
         });
+    }
+
+    private Long parseDestinationId(String destination) {
+        if (destination.isEmpty()) {
+            return null;
+        }
+        try {
+            return Long.parseLong(destination);
+        } catch (NumberFormatException exception) {
+            Toast.makeText(getContext(), "Ingresá un ID de destino válido", Toast.LENGTH_SHORT).show();
+            return null;
+        }
     }
 
     private void showDatePicker(EditText editText) {

@@ -55,6 +55,7 @@ public class ActivityHistoryAdapter extends RecyclerView.Adapter<ActivityHistory
         private final TextView tvDate;
         private final TextView tvDuration;
         private final TextView tvGuide;
+        private final TextView tvRating;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -63,16 +64,21 @@ public class ActivityHistoryAdapter extends RecyclerView.Adapter<ActivityHistory
             tvDate = itemView.findViewById(R.id.tvDate);
             tvDuration = itemView.findViewById(R.id.tvDuration);
             tvGuide = itemView.findViewById(R.id.tvGuide);
+            tvRating = itemView.findViewById(R.id.tvRating);
         }
 
         public void bind(ActivityHistoryResponse activity, OnActivityClickListener listener) {
             tvName.setText(activity.getActivityName());
             tvDestination.setText(activity.getDestination());
-            tvDate.setText("📅 " + activity.getDate());
-            tvGuide.setText("👤 Guía: " + activity.getGuideName());
-            tvDuration.setText("🕒 " + formatDuration(activity.getDurationMinutes()));
+            tvDate.setText("Fecha: " + activity.getDate());
+            tvGuide.setText("Guía: " + activity.getGuideName());
+            tvDuration.setText("Duración: " + formatDuration(activity.getDurationMinutes()));
+            if (activity.isHasRating() && activity.getRating() != null) {
+                tvRating.setText("Calificada: " + activity.getRating() + "/5");
+            } else {
+                tvRating.setText("Sin calificación");
+            }
 
-            //TODO: cambiar a ActivityID
             itemView.setOnClickListener(v -> listener.onActivityClick(activity.getReservationId()));
         }
 
