@@ -175,20 +175,24 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         reservationTotalPriceText.setText("Total: $" + detalle.getTotalPrice());
         reservationCancellationPolicyText.setText(detalle.getCancellationPolicy());
 
+        // El botón solo se deshabilita si el status es CANCELLED o COMPLETED.
         if (Objects.equals(detalle.getStatus(), "CANCELLED") || Objects.equals(detalle.getStatus(), "COMPLETED")) {
             cancelReservationButton.setEnabled(false);
             cancelReservationButton.setAlpha(0.5f);
         } else {
-            // Deshabilitar cancelación si no hay internet
-            cancelReservationButton.setEnabled(NetworkUtils.isNetworkAvailable(getContext()));
-            cancelReservationButton.setAlpha(NetworkUtils.isNetworkAvailable(getContext()) ? 1.0f : 0.5f);
+            // Si el estado permite cancelar, el botón está habilitado (incluso offline)
+            cancelReservationButton.setEnabled(true);
+            cancelReservationButton.setAlpha(1.0f);
         }
 
         cancelReservationButton.setOnClickListener(v -> {
             if (NetworkUtils.isNetworkAvailable(getContext())) {
                 cancelReserva();
             } else {
-                Toast.makeText(getContext(), "Se requiere conexión para cancelar", Toast.LENGTH_SHORT).show();
+                // Modo Offline: Guardar intención de cancelación
+                offlineStorage.addPendingCancellation(reservationId);
+                Toast.makeText(getContext(), "La cancelación se realizará cuando vuelva la conexión", Toast.LENGTH_LONG).show();
+                NavHostFragment.findNavController(this).navigateUp();
             }
         });
         setupHowToGetButton();
@@ -277,11 +281,19 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
             public void onResponse(@NonNull Call<ReservaCancelledResponse> call, @NonNull Response<ReservaCancelledResponse> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(getContext(), "Reserva Cancelada", Toast.LENGTH_SHORT).show();
+                    // Al cancelar con éxito, actualizamos el estado en el almacenamiento offline inmediatamente
+                    if (currentReserva != null) {
+                        offlineStorage.clearReservation(reservationId); 
+                    }
                     NavHostFragment.findNavController(ReservaDetalleFragment.this).navigateUp();
+                } else {
+                    Toast.makeText(getContext(), "Error al cancelar la reserva", Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
-            public void onFailure(@NonNull Call<ReservaCancelledResponse> call, @NonNull Throwable t) {}
+            public void onFailure(@NonNull Call<ReservaCancelledResponse> call, @NonNull Throwable t) {
+                 Toast.makeText(getContext(), "Error de red al intentar cancelar", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 }
