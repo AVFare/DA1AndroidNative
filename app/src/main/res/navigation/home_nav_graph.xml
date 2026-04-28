@@ -178,26 +178,32 @@
     </fragment>
 
 	<fragment
-    android:id="@+id/profileEditFragment"
-    android:name="com.example.da1androidnative.ui.profile.ProfileEditFragment"
-    android:label="Perfil" />
+        android:id="@+id/profileEditFragment"
+        android:name="com.example.da1androidnative.ui.profile.ProfileEditFragment"
+        android:label="Perfil" />
 
 	<fragment
-    android:id="@+id/profileViewFragment"
-    android:name="com.example.da1androidnative.ui.profile.ProfileViewFragment"
-    android:label="Perfil">
+        android:id="@+id/profileViewFragment"
+        android:name="com.example.da1androidnative.ui.profile.ProfileViewFragment"
+        android:label="Perfil">
 		<action
 			android:id="@+id/action_profileViewFragment_to_profileEditFragment"
 			app:destination="@id/profileEditFragment" />
 		<action
 			android:id="@+id/action_profileViewFragment_to_accessSettingsFragment"
 			app:destination="@id/accessSettingsFragment" />
+		<action
+			android:id="@+id/action_profileViewFragment_to_reservasFragment"
+			app:destination="@id/reservasFragment" />
+		<action
+			android:id="@+id/action_profileViewFragment_to_activityHistoryFragment"
+			app:destination="@id/activityHistoryFragment" />
 	</fragment>
-	
+
 	<fragment
-    android:id="@+id/accessSettingsFragment"
-    android:name="com.example.da1androidnative.ui.profile.AccessSettingsFragment"
-    android:label="Configuración de acceso">
+        android:id="@+id/accessSettingsFragment"
+        android:name="com.example.da1androidnative.ui.profile.AccessSettingsFragment"
+        android:label="Configuración de acceso">
 		<action
 			android:id="@+id/action_accessSettings_to_changeEmailFragment"
 			app:destination="@id/changeEmailFragment" />
@@ -214,7 +220,7 @@
 			android:id="@+id/action_changeEmail_to_otpEmailChangeFragment"
 			app:destination="@id/otpEmailChangeFragment" />
 	</fragment>
-	
+
 	<fragment
 		android:id="@+id/otpEmailChangeFragment"
 		android:name="com.example.da1androidnative.ui.profile.OtpEmailChangeFragment"

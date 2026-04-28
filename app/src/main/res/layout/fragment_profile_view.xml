@@ -181,6 +181,7 @@
                 android:layout_marginBottom="24dp">
 
                 <LinearLayout
+                    android:id="@+id/layoutReservadasCard"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -188,7 +189,9 @@
                     android:gravity="center"
                     android:background="?attr/colorSurfaceVariant"
                     android:padding="16dp"
-                    android:layout_marginEnd="8dp">
+                    android:layout_marginEnd="8dp"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <TextView
                         android:id="@+id/tvReservedCountView"
@@ -208,6 +211,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/layoutRealizadasCard"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -215,7 +219,9 @@
                     android:gravity="center"
                     android:background="?attr/colorSurfaceVariant"
                     android:padding="16dp"
-                    android:layout_marginStart="8dp">
+                    android:layout_marginStart="8dp"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <TextView
                         android:id="@+id/tvCompletedCountView"
@@ -243,7 +249,7 @@
                 android:layout_height="52dp"
                 android:text="Editar perfil"
                 android:textAllCaps="false"/>
-				
+
 			<!-- Botón configuración de acceso -->
 			<Button
 				android:id="@+id/btnAccessSettings"
