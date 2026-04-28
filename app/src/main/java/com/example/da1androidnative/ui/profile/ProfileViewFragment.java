@@ -74,11 +74,11 @@ public class ProfileViewFragment extends Fragment {
                 NavHostFragment.findNavController(this)
                         .navigate(R.id.action_profileViewFragment_to_accessSettingsFragment));
 
-        binding.tvReservedCountView.setOnClickListener(v ->
+        binding.layoutReservadasCard.setOnClickListener(v ->
                 NavHostFragment.findNavController(this)
                         .navigate(R.id.action_profileViewFragment_to_reservasFragment));
 
-        binding.tvCompletedCountView.setOnClickListener(v ->
+        binding.layoutRealizadasCard.setOnClickListener(v ->
                 NavHostFragment.findNavController(this)
                         .navigate(R.id.action_profileViewFragment_to_activityHistoryFragment));
     }
