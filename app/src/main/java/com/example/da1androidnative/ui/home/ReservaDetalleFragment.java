@@ -17,11 +17,13 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.da1androidnative.R;
+import com.example.da1androidnative.data.local.OfflineReservationStorage;
 import com.example.da1androidnative.data.model.ActivityDetalleResponse;
 import com.example.da1androidnative.data.model.ItineraryResponse;
 import com.example.da1androidnative.data.model.ReservaCancelledResponse;
 import com.example.da1androidnative.data.model.ReservaDetalleResponse;
 import com.example.da1androidnative.data.network.ApiService;
+import com.example.da1androidnative.data.network.NetworkUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -47,6 +49,7 @@ import retrofit2.Response;
 public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallback {
     
     @Inject ApiService apiService;
+    @Inject OfflineReservationStorage offlineStorage;
     
     private long reservationId;
     private TextView reservationActivityNameText, reservationStatusText, reservationDestinationText;
@@ -104,22 +107,44 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
     private void loadDetalleReserva() {
         if (this.reservationId == -1L) return;
 
-        apiService.getDetalleReserva(reservationId).enqueue(new Callback<ReservaDetalleResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<ReservaDetalleResponse> call, @NonNull Response<ReservaDetalleResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    currentReserva = response.body();
-                    bindDetalle(currentReserva);
-                    
-                    // Si no tiene coordenadas ( África ), vamos a buscarlas a la actividad
-                    fetchActivityDetails(currentReserva.getActivityId());
+        if (!NetworkUtils.isNetworkAvailable(getContext())) {
+            // Modo Offline: Cargar detalle desde SharedPreferences
+            ReservaDetalleResponse savedDetail = offlineStorage.getSavedReservationDetail(reservationId);
+            if (savedDetail != null) {
+                currentReserva = savedDetail;
+                bindDetalle(currentReserva);
+                updateMap();
+                setupHowToGetButton();
+            } else {
+                Toast.makeText(getContext(), "Detalle no disponible sin conexión", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            // Modo Online
+            apiService.getDetalleReserva(reservationId).enqueue(new Callback<ReservaDetalleResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<ReservaDetalleResponse> call, @NonNull Response<ReservaDetalleResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        currentReserva = response.body();
+                        bindDetalle(currentReserva);
+                        // Guardar para offline
+                        offlineStorage.saveReservationDetail(currentReserva);
+                        
+                        fetchActivityDetails(currentReserva.getActivityId());
+                    }
                 }
-            }
-            @Override
-            public void onFailure(@NonNull Call<ReservaDetalleResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error al cargar reserva", Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onFailure(@NonNull Call<ReservaDetalleResponse> call, @NonNull Throwable t) {
+                    // Fallback a offline si hay error de red
+                    ReservaDetalleResponse savedDetail = offlineStorage.getSavedReservationDetail(reservationId);
+                    if (savedDetail != null) {
+                        currentReserva = savedDetail;
+                        bindDetalle(currentReserva);
+                        updateMap();
+                    }
+                    Toast.makeText(getContext(), "Error al cargar reserva, mostrando datos locales", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     private void fetchActivityDetails(long activityId) {
@@ -142,7 +167,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         reservationStatusText.setText(detalle.getStatus());
         reservationDestinationText.setText(detalle.getDestination());
         reservationIdText.setText(getString(R.string.reservation_item_id_label, detalle.getReservationId()));
-        reservationDateText.setText("Fecha: " + detalle.getDate());
+        reservationDateText.setText("Fecha: " + (detalle.getDate() != null ? detalle.getDate().toString() : "N/A"));
         reservationTimeText.setText("Hora: " + detalle.getTime());
         reservationParticipantsText.setText("Participantes: " + detalle.getParticipantsCount());
         reservationMeetingPointText.setText("Punto de encuentro: " + detalle.getMeetingPoint());
@@ -154,11 +179,18 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
             cancelReservationButton.setEnabled(false);
             cancelReservationButton.setAlpha(0.5f);
         } else {
-            cancelReservationButton.setEnabled(true);
-            cancelReservationButton.setAlpha(1.0f);
+            // Deshabilitar cancelación si no hay internet
+            cancelReservationButton.setEnabled(NetworkUtils.isNetworkAvailable(getContext()));
+            cancelReservationButton.setAlpha(NetworkUtils.isNetworkAvailable(getContext()) ? 1.0f : 0.5f);
         }
 
-        cancelReservationButton.setOnClickListener(v -> cancelReserva());
+        cancelReservationButton.setOnClickListener(v -> {
+            if (NetworkUtils.isNetworkAvailable(getContext())) {
+                cancelReserva();
+            } else {
+                Toast.makeText(getContext(), "Se requiere conexión para cancelar", Toast.LENGTH_SHORT).show();
+            }
+        });
         setupHowToGetButton();
     }
 
