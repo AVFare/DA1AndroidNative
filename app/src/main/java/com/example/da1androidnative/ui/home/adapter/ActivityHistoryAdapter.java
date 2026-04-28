@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.da1androidnative.R;
@@ -20,7 +21,7 @@ public class ActivityHistoryAdapter extends RecyclerView.Adapter<ActivityHistory
     private final OnActivityClickListener listener;
 
     public interface OnActivityClickListener {
-        void onActivityClick(long activityId);
+        void onActivityClick(long reservationId);
     }
 
     public ActivityHistoryAdapter(OnActivityClickListener listener) {
@@ -55,6 +56,7 @@ public class ActivityHistoryAdapter extends RecyclerView.Adapter<ActivityHistory
         private final TextView tvDate;
         private final TextView tvDuration;
         private final TextView tvGuide;
+        private final TextView tvStatus;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -63,6 +65,7 @@ public class ActivityHistoryAdapter extends RecyclerView.Adapter<ActivityHistory
             tvDate = itemView.findViewById(R.id.tvDate);
             tvDuration = itemView.findViewById(R.id.tvDuration);
             tvGuide = itemView.findViewById(R.id.tvGuide);
+            tvStatus = itemView.findViewById(R.id.tvStatus);
         }
 
         public void bind(ActivityHistoryResponse activity, OnActivityClickListener listener) {
@@ -72,8 +75,43 @@ public class ActivityHistoryAdapter extends RecyclerView.Adapter<ActivityHistory
             tvGuide.setText("👤 Guía: " + activity.getGuideName());
             tvDuration.setText("🕒 " + formatDuration(activity.getDurationMinutes()));
 
-            //TODO: cambiar a ActivityID
+            setStatusView(activity.getStatus());
+
             itemView.setOnClickListener(v -> listener.onActivityClick(activity.getReservationId()));
+        }
+
+        private void setStatusView(String status) {
+            if (status == null) {
+                tvStatus.setVisibility(View.GONE);
+                return;
+            }
+            tvStatus.setVisibility(View.VISIBLE);
+            String displayStatus;
+            int colorRes;
+
+            switch (status.toUpperCase()) {
+                case "CONFIRMED":
+                    displayStatus = "Confirmado";
+                    colorRes = android.R.color.holo_green_dark;
+                    break;
+                case "COMPLETED":
+                    displayStatus = "Completo";
+                    colorRes = android.R.color.holo_blue_dark;
+                    break;
+                case "CANCELLED":
+                    displayStatus = "Cancelado";
+                    colorRes = android.R.color.holo_red_dark;
+                    break;
+                case "PENDING":
+                    displayStatus = "Pendiente";
+                    colorRes = android.R.color.holo_orange_dark;
+                    break;
+                default:
+                    displayStatus = status;
+                    colorRes = android.R.color.darker_gray;
+            }
+            tvStatus.setText(displayStatus.toUpperCase());
+            tvStatus.setTextColor(ContextCompat.getColor(itemView.getContext(), colorRes));
         }
 
         private String formatDuration(Integer minutes) {

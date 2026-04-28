@@ -39,17 +39,15 @@ public class ActivityHistoryViewModel extends ViewModel {
         this.tokenManager = tokenManager;
     }
 
-    public void loadHistory(String startDate, String endDate, String destination) {
-        long userId = tokenManager.getUserId();
-        if (userId == -1L) {
-            _error.setValue("Usuario no identificado");
-            return;
-        }
-
+    /**
+     * Carga el historial de actividades finalizadas.
+     * Los parámetros son opcionales.
+     */
+    public void loadHistory(String fromDate, String toDate, Long destinationId, String status, Integer page, Integer size) {
         _isLoading.setValue(true);
         _error.setValue(null);
 
-        repository.getActivityHistory(startDate, endDate, destination).enqueue(new Callback<PaginatedActivityHistoryResponse>() {
+        repository.getActivityHistory(fromDate, toDate, destinationId, status, page, size).enqueue(new Callback<PaginatedActivityHistoryResponse>() {
             @Override
             public void onResponse(Call<PaginatedActivityHistoryResponse> call, Response<PaginatedActivityHistoryResponse> response) {
                 _isLoading.setValue(false);
