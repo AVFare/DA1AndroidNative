@@ -14,11 +14,13 @@ public class ActivityHistoryResponse {
     @SerializedName("guideName")
     private String guideName;
     @SerializedName("durationMinutes")
-    private int durationMinutes;
+    private Integer durationMinutes;
     @SerializedName("rating")
-    private int rating;
-    @SerializedName("durationMinutes")
+    private Integer rating;
+    @SerializedName("hasRating")
     private boolean hasRating;
+    @SerializedName("status")
+    private String status;
 
     public long getReservationId() {
         return reservationId;
@@ -60,19 +62,19 @@ public class ActivityHistoryResponse {
         this.guideName = guideName;
     }
 
-    public int getDurationMinutes() {
+    public Integer getDurationMinutes() {
         return durationMinutes;
     }
 
-    public void setDurationMinutes(int durationMinutes) {
+    public void setDurationMinutes(Integer durationMinutes) {
         this.durationMinutes = durationMinutes;
     }
 
-    public int getRating() {
+    public Integer getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Integer rating) {
         this.rating = rating;
     }
 
@@ -82,5 +84,13 @@ public class ActivityHistoryResponse {
 
     public void setHasRating(boolean hasRating) {
         this.hasRating = hasRating;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

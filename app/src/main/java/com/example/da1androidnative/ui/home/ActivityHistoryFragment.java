@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -20,7 +22,9 @@ import com.example.da1androidnative.R;
 import com.example.da1androidnative.ui.home.adapter.ActivityHistoryAdapter;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -30,7 +34,18 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
     private ActivityHistoryViewModel viewModel;
     private ActivityHistoryAdapter adapter;
     private EditText etDestination, etStartDate, etEndDate;
+    private AutoCompleteTextView spinnerStatus;
     private View progressBar, tvEmptyState, tvError;
+
+    private final String[] statusOptionsDisplay = {"Todos", "Confirmado", "Cancelado", "Completo", "Pendiente"};
+    private final Map<String, String> statusMap = new HashMap<>();
+
+    public ActivityHistoryFragment() {
+        statusMap.put("Confirmado", "CONFIRMED");
+        statusMap.put("Cancelado", "CANCELLED");
+        statusMap.put("Completo", "COMPLETED");
+        statusMap.put("Pendiente", "PENDING");
+    }
 
     @Nullable
     @Override
@@ -48,31 +63,61 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         setupRecyclerView(view);
         observeViewModel();
 
-        // Carga inicial
-        viewModel.loadHistory(null, null, null);
+        // Carga inicial: Historial entero sin filtros
+        viewModel.loadHistory(null, null, null, null, null, null);
     }
 
     private void setupViews(View view) {
         etDestination = view.findViewById(R.id.etDestinationFilter);
         etStartDate = view.findViewById(R.id.etStartDate);
         etEndDate = view.findViewById(R.id.etEndDate);
+        spinnerStatus = view.findViewById(R.id.spinnerStatus);
         progressBar = view.findViewById(R.id.progressBar);
         tvEmptyState = view.findViewById(R.id.tvEmptyState);
         tvError = view.findViewById(R.id.tvError);
+
+        // Setup Dropdown/Spinner
+        ArrayAdapter<String> adapterStatus = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, statusOptionsDisplay);
+        spinnerStatus.setAdapter(adapterStatus);
+        spinnerStatus.setText(statusOptionsDisplay[0], false); // "Todos" por defecto
 
         etStartDate.setOnClickListener(v -> showDatePicker(etStartDate));
         etEndDate.setOnClickListener(v -> showDatePicker(etEndDate));
 
         view.findViewById(R.id.btnApplyFilters).setOnClickListener(v -> {
-            String destination = etDestination.getText().toString().trim();
+            String destinationStr = etDestination.getText().toString().trim();
             String start = etStartDate.getText().toString().trim();
             String end = etEndDate.getText().toString().trim();
+            String selectedStatus = spinnerStatus.getText().toString();
             
+            String statusValue = statusMap.get(selectedStatus); // null si es "Todos"
+
+            Long destinationId = null;
+            try {
+                if (!destinationStr.isEmpty()) {
+                    destinationId = Long.parseLong(destinationStr);
+                }
+            } catch (NumberFormatException e) {
+                // destinationId nulo
+            }
+
             viewModel.loadHistory(
                 start.isEmpty() ? null : start,
                 end.isEmpty() ? null : end,
-                destination.isEmpty() ? null : destination
+                destinationId,
+                statusValue,
+                null, // page
+                null  // size
             );
+        });
+
+        view.findViewById(R.id.btnClearFilters).setOnClickListener(v -> {
+            etDestination.setText("");
+            etStartDate.setText("");
+            etEndDate.setText("");
+            spinnerStatus.setText(statusOptionsDisplay[0], false);
+
+            viewModel.loadHistory(null, null, null, null, null, null);
         });
     }
 
@@ -94,7 +139,7 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
     private void observeViewModel() {
         viewModel.activities.observe(getViewLifecycleOwner(), list -> {
             adapter.setActivities(list);
-            tvEmptyState.setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
+            tvEmptyState.setVisibility(list == null || list.isEmpty() ? View.VISIBLE : View.GONE);
         });
 
         viewModel.isLoading.observe(getViewLifecycleOwner(), isLoading -> {
@@ -112,9 +157,9 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
     }
 
     @Override
-    public void onActivityClick(long activityId) {
+    public void onActivityClick(long reservationId) {
         Bundle args = new Bundle();
-        args.putLong("activityId", activityId);
-        NavHostFragment.findNavController(this).navigate(R.id.action_activityHistory_to_activityDetalleFragment, args);
+        args.putLong("reservationId", reservationId);
+        NavHostFragment.findNavController(this).navigate(R.id.action_activityHistory_to_reservaDetalleFragment, args);
     }
 }
