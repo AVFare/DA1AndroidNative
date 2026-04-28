@@ -150,9 +150,14 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         reservationTotalPriceText.setText("Total: $" + detalle.getTotalPrice());
         reservationCancellationPolicyText.setText(detalle.getCancellationPolicy());
 
-        if (Objects.equals(detalle.getStatus(), "CANCELLED")) {
+        if (Objects.equals(detalle.getStatus(), "CANCELLED") || Objects.equals(detalle.getStatus(), "COMPLETED")) {
             cancelReservationButton.setEnabled(false);
+            cancelReservationButton.setAlpha(0.5f);
+        } else {
+            cancelReservationButton.setEnabled(true);
+            cancelReservationButton.setAlpha(1.0f);
         }
+
         cancelReservationButton.setOnClickListener(v -> cancelReserva());
         setupHowToGetButton();
     }
