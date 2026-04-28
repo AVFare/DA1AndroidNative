@@ -60,6 +60,15 @@
         <action
             android:id="@+id/action_reviewsFragment_to_reviewCreateFragment"
             app:destination="@id/reviewCreateFragment" />
+        <action
+            android:id="@+id/action_reviews_to_reservas"
+            app:destination="@id/reservasFragment" />
+        <action
+            android:id="@+id/action_reviews_to_favorites"
+            app:destination="@id/favoritesFragment" />
+        <action
+            android:id="@+id/action_reviews_to_history"
+            app:destination="@id/activityHistoryFragment" />
     </fragment>
 
     <fragment
@@ -95,6 +104,12 @@
             android:id="@+id/action_favorites_to_reservasFragment"
             app:destination="@id/reservasFragment"
             app:popUpTo="@id/homeFragment" />
+        <action
+            android:id="@+id/action_favorites_to_history"
+            app:destination="@id/activityHistoryFragment" />
+        <action
+            android:id="@+id/action_favorites_to_reviews"
+            app:destination="@id/reviewsFragment" />
     </fragment>
 
     <fragment
@@ -146,18 +161,20 @@
         android:name="com.example.da1androidnative.ui.home.ActivityHistoryFragment"
         android:label="Historial de Actividades">
         <action
-            android:id="@+id/action_activityHistory_to_activityHistoryDetailFragment"
-            app:destination="@id/activityHistoryDetailFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/activityHistoryDetailFragment"
-        android:name="com.example.da1androidnative.ui.home.ActivityHistoryDetailFragment"
-        android:label="Detalle realizado">
-        <argument
-            android:name="reservationId"
-            app:argType="long"
-            android:defaultValue="-1L" />
+            android:id="@+id/action_activityHistory_to_activityDetalleFragment"
+            app:destination="@id/activityDetalleFragment" />
+        <action
+            android:id="@+id/action_activityHistory_to_reservaDetalleFragment"
+            app:destination="@id/reservaDetalleFragment" />
+        <action
+            android:id="@+id/action_activityHistory_to_reservasFragment"
+            app:destination="@id/reservasFragment" />
+        <action
+            android:id="@+id/action_activityHistory_to_reviewsFragment"
+            app:destination="@id/reviewsFragment" />
+        <action
+            android:id="@+id/action_activityHistory_to_favoritesFragment"
+            app:destination="@id/favoritesFragment" />
     </fragment>
 
 	<fragment

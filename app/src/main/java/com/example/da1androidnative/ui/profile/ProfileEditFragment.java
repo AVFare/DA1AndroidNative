@@ -18,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.example.da1androidnative.data.model.UpdateUserPreferencesRequest;
 import com.example.da1androidnative.data.model.UpdateUserProfileRequest;
 import com.example.da1androidnative.databinding.FragmentProfileBinding;
 
@@ -38,23 +37,31 @@ public class ProfileEditFragment extends Fragment {
     private String currentPhotoBase64 = null;
 
     private final ActivityResultLauncher<String> pickImageLauncher =
-            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
-                if (uri != null) {
-                    handleImageSelected(uri);
-                }
-            });
+            registerForActivityResult(
+                    new ActivityResultContracts.GetContent(),
+                    uri -> {
+                        if (uri != null) {
+                            handleImageSelected(uri);
+                        }
+                    }
+            );
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(
+            @NonNull LayoutInflater inflater,
+            @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState
+    ) {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(
+            @NonNull View view,
+            @Nullable Bundle savedInstanceState
+    ) {
         super.onViewCreated(view, savedInstanceState);
 
         viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
@@ -73,86 +80,168 @@ public class ProfileEditFragment extends Fragment {
             binding.etEmail.setText(profile.getEmail());
             binding.etPhone.setText(profile.getPhone());
 
-            if (profile.getProfilePictureUrl() != null && !profile.getProfilePictureUrl().isEmpty()) {
+            if (profile.getProfilePictureUrl() != null
+                    && !profile.getProfilePictureUrl().isEmpty()) {
                 currentPhotoBase64 = profile.getProfilePictureUrl();
                 loadBase64Image(profile.getProfilePictureUrl());
             }
 
             if (profile.getTravelPreferences() != null) {
-                binding.cbAventura.setChecked(profile.getTravelPreferences().contains("AVENTURA"));
-                binding.cbCultura.setChecked(profile.getTravelPreferences().contains("CULTURA"));
-                binding.cbGastronomia.setChecked(profile.getTravelPreferences().contains("GASTRONOMIA"));
-                binding.cbNaturaleza.setChecked(profile.getTravelPreferences().contains("NATURALEZA"));
-                binding.cbRelax.setChecked(profile.getTravelPreferences().contains("RELAX"));
+                binding.cbAventura.setChecked(
+                        profile.getTravelPreferences().contains("AVENTURA")
+                );
+                binding.cbCultura.setChecked(
+                        profile.getTravelPreferences().contains("CULTURA")
+                );
+                binding.cbGastronomia.setChecked(
+                        profile.getTravelPreferences().contains("GASTRONOMIA")
+                );
+                binding.cbNaturaleza.setChecked(
+                        profile.getTravelPreferences().contains("NATURALEZA")
+                );
+                binding.cbRelax.setChecked(
+                        profile.getTravelPreferences().contains("RELAX")
+                );
             }
         });
 
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            binding.btnSaveProfile.setEnabled(!isLoading);
+            binding.btnSaveProfile.setEnabled(!Boolean.TRUE.equals(isLoading));
         });
 
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
-                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(
+                        requireContext(),
+                        error,
+                        Toast.LENGTH_SHORT
+                ).show();
             }
         });
 
         viewModel.getUpdateSuccess().observe(getViewLifecycleOwner(), success -> {
-            if (success != null && success) {
-                Toast.makeText(requireContext(), "Perfil actualizado", Toast.LENGTH_SHORT).show();
-                NavHostFragment.findNavController(ProfileEditFragment.this).navigateUp();
+            if (Boolean.TRUE.equals(success)) {
+                Toast.makeText(
+                        requireContext(),
+                        "Perfil actualizado",
+                        Toast.LENGTH_SHORT
+                ).show();
+
+                NavHostFragment
+                        .findNavController(ProfileEditFragment.this)
+                        .navigateUp();
             }
         });
     }
 
     private void setupListeners() {
-        binding.btnChangePhoto.setOnClickListener(v -> pickImageLauncher.launch("image/*"));
+        binding.btnChangePhoto.setOnClickListener(
+                v -> pickImageLauncher.launch("image/*")
+        );
 
         binding.btnSaveProfile.setOnClickListener(v -> {
             String firstName = binding.etFirstName.getText() != null
-                    ? binding.etFirstName.getText().toString().trim() : "";
+                    ? binding.etFirstName.getText().toString().trim()
+                    : "";
+
             String lastName = binding.etLastName.getText() != null
-                    ? binding.etLastName.getText().toString().trim() : "";
+                    ? binding.etLastName.getText().toString().trim()
+                    : "";
+
             String phone = binding.etPhone.getText() != null
-                    ? binding.etPhone.getText().toString().trim() : "";
+                    ? binding.etPhone.getText().toString().trim()
+                    : "";
 
             List<String> preferences = new ArrayList<>();
-            if (binding.cbAventura.isChecked()) preferences.add("AVENTURA");
-            if (binding.cbCultura.isChecked()) preferences.add("CULTURA");
-            if (binding.cbGastronomia.isChecked()) preferences.add("GASTRONOMIA");
-            if (binding.cbNaturaleza.isChecked()) preferences.add("NATURALEZA");
-            if (binding.cbRelax.isChecked()) preferences.add("RELAX");
 
-            UpdateUserProfileRequest request = new UpdateUserProfileRequest(
-                    firstName, lastName, phone, currentPhotoBase64);
+            if (binding.cbAventura.isChecked()) {
+                preferences.add("AVENTURA");
+            }
 
-            UpdateUserPreferencesRequest preferencesRequest = new UpdateUserPreferencesRequest(preferences);
+            if (binding.cbCultura.isChecked()) {
+                preferences.add("CULTURA");
+            }
 
-            viewModel.updateProfile(request, preferencesRequest);
+            if (binding.cbGastronomia.isChecked()) {
+                preferences.add("GASTRONOMIA");
+            }
+
+            if (binding.cbNaturaleza.isChecked()) {
+                preferences.add("NATURALEZA");
+            }
+
+            if (binding.cbRelax.isChecked()) {
+                preferences.add("RELAX");
+            }
+
+            UpdateUserProfileRequest request =
+                    new UpdateUserProfileRequest(
+                            firstName,
+                            lastName,
+                            phone,
+                            currentPhotoBase64,
+                            preferences
+                    );
+
+            android.util.Log.d("DEBUG_PREFS", "Preferences: " + preferences.toString());
+            viewModel.updateProfile(request);
         });
+
         binding.btnCancelEdit.setOnClickListener(v ->
-                NavHostFragment.findNavController(ProfileEditFragment.this).navigateUp());
+                NavHostFragment
+                        .findNavController(ProfileEditFragment.this)
+                        .navigateUp()
+        );
     }
 
     private void handleImageSelected(Uri uri) {
         try {
-            InputStream inputStream = requireContext().getContentResolver().openInputStream(uri);
+            InputStream inputStream = requireContext()
+                    .getContentResolver()
+                    .openInputStream(uri);
+
             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
+            bitmap.compress(
+                    Bitmap.CompressFormat.JPEG,
+                    80,
+                    baos
+            );
+
             byte[] imageBytes = baos.toByteArray();
-            currentPhotoBase64 = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+
+            currentPhotoBase64 = Base64.encodeToString(
+                    imageBytes,
+                    Base64.DEFAULT
+            );
+
             binding.ivProfilePhoto.setImageBitmap(bitmap);
+
         } catch (IOException e) {
-            Toast.makeText(requireContext(), "Error al cargar la imagen", Toast.LENGTH_SHORT).show();
+            Toast.makeText(
+                    requireContext(),
+                    "Error al cargar la imagen",
+                    Toast.LENGTH_SHORT
+            ).show();
         }
     }
 
     private void loadBase64Image(String base64) {
         try {
-            byte[] decodedBytes = Base64.decode(base64, Base64.DEFAULT);
-            Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
+            byte[] decodedBytes = Base64.decode(
+                    base64,
+                    Base64.DEFAULT
+            );
+
+            Bitmap bitmap = BitmapFactory.decodeByteArray(
+                    decodedBytes,
+                    0,
+                    decodedBytes.length
+            );
+
             binding.ivProfilePhoto.setImageBitmap(bitmap);
+
         } catch (Exception e) {
             // Si falla, queda el ícono por defecto
         }

@@ -17,7 +17,7 @@ public class ActivityHistoryRepository {
         this.apiService = apiService;
     }
 
-    public Call<PaginatedActivityHistoryResponse> getActivityHistory(String fromDate, String toDate, Long destinationId) {
-        return apiService.getActivityHistory(fromDate, toDate, destinationId);
+    public Call<PaginatedActivityHistoryResponse> getActivityHistory(String fromDate, String toDate, Long destinationId, String status, Integer page, Integer size) {
+        return apiService.getActivityHistory(fromDate, toDate, destinationId, status, page, size);
     }
 }

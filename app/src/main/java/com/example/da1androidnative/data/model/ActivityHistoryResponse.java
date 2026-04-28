@@ -19,6 +19,8 @@ public class ActivityHistoryResponse {
     private Integer rating;
     @SerializedName("hasRating")
     private boolean hasRating;
+    @SerializedName("status")
+    private String status;
 
     public long getReservationId() {
         return reservationId;
@@ -82,5 +84,13 @@ public class ActivityHistoryResponse {
 
     public void setHasRating(boolean hasRating) {
         this.hasRating = hasRating;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

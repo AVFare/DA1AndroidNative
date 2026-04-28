@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.da1androidnative.data.ProfileRepository;
-import com.example.da1androidnative.data.model.UpdateUserPreferencesRequest;
 import com.example.da1androidnative.data.model.UpdateUserProfileRequest;
 import com.example.da1androidnative.data.model.UserProfileResponse;
 
@@ -31,17 +30,33 @@ public class ProfileViewModel extends ViewModel {
         this.profileRepository = profileRepository;
     }
 
-    public LiveData<UserProfileResponse> getProfileData() { return profileData; }
-    public LiveData<String> getErrorMessage() { return errorMessage; }
-    public LiveData<Boolean> getIsLoading() { return isLoading; }
-    public LiveData<Boolean> getUpdateSuccess() { return updateSuccess; }
+    public LiveData<UserProfileResponse> getProfileData() {
+        return profileData;
+    }
+
+    public LiveData<String> getErrorMessage() {
+        return errorMessage;
+    }
+
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
+
+    public LiveData<Boolean> getUpdateSuccess() {
+        return updateSuccess;
+    }
 
     public void loadProfile() {
         isLoading.setValue(true);
+
         profileRepository.getMyProfile().enqueue(new Callback<UserProfileResponse>() {
             @Override
-            public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
+            public void onResponse(
+                    Call<UserProfileResponse> call,
+                    Response<UserProfileResponse> response
+            ) {
                 isLoading.setValue(false);
+
                 if (response.isSuccessful() && response.body() != null) {
                     profileData.setValue(response.body());
                 } else {
@@ -50,54 +65,45 @@ public class ProfileViewModel extends ViewModel {
             }
 
             @Override
-            public void onFailure(Call<UserProfileResponse> call, Throwable t) {
+            public void onFailure(
+                    Call<UserProfileResponse> call,
+                    Throwable t
+            ) {
                 isLoading.setValue(false);
                 errorMessage.setValue("Error de conexión");
             }
         });
     }
 
-    public void updateProfile(UpdateUserProfileRequest request, UpdateUserPreferencesRequest preferencesRequest) {
+    public void updateProfile(UpdateUserProfileRequest request) {
         isLoading.setValue(true);
 
-        profileRepository.updateMyProfile(request).enqueue(new Callback<UserProfileResponse>() {
-            @Override
-            public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
-                isLoading.setValue(false);
-                if (response.isSuccessful() && response.body() != null) {
-                    profileData.setValue(response.body());
-                    updateSuccess.setValue(true);
-                } else {
-                    errorMessage.setValue("Error al actualizar el perfil");
-                }
-            }
+        profileRepository.updateMyProfile(request)
+                .enqueue(new Callback<UserProfileResponse>() {
 
-            @Override
-            public void onFailure(Call<UserProfileResponse> call, Throwable t) {
-                isLoading.setValue(false);
-                errorMessage.setValue("Error de conexión");
-            }
-        });
+                    @Override
+                    public void onResponse(
+                            Call<UserProfileResponse> call,
+                            Response<UserProfileResponse> response
+                    ) {
+                        isLoading.setValue(false);
 
-        if (preferencesRequest != null) {
-            profileRepository.updateMyPreferences(preferencesRequest).enqueue(new Callback<UserProfileResponse>() {
-                @Override
-                public void onResponse(Call<UserProfileResponse> call, Response<UserProfileResponse> response) {
-                    isLoading.setValue(false);
-                    if (response.isSuccessful() && response.body() != null) {
-                        profileData.setValue(response.body());
-                        updateSuccess.setValue(true);
-                    } else {
-                        errorMessage.setValue("Error al actualizar preferencias");
+                        if (response.isSuccessful() && response.body() != null) {
+                            profileData.setValue(response.body());
+                            updateSuccess.setValue(true);
+                        } else {
+                            errorMessage.setValue("Error al actualizar el perfil");
+                        }
                     }
-                }
 
-                @Override
-                public void onFailure(Call<UserProfileResponse> call, Throwable t) {
-                    isLoading.setValue(false);
-                    errorMessage.setValue("Error de conexión");
-                }
-            });
-        }
+                    @Override
+                    public void onFailure(
+                            Call<UserProfileResponse> call,
+                            Throwable t
+                    ) {
+                        isLoading.setValue(false);
+                        errorMessage.setValue("Error de conexión");
+                    }
+                });
     }
 }

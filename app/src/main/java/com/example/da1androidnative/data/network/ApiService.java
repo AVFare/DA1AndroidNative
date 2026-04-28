@@ -79,15 +79,15 @@ public interface ApiService {
     @POST("ratings")
     Call<ReviewResponse> createReview(@Body ReviewRequest request);
 
-    @GET("history")
+    @GET("activity/history")
     Call<PaginatedActivityHistoryResponse> getActivityHistory(
             @Query("fromDate") String fromDate,
             @Query("toDate") String toDate,
-            @Query("destinationId") Long destinationId
+            @Query("destinationId") Long destinationId,
+            @Query("status") String status,
+            @Query("page") Integer page,
+            @Query("size") Integer size
     );
-
-    @GET("history/{reservationId}")
-    Call<ActivityHistoryDetailResponse> getActivityHistoryDetail(@Path("reservationId") long reservationId);
 
     @GET("profile")
     Call<UserProfileResponse> getMyProfile();
