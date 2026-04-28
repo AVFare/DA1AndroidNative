@@ -5,18 +5,18 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class UpdateUserPreferencesRequest {
-    @SerializedName("travelPreferences")
-    private List<String> travelPreferences;
+    @SerializedName("preferences")
+    private List<String> preferences;
 
-    public UpdateUserPreferencesRequest(List<String> travelPreferences) {
-        this.travelPreferences = travelPreferences;
+    public UpdateUserPreferencesRequest(List<String> preferences) {
+        this.preferences = preferences;
     }
 
     public List<String> getTravelPreferences() {
-        return travelPreferences;
+        return preferences;
     }
 
-    public void setTravelPreferences(List<String> travelPreferences) {
-        this.travelPreferences = travelPreferences;
+    public void setTravelPreferences(List<String> preferences) {
+        this.preferences = preferences;
     }
 }
