@@ -73,6 +73,14 @@ public class ProfileViewFragment extends Fragment {
         binding.btnAccessSettings.setOnClickListener(v ->
                 NavHostFragment.findNavController(this)
                         .navigate(R.id.action_profileViewFragment_to_accessSettingsFragment));
+
+        binding.layoutReservadasCard.setOnClickListener(v ->
+                NavHostFragment.findNavController(this)
+                        .navigate(R.id.action_profileViewFragment_to_reservasFragment));
+
+        binding.layoutRealizadasCard.setOnClickListener(v ->
+                NavHostFragment.findNavController(this)
+                        .navigate(R.id.action_profileViewFragment_to_activityHistoryFragment));
     }
 
     private void observeViewModel() {
