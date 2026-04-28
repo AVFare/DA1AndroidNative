@@ -1,6 +1,7 @@
 package com.example.da1androidnative.data.network;
 
 import com.example.da1androidnative.data.model.ActivityDetalleResponse;
+import com.example.da1androidnative.data.model.ActivityHistoryDetailResponse;
 import com.example.da1androidnative.data.model.ActivityHistoryResponse;
 import com.example.da1androidnative.data.model.AuthResponse;
 import com.example.da1androidnative.data.model.ConfirmEmailChangeRequest;

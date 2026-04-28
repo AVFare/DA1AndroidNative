@@ -121,6 +121,18 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         });
     }
 
+    private Long parseDestinationId(String destination) {
+        if (destination.isEmpty()) {
+            return null;
+        }
+        try {
+            return Long.parseLong(destination);
+        } catch (NumberFormatException exception) {
+            Toast.makeText(getContext(), "Ingresá un ID de destino válido", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+    }
+
     private void showDatePicker(EditText editText) {
         Calendar calendar = Calendar.getInstance();
         new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {

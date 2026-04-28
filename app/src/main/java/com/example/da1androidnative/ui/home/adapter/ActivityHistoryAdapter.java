@@ -29,7 +29,7 @@ public class ActivityHistoryAdapter extends RecyclerView.Adapter<ActivityHistory
     }
 
     public void setActivities(List<ActivityHistoryResponse> activities) {
-        this.activities = activities;
+        this.activities = activities != null ? activities : new ArrayList<>();
         notifyDataSetChanged();
     }
 
@@ -71,9 +71,14 @@ public class ActivityHistoryAdapter extends RecyclerView.Adapter<ActivityHistory
         public void bind(ActivityHistoryResponse activity, OnActivityClickListener listener) {
             tvName.setText(activity.getActivityName());
             tvDestination.setText(activity.getDestination());
-            tvDate.setText("📅 " + activity.getDate());
-            tvGuide.setText("👤 Guía: " + activity.getGuideName());
-            tvDuration.setText("🕒 " + formatDuration(activity.getDurationMinutes()));
+            tvDate.setText("Fecha: " + activity.getDate());
+            tvGuide.setText("Guía: " + activity.getGuideName());
+            tvDuration.setText("Duración: " + formatDuration(activity.getDurationMinutes()));
+            if (activity.isHasRating() && activity.getRating() != null) {
+                tvRating.setText("Calificada: " + activity.getRating() + "/5");
+            } else {
+                tvRating.setText("Sin calificación");
+            }
 
             setStatusView(activity.getStatus());
 
