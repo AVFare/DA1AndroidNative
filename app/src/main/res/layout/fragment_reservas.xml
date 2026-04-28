@@ -89,6 +89,20 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- Banner de modo offline -->
+    <TextView
+        android:id="@+id/tvOfflineBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFF3CD"
+        android:padding="8dp"
+        android:text="Modo sin conexión: mostrando información guardada en el dispositivo"
+        android:textColor="#856404"
+        android:textSize="14sp"
+        android:textAlignment="center"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
