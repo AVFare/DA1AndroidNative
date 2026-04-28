@@ -57,6 +57,7 @@ public class ActivityHistoryAdapter extends RecyclerView.Adapter<ActivityHistory
         private final TextView tvDuration;
         private final TextView tvGuide;
         private final TextView tvStatus;
+        private final TextView tvRating;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -66,6 +67,7 @@ public class ActivityHistoryAdapter extends RecyclerView.Adapter<ActivityHistory
             tvDuration = itemView.findViewById(R.id.tvDuration);
             tvGuide = itemView.findViewById(R.id.tvGuide);
             tvStatus = itemView.findViewById(R.id.tvStatus);
+            tvRating = itemView.findViewById(R.id.tvRating);
         }
 
         public void bind(ActivityHistoryResponse activity, OnActivityClickListener listener) {

@@ -89,6 +89,9 @@ public interface ApiService {
             @Query("size") Integer size
     );
 
+    @GET("activity/history/{reservationId}")
+    Call<ActivityHistoryDetailResponse> getActivityHistoryDetail(@Path("reservationId") long reservationId);
+
     @GET("profile")
     Call<UserProfileResponse> getMyProfile();
 
