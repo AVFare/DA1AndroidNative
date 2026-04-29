@@ -44,15 +44,13 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
     private AutoCompleteTextView spinnerStatus, spinnerDestination;
     private View progressBar, tvEmptyState, tvError;
 
-    private final String[] statusOptionsDisplay = {"Todos", "Confirmado", "Cancelado", "Completo", "Pendiente"};
+    private final String[] statusOptionsDisplay = {"Todos", "Cancelado", "Completo"};
     private final Map<String, String> statusMap = new HashMap<>();
     private List<ActivityHistoryResponse> allActivities = new ArrayList<>();
 
     public ActivityHistoryFragment() {
-        statusMap.put("Confirmado", "CONFIRMED");
         statusMap.put("Cancelado", "CANCELLED");
         statusMap.put("Completo", "COMPLETED");
-        statusMap.put("Pendiente", "PENDING");
     }
 
     @Nullable
@@ -71,8 +69,8 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         setupRecyclerView(view);
         observeViewModel();
 
-        // Carga inicial: Historial entero sin filtros
-        viewModel.loadHistory(null, null, null, null, null, null);
+        // Carga inicial: Historial filtrado por completados y cancelados
+        viewModel.loadHistory(null, null, null, "COMPLETED,CANCELLED", null, null);
     }
 
     private void setupViews(View view) {
@@ -102,7 +100,7 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
             etEndDate.setText("");
             spinnerStatus.setText(statusOptionsDisplay[0], false);
 
-            viewModel.loadHistory(null, null, null, null, null, null);
+            viewModel.loadHistory(null, null, null, "COMPLETED,CANCELLED", null, null);
         });
     }
 
@@ -111,6 +109,11 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         String end = etEndDate.getText().toString().trim();
         String selectedStatus = spinnerStatus.getText().toString();
         String statusValue = statusMap.get(selectedStatus);
+
+        // Si es "Todos", pasamos los estados de historial
+        if ("Todos".equals(selectedStatus)) {
+            statusValue = "COMPLETED,CANCELLED";
+        }
 
         // Primero cargamos de la API con filtros de fecha y estado
         viewModel.loadHistory(
@@ -159,7 +162,7 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
     }
 
     private void showDatePicker(EditText editText) {
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = calendar = Calendar.getInstance();
         new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
             String date = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month + 1, dayOfMonth);
             editText.setText(date);
