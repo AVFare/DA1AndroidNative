@@ -7,6 +7,8 @@ import com.example.da1androidnative.data.model.AuthResponse;
 import com.example.da1androidnative.data.model.ConfirmEmailChangeRequest;
 import com.example.da1androidnative.data.model.InitiateEmailChangeRequest;
 import com.example.da1androidnative.data.model.LoginRequest;
+import com.example.da1androidnative.data.model.NewsDetailResponse;
+import com.example.da1androidnative.data.model.NewsResponse;
 import com.example.da1androidnative.data.model.OtpChallengeResponse;
 import com.example.da1androidnative.data.model.OtpRequest;
 import com.example.da1androidnative.data.model.OtpVerifyRequest;
@@ -109,4 +111,10 @@ public interface ApiService {
 
     @POST("profile/me/email-change/confirm")
     Call<Void> confirmEmailChange(@Body ConfirmEmailChangeRequest request);
+
+    @GET("news")
+    Call<List<NewsResponse>> getNews();
+
+    @GET("news/{newsId}")
+    Call<NewsDetailResponse> getNewsDetail(@Path("newsId") long newsId);
 }
