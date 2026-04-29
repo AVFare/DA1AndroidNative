@@ -240,5 +240,7 @@
     <fragment
         android:id="@+id/newsFragment"
         android:name="com.example.da1androidnative.ui.home.NewsFragment"
-        android:label="Noticias" />
+        android:label="Noticias" >
+
+    </fragment>
 </navigation>
