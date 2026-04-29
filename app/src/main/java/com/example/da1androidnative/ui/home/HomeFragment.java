@@ -73,6 +73,10 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
 
         view.findViewById(R.id.btnMisDatos).setOnClickListener(v ->
                 NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_home_to_profileFragment));
+
+        view.findViewById(R.id.btnNoticias).setOnClickListener(v ->
+                NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_home_to_news));
+
     }
 
     @Override

@@ -30,6 +30,11 @@
         <action
             android:id="@+id/action_home_to_activityHistory"
             app:destination="@id/activityHistoryFragment" />
+
+        <action
+            android:id="@+id/action_home_to_news"
+            app:destination="@id/newsFragment" />
+
     </fragment>
 
     <fragment
@@ -231,4 +236,9 @@
 			app:popUpTo="@id/profileViewFragment"
 			app:popUpToInclusive="true" />
 	</fragment>
+
+    <fragment
+        android:id="@+id/newsFragment"
+        android:name="com.example.da1androidnative.ui.home.NewsFragment"
+        android:label="Noticias" />
 </navigation>
