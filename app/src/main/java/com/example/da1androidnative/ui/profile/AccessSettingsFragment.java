@@ -173,7 +173,7 @@ public class AccessSettingsFragment extends Fragment {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Cambiar Contraseña")
                 .setMessage("¿Queres Cambiar tu Contraseña? Te enviaremos un OTP a tu mail registrado!")
-                .setPositiveButton("Cerrar sesión", (dialog, which) -> performPasswordChangeInitialization())
+                .setPositiveButton("Cambiar Contraseña", (dialog, which) -> performPasswordChangeInitialization())
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
