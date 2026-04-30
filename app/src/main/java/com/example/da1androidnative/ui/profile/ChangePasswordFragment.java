@@ -26,7 +26,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 @AndroidEntryPoint
-public class ChangeEmailFragment extends Fragment {
+public class ChangePasswordFragment extends Fragment {
 
     @Inject ApiService apiService;
     private TextInputEditText password;
@@ -55,7 +55,7 @@ public class ChangeEmailFragment extends Fragment {
 
 
 
-        });
+
     }
 
 }
