@@ -82,7 +82,7 @@
                         android:layout_marginTop="6dp"
                         android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                         android:textColor="?attr/colorOnSurfaceVariant"
-                        tools:text="En este entorno de desarrollo el codigo se muestra en la terminal del backend." />
+                        tools:text="Te enviamos el codigo por email. Revisa tu bandeja de entrada y spam." />
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
