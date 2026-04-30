@@ -29,7 +29,7 @@
     <string name="request_recovery_otp_button">Recuperar acceso con OTP</string>
 
     <string name="app_brand_title">XploreNow Argentina</string>
-    <string name="nav_reservas">Reservas</string>
+    <string name="nav_reservas">Mis actividades</string>
     <string name="nav_favoritos">Favoritos</string>
     <string name="nav_perfil">Perfil</string>
 
