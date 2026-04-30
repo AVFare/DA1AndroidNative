@@ -4,6 +4,8 @@ import com.example.da1androidnative.data.model.ActivityDetalleResponse;
 import com.example.da1androidnative.data.model.ActivityHistoryDetailResponse;
 import com.example.da1androidnative.data.model.ActivityHistoryResponse;
 import com.example.da1androidnative.data.model.AuthResponse;
+import com.example.da1androidnative.data.model.ConfirmChangePasswordRequest;
+import com.example.da1androidnative.data.model.ConfirmChangePasswordResponse;
 import com.example.da1androidnative.data.model.ConfirmEmailChangeRequest;
 import com.example.da1androidnative.data.model.InitiateEmailChangeRequest;
 import com.example.da1androidnative.data.model.LoginRequest;
@@ -42,6 +44,12 @@ import retrofit2.http.Query;
 public interface ApiService {
     @POST("auth/login")
     Call<AuthResponse> login(@Body LoginRequest loginRequest);
+
+    @POST
+    Call<Void> initiateChangePassword();
+
+    @POST
+    Call<ConfirmChangePasswordResponse> ConfirmChangePassword(@Body ConfirmChangePasswordRequest confirmChangePasswordRequest);
 
     @POST("auth/register")
     Call<AuthResponse> register(@Body RegisterRequest request);
