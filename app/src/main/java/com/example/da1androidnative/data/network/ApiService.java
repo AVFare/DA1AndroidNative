@@ -45,10 +45,10 @@ public interface ApiService {
     @POST("auth/login")
     Call<AuthResponse> login(@Body LoginRequest loginRequest);
 
-    @POST
+    @POST("profile/me/password-change/initiate")
     Call<Void> initiateChangePassword();
 
-    @POST
+    @POST("profile/me/password-change/confirm")
     Call<ConfirmChangePasswordResponse> ConfirmChangePassword(@Body ConfirmChangePasswordRequest confirmChangePasswordRequest);
 
     @POST("auth/register")
