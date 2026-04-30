@@ -77,9 +77,9 @@ public class ActivityHistoryAdapter extends RecyclerView.Adapter<ActivityHistory
             tvGuide.setText("Guía: " + activity.getGuideName());
             tvDuration.setText("Duración: " + formatDuration(activity.getDurationMinutes()));
             if (activity.isHasRating() && activity.getRating() != null) {
-                tvRating.setText("Calificada: " + activity.getRating() + "/5");
+                tvRating.setText("Actividad: " + activity.getRating() + "/5 • Abrí para ver guía y comentario");
             } else {
-                tvRating.setText("Sin calificación");
+                tvRating.setText("Sin calificación • Abrí para ver detalle");
             }
 
             setStatusView(activity.getStatus());
