@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
@@ -65,12 +66,20 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
 
         viewModel = new ViewModelProvider(this).get(ActivityHistoryViewModel.class);
         
+        setupToolbar(view); // volver atras
         setupViews(view);
         setupRecyclerView(view);
         observeViewModel();
 
-        // Carga inicial: Historial filtrado por completados y cancelados
         viewModel.loadHistory(null, null, null, "COMPLETED,CANCELLED", null, null);
+    }
+
+    private void setupToolbar(View view) {
+        Toolbar toolbar = view.findViewById(R.id.historyToolbar);
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(v -> 
+                NavHostFragment.findNavController(this).navigateUp());
+        }
     }
 
     private void setupViews(View view) {
@@ -82,24 +91,20 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         tvEmptyState = view.findViewById(R.id.tvEmptyState);
         tvError = view.findViewById(R.id.tvError);
 
-        // Setup Dropdown Status
         ArrayAdapter<String> adapterStatus = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, statusOptionsDisplay);
         spinnerStatus.setAdapter(adapterStatus);
-        spinnerStatus.setText(statusOptionsDisplay[0], false); // "Todos" por defecto
+        spinnerStatus.setText(statusOptionsDisplay[0], false);
 
         etStartDate.setOnClickListener(v -> showDatePicker(etStartDate));
         etEndDate.setOnClickListener(v -> showDatePicker(etEndDate));
 
-        view.findViewById(R.id.btnApplyFilters).setOnClickListener(v -> {
-            applyFilters();
-        });
+        view.findViewById(R.id.btnApplyFilters).setOnClickListener(v -> applyFilters());
 
         view.findViewById(R.id.btnClearFilters).setOnClickListener(v -> {
             spinnerDestination.setText("Todos", false);
             etStartDate.setText("");
             etEndDate.setText("");
             spinnerStatus.setText(statusOptionsDisplay[0], false);
-
             viewModel.loadHistory(null, null, null, "COMPLETED,CANCELLED", null, null);
         });
     }
@@ -110,16 +115,14 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         String selectedStatus = spinnerStatus.getText().toString();
         String statusValue = statusMap.get(selectedStatus);
 
-        // Si es "Todos", pasamos los estados de historial
         if ("Todos".equals(selectedStatus)) {
             statusValue = "COMPLETED,CANCELLED";
         }
 
-        // Primero cargamos de la API con filtros de fecha y estado
         viewModel.loadHistory(
             start.isEmpty() ? null : start,
             end.isEmpty() ? null : end,
-            null, // destinationId lo manejamos localmente
+            null,
             statusValue,
             null,
             null
@@ -162,8 +165,8 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
     }
 
     private void showDatePicker(EditText editText) {
-        Calendar calendar = calendar = Calendar.getInstance();
-        new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
+        Calendar calendar = Calendar.getInstance();
+        new DatePickerDialog(requireContext(), (v, year, month, dayOfMonth) -> {
             String date = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month + 1, dayOfMonth);
             editText.setText(date);
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
@@ -180,10 +183,7 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         viewModel.activities.observe(getViewLifecycleOwner(), list -> {
             allActivities = list != null ? list : new ArrayList<>();
             updateDestinationSpinner(allActivities);
-            
-            // Aplicar el filtro de destino local inmediatamente después de recibir datos
-            String selectedDest = spinnerDestination.getText().toString();
-            filterByDestinationLocally(selectedDest);
+            filterByDestinationLocally(spinnerDestination.getText().toString());
         });
 
         viewModel.isLoading.observe(getViewLifecycleOwner(), isLoading -> {
@@ -191,16 +191,13 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         });
 
         viewModel.error.observe(getViewLifecycleOwner(), error -> {
+            tvError.setVisibility(error != null ? View.VISIBLE : View.GONE);
             if (error != null) {
-                tvError.setVisibility(View.VISIBLE);
                 Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
-            } else {
-                tvError.setVisibility(View.GONE);
             }
         });
 
-        // Escuchar cambios en el dropdown de destino
-        spinnerDestination.setOnItemClickListener((parent, view, position, id) -> {
+        spinnerDestination.setOnItemClickListener((parent, v, position, id) -> {
             String selected = (String) parent.getItemAtPosition(position);
             filterByDestinationLocally(selected);
         });

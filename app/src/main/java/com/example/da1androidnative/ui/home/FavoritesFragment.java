@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -39,6 +40,7 @@ public class FavoritesFragment extends Fragment implements ActivityAdapter.OnAct
     
     private ActivityAdapter adapter;
     private RecyclerView recyclerView;
+    private View emptyState;
 
     @Nullable
     @Override
@@ -50,9 +52,18 @@ public class FavoritesFragment extends Fragment implements ActivityAdapter.OnAct
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         
+        emptyState = view.findViewById(R.id.emptyFavoritesState);
+        setupToolbar(view);
         setupRecyclerView(view);
-        setupButtons(view);
         loadFavorites();
+    }
+
+    private void setupToolbar(View view) {
+        Toolbar toolbar = view.findViewById(R.id.favoritesToolbar);
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(v ->
+                NavHostFragment.findNavController(this).navigateUp());
+        }
     }
 
     private void setupRecyclerView(View view) {
@@ -60,14 +71,6 @@ public class FavoritesFragment extends Fragment implements ActivityAdapter.OnAct
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new ActivityAdapter(getContext(), favoritesManager, this);
         recyclerView.setAdapter(adapter);
-    }
-
-    private void setupButtons(View view) {
-        view.findViewById(R.id.btnReservas).setOnClickListener(v ->
-                NavHostFragment.findNavController(this).navigate(R.id.action_favorites_to_reservasFragment));
-        
-        view.findViewById(R.id.btnMisDatos).setOnClickListener(v ->
-                Toast.makeText(getContext(), R.string.nav_perfil, Toast.LENGTH_SHORT).show());
     }
 
     private void loadFavorites() {
@@ -84,15 +87,28 @@ public class FavoritesFragment extends Fragment implements ActivityAdapter.OnAct
                             favoriteActivities.add(activity);
                         }
                     }
+
                     adapter.setActivities(favoriteActivities);
+                    updateUI(favoriteActivities.isEmpty());
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<PaginatedActivitiesResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                if (isAdded()) {
+                    Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         });
+    }
+
+    private void updateUI(boolean isEmpty) {
+        if (emptyState != null) {
+            emptyState.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
+        }
+        if (recyclerView != null) {
+            recyclerView.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
+        }
     }
 
     @Override

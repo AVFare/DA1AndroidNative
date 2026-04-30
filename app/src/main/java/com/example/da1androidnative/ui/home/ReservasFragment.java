@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -40,9 +41,14 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
 
     @Inject ApiService apiService;
     @Inject OfflineReservationStorage offlineStorage;
+    
     private ReservasAdapter reservasAdapter;
     private RecyclerView recyclerView;
     private TextView tvOfflineBanner;
+    
+    private TextView tvTotalCount, tvPendingCount;
+    private View summaryCard, emptyState;
+    
     private ConnectivityManager.NetworkCallback networkCallback;
 
     @Nullable
@@ -54,9 +60,22 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        
         tvOfflineBanner = view.findViewById(R.id.tvOfflineBanner);
+        tvTotalCount = view.findViewById(R.id.tvTotalCount);
+        tvPendingCount = view.findViewById(R.id.tvPendingCount);
+        summaryCard = view.findViewById(R.id.summaryCard);
+        emptyState = view.findViewById(R.id.emptyState);
+        recyclerView = view.findViewById(R.id.reservasRecyclerView);
+
+        // configuracion de toolbar y retroceso...
+        Toolbar toolbar = view.findViewById(R.id.reservasToolbar);
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(v -> 
+                NavHostFragment.findNavController(this).navigateUp());
+        }
+
         setupRecyclerView(view);
-        setupButtons(view);
         registerNetworkCallback();
         loadReservas();
     }
@@ -74,20 +93,32 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
     }
 
     private void setupRecyclerView(View view) {
-        recyclerView = view.findViewById(R.id.reservasRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         reservasAdapter = new ReservasAdapter(getContext(), this);
         recyclerView.setAdapter(reservasAdapter);
     }
 
-    private void setupButtons(View view) {
-        view.findViewById(R.id.btnCalificaciones).setOnClickListener(v ->
-                NavHostFragment.findNavController(this).navigate(R.id.action_reservas_to_reviewsFragment));
-        view.findViewById(R.id.btnFavoritos).setOnClickListener(v ->
-                NavHostFragment.findNavController(this).navigate(R.id.action_reservas_to_favoritesFragment));
+    private void updateUIState(List<ReservaResponse> reservas) {
+        if (reservas == null || reservas.isEmpty()) {
+            if (summaryCard != null) summaryCard.setVisibility(View.GONE);
+            if (recyclerView != null) recyclerView.setVisibility(View.GONE);
+            if (emptyState != null) emptyState.setVisibility(View.VISIBLE);
+        } else {
+            if (emptyState != null) emptyState.setVisibility(View.GONE);
+            if (summaryCard != null) summaryCard.setVisibility(View.VISIBLE);
+            if (recyclerView != null) recyclerView.setVisibility(View.VISIBLE);
 
-        view.findViewById(R.id.btnMisDatos).setOnClickListener(v ->
-                Toast.makeText(getContext(), R.string.nav_perfil, Toast.LENGTH_SHORT).show());
+            int total = reservas.size();
+            int pending = 0;
+            for (ReservaResponse r : reservas) {
+                if ("PENDING".equalsIgnoreCase(r.getStatus()) || "CONFIRMED".equalsIgnoreCase(r.getStatus())) {
+                    pending++;
+                }
+            }
+
+            if (tvTotalCount != null) tvTotalCount.setText(String.valueOf(total));
+            if (tvPendingCount != null) tvPendingCount.setText(String.valueOf(pending));
+        }
     }
 
     private void registerNetworkCallback() {
@@ -98,7 +129,6 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
                 public void onAvailable(@NonNull Network network) {
                     if (getActivity() != null) {
                         getActivity().runOnUiThread(() -> {
-                            // Sincronización automática al recuperar conexión
                             syncPendingCancellations();
                             loadReservas();
                         });
@@ -138,26 +168,23 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
                     if (response.isSuccessful()) {
                         offlineStorage.removePendingCancellation(reservationId);
                         offlineStorage.clearReservation(reservationId);
-                        loadReservas(); // Recargar lista para ver cambios
+                        loadReservas();
                     }
                 }
 
                 @Override
-                public void onFailure(@NonNull Call<ReservaCancelledResponse> call, @NonNull Throwable t) {
-                    // Reintentar en la próxima conexión
-                }
+                public void onFailure(@NonNull Call<ReservaCancelledResponse> call, @NonNull Throwable t) {}
             });
         }
     }
 
     private void loadReservas() {
         if (!NetworkUtils.isNetworkAvailable(getContext())) {
-            // Modo Offline: Cargar desde SharedPreferences
             showOfflineMode(true);
             List<ReservaResponse> savedReservas = offlineStorage.getSavedReservations();
             reservasAdapter.setReservas(savedReservas);
+            updateUIState(savedReservas);
         } else {
-            // Modo Online: Cargar desde el servidor
             showOfflineMode(false);
             apiService.getAllReservas().enqueue(new Callback<PaginatedReservasResponse>() {
                 @Override
@@ -165,18 +192,18 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
                     if (response.isSuccessful() && response.body() != null) {
                         List<ReservaResponse> listaReservas = response.body().getContent();
                         reservasAdapter.setReservas(listaReservas);
-                        // Sincronizar cache local con los datos actuales del servidor
                         offlineStorage.updateReservations(listaReservas);
+                        updateUIState(listaReservas);
                     } else {
-                        Toast.makeText(getContext(), "Error al cargar reservas: " + response.code(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Error al cargar reservas", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(@NonNull Call<PaginatedReservasResponse> call, @NonNull Throwable t) {
-                    // Fallback a offline si hay fallo de red inesperado
                     List<ReservaResponse> savedReservas = offlineStorage.getSavedReservations();
                     reservasAdapter.setReservas(savedReservas);
+                    updateUIState(savedReservas);
                     showOfflineMode(true);
                 }
             });
