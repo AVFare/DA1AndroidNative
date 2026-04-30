@@ -105,4 +105,9 @@
     <string name="biometric_credentials_not_found">Credenciales no encontradas, ingresa manualmente</string>
     <string name="biometric_permission_denied">Permiso de biometría denegado</string>
     <string name="biometric_switch_label">Habilitar Biometría</string>
+
+    <!-- Change Password Strings -->
+    <string name="new_password_hint">Nueva contraseña</string>
+    <string name="confirm_password_hint">Confirmar contraseña</string>
+    <string name="confirm_button">Confirmar cambios</string>
 </resources>

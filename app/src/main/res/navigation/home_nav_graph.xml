@@ -212,6 +212,9 @@
 		<action
 			android:id="@+id/action_accessSettings_to_changeEmailFragment"
 			app:destination="@id/changeEmailFragment" />
+		<action
+			android:id="@+id/action_accessSettings_to_changePasswordFragment"
+			app:destination="@id/changePasswordFragment" />
 	</fragment>
 
 	<fragment
@@ -225,6 +228,11 @@
 			android:id="@+id/action_changeEmail_to_otpEmailChangeFragment"
 			app:destination="@id/otpEmailChangeFragment" />
 	</fragment>
+
+	<fragment
+		android:id="@+id/changePasswordFragment"
+		android:name="com.example.da1androidnative.ui.profile.ChangePasswordFragment"
+		android:label="Cambiar contraseña" />
 
 	<fragment
 		android:id="@+id/otpEmailChangeFragment"
