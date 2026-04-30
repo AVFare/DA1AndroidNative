@@ -137,7 +137,7 @@ public class OtpVerificationFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<OtpChallengeResponse> call, @NonNull Response<OtpChallengeResponse> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Se genero un nuevo codigo. Revisa la terminal del backend.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Se genero un nuevo codigo. Revisa tu email.", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getContext(), "No se pudo reenviar el codigo", Toast.LENGTH_LONG).show();
                 }
