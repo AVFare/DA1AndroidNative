@@ -107,6 +107,10 @@
     <string name="biometric_switch_label">Habilitar Biometría</string>
 
     <!-- Change Password Strings -->
+    <string name="change_password_title">Cambiar contraseña</string>
+    <string name="change_password_subtitle">Ingresa tu nueva contraseña y el código OTP enviado a tu correo.</string>
+    <string name="change_password_otp_section_title">Verificación OTP</string>
+    <string name="change_password_otp_helper_text">Se ha enviado un código a tu correo electrónico.</string>
     <string name="new_password_hint">Nueva contraseña</string>
     <string name="confirm_password_hint">Confirmar contraseña</string>
     <string name="confirm_button">Confirmar cambios</string>
