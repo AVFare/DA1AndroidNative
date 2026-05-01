@@ -80,6 +80,7 @@ public class AccessSettingsFragment extends Fragment {
 
         view.findViewById(R.id.btnLogout).setOnClickListener(v -> confirmLogout());
 
+        view.findViewById(R.id.btnChangePassword).setOnClickListener(v -> initiateChangePassword());
 
         view.findViewById(R.id.btnDeleteAccount).setOnClickListener(v -> confirmDeleteAccount());
     }
@@ -166,6 +167,36 @@ public class AccessSettingsFragment extends Fragment {
                 .setPositiveButton("Cerrar sesión", (dialog, which) -> performLogout())
                 .setNegativeButton("Cancelar", null)
                 .show();
+    }
+
+    private void initiateChangePassword() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Cambiar Contraseña")
+                .setMessage("¿Queres Cambiar tu Contraseña? Te enviaremos un OTP a tu mail registrado!")
+                .setPositiveButton("Cambiar Contraseña", (dialog, which) -> performPasswordChangeInitialization())
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void performPasswordChangeInitialization() {
+        apiService.initiateChangePassword().enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (response.isSuccessful()) {
+                    NavHostFragment.findNavController(AccessSettingsFragment.this)
+                            .navigate(R.id.action_accessSettings_to_changePasswordFragment);
+                    Toast.makeText(getContext(), "OTP Enviado Revisa tu Mail!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "No se pudo iniciar el cambio de contraseña", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     private void performLogout() {

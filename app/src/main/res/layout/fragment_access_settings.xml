@@ -42,6 +42,15 @@
             android:layout_height="wrap_content" />
     </LinearLayout>
 
+    <!-- Cambiar contraseña -->
+    <Button
+        android:id="@+id/btnChangePassword"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cambiar contraseña"
+        android:layout_marginBottom="16dp" />
+
     <!-- Cambiar email -->
     <Button
         android:id="@+id/btnChangeEmail"
