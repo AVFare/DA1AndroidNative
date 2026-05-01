@@ -109,7 +109,7 @@ public class OtpEmailChangeFragment extends Fragment {
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if (response.isSuccessful()) {
-                            Toast.makeText(getContext(), "Se reenvió el código. Revisá la terminal del backend.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "Se reenvió el código. Revisá tu email.", Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(getContext(), "No se pudo reenviar el código", Toast.LENGTH_SHORT).show();
                         }

@@ -19,9 +19,11 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.local.OfflineReservationStorage;
 import com.example.da1androidnative.data.model.ActivityDetalleResponse;
+import com.example.da1androidnative.data.model.ActivityHistoryDetailResponse;
 import com.example.da1androidnative.data.model.ItineraryResponse;
 import com.example.da1androidnative.data.model.ReservaCancelledResponse;
 import com.example.da1androidnative.data.model.ReservaDetalleResponse;
+import com.example.da1androidnative.data.model.ReviewableReservationResponse;
 import com.example.da1androidnative.data.network.ApiService;
 import com.example.da1androidnative.data.network.NetworkUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -56,6 +58,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
     private TextView reservationIdText, reservationDateText, reservationTimeText, reservationParticipantsText;
     private TextView reservationMeetingPointText, reservationVoucherCodeText, reservationTotalPriceText;
     private TextView reservationCancellationPolicyText;
+    private TextView reservationRatingStatusText, reservationActivityRatingText, reservationGuideRatingText, reservationCommentText;
     private Button cancelReservationButton, btnHowToGet;
     
     private GoogleMap mMap;
@@ -100,6 +103,10 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         reservationVoucherCodeText = view.findViewById(R.id.reservationVoucherCodeText);
         reservationTotalPriceText = view.findViewById(R.id.reservationTotalPriceText);
         reservationCancellationPolicyText = view.findViewById(R.id.reservationCancellationPolicyText);
+        reservationRatingStatusText = view.findViewById(R.id.reservationRatingStatusText);
+        reservationActivityRatingText = view.findViewById(R.id.reservationActivityRatingText);
+        reservationGuideRatingText = view.findViewById(R.id.reservationGuideRatingText);
+        reservationCommentText = view.findViewById(R.id.reservationCommentText);
         cancelReservationButton = view.findViewById(R.id.cancelReservationButton);
         btnHowToGet = view.findViewById(R.id.btnHowToGet);
     }
@@ -174,6 +181,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         reservationVoucherCodeText.setText("Voucher: " + detalle.getVoucherCode());
         reservationTotalPriceText.setText("Total: $" + detalle.getTotalPrice());
         reservationCancellationPolicyText.setText(detalle.getCancellationPolicy());
+        bindInitialRatingState(detalle.getStatus());
 
         // El botón solo se deshabilita si el status es CANCELLED o COMPLETED.
         if (Objects.equals(detalle.getStatus(), "CANCELLED") || Objects.equals(detalle.getStatus(), "COMPLETED")) {
@@ -196,6 +204,127 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
             }
         });
         setupHowToGetButton();
+
+        if (NetworkUtils.isNetworkAvailable(getContext())) {
+            loadRatingDetailsIfNeeded(detalle.getStatus());
+        } else {
+            showOfflineRatingMessage(detalle.getStatus());
+        }
+    }
+
+    private void bindInitialRatingState(String status) {
+        if (!isCompleted(status)) {
+            reservationRatingStatusText.setText("No podés calificar una actividad que todavía no se realizó.");
+            reservationActivityRatingText.setText("Actividad: -");
+            reservationGuideRatingText.setText("Guía: -");
+            reservationCommentText.setText("Comentario: disponible cuando la actividad esté finalizada.");
+            return;
+        }
+
+        reservationRatingStatusText.setText("Consultando calificación...");
+        reservationActivityRatingText.setText("Actividad: -");
+        reservationGuideRatingText.setText("Guía: -");
+        reservationCommentText.setText("Comentario: consultando...");
+    }
+
+    private void loadRatingDetailsIfNeeded(String status) {
+        if (!isCompleted(status) || reservationId == -1L) {
+            return;
+        }
+
+        apiService.getActivityHistoryDetail(reservationId).enqueue(new Callback<ActivityHistoryDetailResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ActivityHistoryDetailResponse> call, @NonNull Response<ActivityHistoryDetailResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().isHasRating()) {
+                    bindSubmittedRating(response.body());
+                } else {
+                    loadPendingRatingWindow();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ActivityHistoryDetailResponse> call, @NonNull Throwable t) {
+                loadPendingRatingWindow();
+            }
+        });
+    }
+
+    private void bindSubmittedRating(ActivityHistoryDetailResponse detail) {
+        reservationRatingStatusText.setText("Calificación enviada.");
+        reservationActivityRatingText.setText("Actividad: " + formatStars(detail.getActivityStars()));
+        reservationGuideRatingText.setText("Guía: " + formatStars(detail.getGuideStars()));
+
+        if (isBlank(detail.getComment())) {
+            reservationCommentText.setText("Comentario: no dejaste comentario en el plazo de calificación.");
+        } else {
+            reservationCommentText.setText("Comentario: " + detail.getComment());
+        }
+    }
+
+    private void loadPendingRatingWindow() {
+        apiService.getReviewableReservations().enqueue(new Callback<List<ReviewableReservationResponse>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<ReviewableReservationResponse>> call,
+                                   @NonNull Response<List<ReviewableReservationResponse>> response) {
+                reservationActivityRatingText.setText("Actividad: -");
+                reservationGuideRatingText.setText("Guía: -");
+
+                if (!response.isSuccessful() || response.body() == null) {
+                    reservationRatingStatusText.setText("No se pudo consultar el estado de calificación.");
+                    reservationCommentText.setText("Comentario: revisá la sección Reseñas cuando tengas conexión.");
+                    return;
+                }
+
+                ReviewableReservationResponse pending = findPendingByReservationId(response.body(), reservationId);
+                if (pending != null) {
+                    reservationRatingStatusText.setText("Todavía podés calificar esta actividad.");
+                    reservationCommentText.setText("Comentario: aún estás en plazo (hasta " + pending.getExpiresAt() + ").");
+                } else {
+                    reservationRatingStatusText.setText("Ya venció el plazo para calificar esta actividad.");
+                    reservationCommentText.setText("Comentario: no dejaste comentario en el plazo de calificación.");
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<ReviewableReservationResponse>> call, @NonNull Throwable t) {
+                reservationActivityRatingText.setText("Actividad: -");
+                reservationGuideRatingText.setText("Guía: -");
+                reservationRatingStatusText.setText("No se pudo consultar el estado de calificación.");
+                reservationCommentText.setText("Comentario: revisá la sección Reseñas cuando tengas conexión.");
+            }
+        });
+    }
+
+    private void showOfflineRatingMessage(String status) {
+        if (!isCompleted(status)) {
+            return;
+        }
+
+        reservationActivityRatingText.setText("Actividad: -");
+        reservationGuideRatingText.setText("Guía: -");
+        reservationRatingStatusText.setText("Sin conexión: no se pudo consultar la calificación.");
+        reservationCommentText.setText("Comentario: conectate para ver calificación y estado de plazo.");
+    }
+
+    private ReviewableReservationResponse findPendingByReservationId(List<ReviewableReservationResponse> items, long id) {
+        for (ReviewableReservationResponse item : items) {
+            if (item.getReservationId() == id) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    private boolean isCompleted(String status) {
+        return status != null && "COMPLETED".equalsIgnoreCase(status);
+    }
+
+    private String formatStars(Integer stars) {
+        return stars == null ? "-" : stars + "/5";
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 
     private void setupHowToGetButton() {
