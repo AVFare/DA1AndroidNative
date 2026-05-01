@@ -56,6 +56,13 @@ public interface ApiService {
     @GET("activities")
     Call<PaginatedActivitiesResponse> getAllActivities();
 
+    @GET("activities")
+    Call<PaginatedActivitiesResponse> getAllActivities(
+            @Query("userId") Long userId,
+            @Query("page") Integer page,
+            @Query("size") Integer size
+    );
+
     @GET("activities/{activityId}")
     Call<ActivityDetalleResponse> getDetalleActivity(@Path("activityId") long activityId);
 

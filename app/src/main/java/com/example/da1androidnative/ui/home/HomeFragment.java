@@ -156,14 +156,35 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
 
     private void loadActivities() {
         if (!NetworkUtils.isNetworkAvailable(getContext())) return;
-        apiService.getAllActivities().enqueue(new Callback<PaginatedActivitiesResponse>() {
+
+        long userId = tokenManager.getUserId();
+
+        apiService.getAllActivities(
+                userId != -1 ? userId : null,
+                0,
+                10
+        ).enqueue(new Callback<PaginatedActivitiesResponse>() {
             @Override
-            public void onResponse(@NonNull Call<PaginatedActivitiesResponse> call, @NonNull Response<PaginatedActivitiesResponse> response) {
-                if (response.isSuccessful() && response.body() != null) adapter.setActivities(response.body().getContent());
+            public void onResponse(@NonNull Call<PaginatedActivitiesResponse> call,
+                                   @NonNull Response<PaginatedActivitiesResponse> response) {
+
+                if (response.isSuccessful() && response.body() != null) {
+                    adapter.setActivities(response.body().getContent());
+
+                    //Log: featured flag.
+                    for (ActivityResponse a : response.body().getContent()) {
+                        android.util.Log.d("FEATURED_TEST",
+                                a.getName() + " -> featured=" + a.isFeatured());
+                    }
+                }
             }
+
             @Override
-            public void onFailure(@NonNull Call<PaginatedActivitiesResponse> call, @NonNull Throwable t) {
-                if (isAdded()) Toast.makeText(getContext(), "Fallo al cargar actividades", Toast.LENGTH_SHORT).show();
+            public void onFailure(@NonNull Call<PaginatedActivitiesResponse> call,
+                                  @NonNull Throwable t) {
+                if (isAdded()) {
+                    Toast.makeText(getContext(), "Fallo al cargar actividades", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

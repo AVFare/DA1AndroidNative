@@ -58,4 +58,11 @@ public class ActivityResponse {
     public List<ActivityImageResponse> getImages() {
         return images;
     }
+
+    @SerializedName("featured")
+    private boolean featured;
+
+    public boolean isFeatured() {
+        return featured;
+    }
 }
