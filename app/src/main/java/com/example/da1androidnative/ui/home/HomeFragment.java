@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +33,10 @@ import com.example.da1androidnative.data.network.NetworkUtils;
 import com.example.da1androidnative.ui.home.adapter.ActivityAdapter;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -48,8 +53,14 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
 
     private ActivityAdapter adapter;
     private TextView tvOfflineBanner;
+    private TextView tvPageNumber;
+    private Button btnPreviousPage;
+    private Button btnNextPage;
     private SwitchMaterial biometricSwitch;
     private ConnectivityManager.NetworkCallback networkCallback;
+    private int currentPage = 0;
+    private boolean isLastPage = false;
+    private static final int PAGE_SIZE = 6;
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -73,6 +84,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         biometricSwitch = view.findViewById(R.id.biometricSwitch);
 
         setupRecyclerView(view);
+        setupPagination(view);
         setupBiometricSwitch();
         registerNetworkCallback();
         loadActivities();
@@ -124,6 +136,16 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         recyclerView.setAdapter(adapter);
     }
 
+    private void setupPagination(View view) {
+        btnPreviousPage = view.findViewById(R.id.btnPreviousPage);
+        btnNextPage = view.findViewById(R.id.btnNextPage);
+        tvPageNumber = view.findViewById(R.id.tvPageNumber);
+
+        btnPreviousPage.setOnClickListener(v -> previousPage());
+        btnNextPage.setOnClickListener(v -> nextPage());
+        updatePaginationControls();
+    }
+
     private void registerNetworkCallback() {
         ConnectivityManager cm = (ConnectivityManager) requireContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm != null) {
@@ -161,18 +183,22 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
 
         apiService.getAllActivities(
                 userId != -1 ? userId : null,
-                0,
-                10
+                currentPage,
+                PAGE_SIZE
         ).enqueue(new Callback<PaginatedActivitiesResponse>() {
             @Override
             public void onResponse(@NonNull Call<PaginatedActivitiesResponse> call,
                                    @NonNull Response<PaginatedActivitiesResponse> response) {
 
                 if (response.isSuccessful() && response.body() != null) {
-                    adapter.setActivities(response.body().getContent());
+                    PaginatedActivitiesResponse body = response.body();
+                    List<ActivityResponse> content = body.getContent();
+                    adapter.setActivities(content != null ? content : new ArrayList<>());
+                    isLastPage = isLastPage(body, content);
+                    updatePaginationControls();
 
                     //Log: featured flag.
-                    for (ActivityResponse a : response.body().getContent()) {
+                    for (ActivityResponse a : content != null ? content : new ArrayList<ActivityResponse>()) {
                         android.util.Log.d("FEATURED_TEST",
                                 a.getName() + " -> featured=" + a.isFeatured());
                     }
@@ -187,6 +213,47 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
                 }
             }
         });
+    }
+
+    private void nextPage() {
+        if (!isLastPage) {
+            currentPage++;
+            updatePaginationControls();
+            loadActivities();
+        }
+    }
+
+    private void previousPage() {
+        if (currentPage > 0) {
+            currentPage--;
+            updatePaginationControls();
+            loadActivities();
+        }
+    }
+
+    private void updatePaginationControls() {
+        if (tvPageNumber != null) {
+            tvPageNumber.setText(String.format(Locale.getDefault(), "P\u00e1gina %d", currentPage + 1));
+        }
+        if (btnPreviousPage != null) {
+            btnPreviousPage.setEnabled(currentPage > 0);
+        }
+        if (btnNextPage != null) {
+            btnNextPage.setEnabled(!isLastPage);
+        }
+    }
+
+    private boolean isLastPage(PaginatedActivitiesResponse body, List<ActivityResponse> content) {
+        if (body.getLast() != null) {
+            return body.getLast();
+        }
+
+        Integer totalPages = body.getTotalPages();
+        if (totalPages != null) {
+            return currentPage >= totalPages - 1;
+        }
+
+        return content == null || content.size() < PAGE_SIZE;
     }
 
     @Override
