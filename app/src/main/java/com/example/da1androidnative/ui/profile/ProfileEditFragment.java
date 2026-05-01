@@ -8,6 +8,8 @@ import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -18,8 +20,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
+import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.UpdateUserProfileRequest;
-import com.example.da1androidnative.databinding.FragmentProfileBinding;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,9 +36,21 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class ProfileEditFragment extends Fragment {
 
-    private FragmentProfileBinding binding;
     private ProfileViewModel viewModel;
     private String currentPhotoBase64 = null;
+    private ImageView ivProfilePhoto;
+    private TextInputEditText etFirstName;
+    private TextInputEditText etLastName;
+    private TextInputEditText etEmail;
+    private TextInputEditText etPhone;
+    private CheckBox cbAventura;
+    private CheckBox cbCultura;
+    private CheckBox cbGastronomia;
+    private CheckBox cbNaturaleza;
+    private CheckBox cbRelax;
+    private MaterialButton btnChangePhoto;
+    private MaterialButton btnSaveProfile;
+    private MaterialButton btnCancelEdit;
 
     private final ActivityResultLauncher<String> pickImageLauncher =
             registerForActivityResult(
@@ -53,8 +69,7 @@ public class ProfileEditFragment extends Fragment {
             @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState
     ) {
-        binding = FragmentProfileBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+        return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
     @Override
@@ -66,19 +81,36 @@ public class ProfileEditFragment extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 
+        initViews(view);
         observeViewModel();
         setupListeners();
         viewModel.loadProfile();
+    }
+
+    private void initViews(View view) {
+        ivProfilePhoto = view.findViewById(R.id.ivProfilePhoto);
+        etFirstName = view.findViewById(R.id.etFirstName);
+        etLastName = view.findViewById(R.id.etLastName);
+        etEmail = view.findViewById(R.id.etEmail);
+        etPhone = view.findViewById(R.id.etPhone);
+        cbAventura = view.findViewById(R.id.cbAventura);
+        cbCultura = view.findViewById(R.id.cbCultura);
+        cbGastronomia = view.findViewById(R.id.cbGastronomia);
+        cbNaturaleza = view.findViewById(R.id.cbNaturaleza);
+        cbRelax = view.findViewById(R.id.cbRelax);
+        btnChangePhoto = view.findViewById(R.id.btnChangePhoto);
+        btnSaveProfile = view.findViewById(R.id.btnSaveProfile);
+        btnCancelEdit = view.findViewById(R.id.btnCancelEdit);
     }
 
     private void observeViewModel() {
         viewModel.getProfileData().observe(getViewLifecycleOwner(), profile -> {
             if (profile == null) return;
 
-            binding.etFirstName.setText(profile.getFirstName());
-            binding.etLastName.setText(profile.getLastName());
-            binding.etEmail.setText(profile.getEmail());
-            binding.etPhone.setText(profile.getPhone());
+            etFirstName.setText(profile.getFirstName());
+            etLastName.setText(profile.getLastName());
+            etEmail.setText(profile.getEmail());
+            etPhone.setText(profile.getPhone());
 
             // Cambiado: usa profilePhoto (base64) en lugar de profilePictureUrl
             if (profile.getProfilePhoto() != null
@@ -88,26 +120,26 @@ public class ProfileEditFragment extends Fragment {
             }
 
             if (profile.getTravelPreferences() != null) {
-                binding.cbAventura.setChecked(
+                cbAventura.setChecked(
                         profile.getTravelPreferences().contains("AVENTURA")
                 );
-                binding.cbCultura.setChecked(
+                cbCultura.setChecked(
                         profile.getTravelPreferences().contains("CULTURA")
                 );
-                binding.cbGastronomia.setChecked(
+                cbGastronomia.setChecked(
                         profile.getTravelPreferences().contains("GASTRONOMIA")
                 );
-                binding.cbNaturaleza.setChecked(
+                cbNaturaleza.setChecked(
                         profile.getTravelPreferences().contains("NATURALEZA")
                 );
-                binding.cbRelax.setChecked(
+                cbRelax.setChecked(
                         profile.getTravelPreferences().contains("RELAX")
                 );
             }
         });
 
         viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            binding.btnSaveProfile.setEnabled(!Boolean.TRUE.equals(isLoading));
+            btnSaveProfile.setEnabled(!Boolean.TRUE.equals(isLoading));
         });
 
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
@@ -136,30 +168,30 @@ public class ProfileEditFragment extends Fragment {
     }
 
     private void setupListeners() {
-        binding.btnChangePhoto.setOnClickListener(
+        btnChangePhoto.setOnClickListener(
                 v -> pickImageLauncher.launch("image/*")
         );
 
-        binding.btnSaveProfile.setOnClickListener(v -> {
-            String firstName = binding.etFirstName.getText() != null
-                    ? binding.etFirstName.getText().toString().trim()
+        btnSaveProfile.setOnClickListener(v -> {
+            String firstName = etFirstName.getText() != null
+                    ? etFirstName.getText().toString().trim()
                     : "";
 
-            String lastName = binding.etLastName.getText() != null
-                    ? binding.etLastName.getText().toString().trim()
+            String lastName = etLastName.getText() != null
+                    ? etLastName.getText().toString().trim()
                     : "";
 
-            String phone = binding.etPhone.getText() != null
-                    ? binding.etPhone.getText().toString().trim()
+            String phone = etPhone.getText() != null
+                    ? etPhone.getText().toString().trim()
                     : "";
 
             List<String> preferences = new ArrayList<>();
 
-            if (binding.cbAventura.isChecked()) preferences.add("AVENTURA");
-            if (binding.cbCultura.isChecked()) preferences.add("CULTURA");
-            if (binding.cbGastronomia.isChecked()) preferences.add("GASTRONOMIA");
-            if (binding.cbNaturaleza.isChecked()) preferences.add("NATURALEZA");
-            if (binding.cbRelax.isChecked()) preferences.add("RELAX");
+            if (cbAventura.isChecked()) preferences.add("AVENTURA");
+            if (cbCultura.isChecked()) preferences.add("CULTURA");
+            if (cbGastronomia.isChecked()) preferences.add("GASTRONOMIA");
+            if (cbNaturaleza.isChecked()) preferences.add("NATURALEZA");
+            if (cbRelax.isChecked()) preferences.add("RELAX");
 
             UpdateUserProfileRequest request = new UpdateUserProfileRequest(
                     firstName,
@@ -172,7 +204,7 @@ public class ProfileEditFragment extends Fragment {
             viewModel.updateProfile(request);
         });
 
-        binding.btnCancelEdit.setOnClickListener(v ->
+        btnCancelEdit.setOnClickListener(v ->
                 NavHostFragment
                         .findNavController(ProfileEditFragment.this)
                         .navigateUp()
@@ -194,7 +226,7 @@ public class ProfileEditFragment extends Fragment {
 
             currentPhotoBase64 = Base64.encodeToString(imageBytes, Base64.DEFAULT);
 
-            binding.ivProfilePhoto.setImageBitmap(bitmap);
+            ivProfilePhoto.setImageBitmap(bitmap);
 
         } catch (IOException e) {
             Toast.makeText(
@@ -215,7 +247,7 @@ public class ProfileEditFragment extends Fragment {
                     decodedBytes.length
             );
 
-            binding.ivProfilePhoto.setImageBitmap(bitmap);
+            ivProfilePhoto.setImageBitmap(bitmap);
 
         } catch (Exception e) {
             // Si falla, queda el ícono por defecto
@@ -225,6 +257,5 @@ public class ProfileEditFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null;
     }
 }
