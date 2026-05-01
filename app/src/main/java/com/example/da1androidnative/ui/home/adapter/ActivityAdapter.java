@@ -61,7 +61,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
         holder.activityPrice.setText("Precio: $" + activity.getBasePrice());
         holder.activitySpots.setText("Cupos: " + activity.getAvailableSpots());
 
-        Glide.with(context)
+        Glide.with(holder.itemView)
                 .load(activity.getFirstImageUrl())
                 .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_launcher_background)

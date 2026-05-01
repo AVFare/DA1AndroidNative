@@ -18,13 +18,11 @@ public class ActivityResponse {
     private int availableSpots;
     @SerializedName("price")
     private Double basePrice;
-    private List<ActivityImageResponse> images;
+    @SerializedName("image")
+    private String firstImageUrl;
 
     public String getFirstImageUrl() {
-        if (images != null && !images.isEmpty()) {
-            return images.get(0).getImageUrl();
-        }
-        return null; // O una URL de imagen por defecto
+        return firstImageUrl;
     }
 
     public long getId() {
@@ -53,10 +51,6 @@ public class ActivityResponse {
 
     public Double getBasePrice() {
         return basePrice;
-    }
-
-    public List<ActivityImageResponse> getImages() {
-        return images;
     }
 
     @SerializedName("featured")

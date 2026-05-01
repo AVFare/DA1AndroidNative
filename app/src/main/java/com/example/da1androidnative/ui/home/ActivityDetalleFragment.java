@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,14 +20,14 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
 
-import com.bumptech.glide.Glide;
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.ActivityDetalleResponse;
 import com.example.da1androidnative.data.model.ItineraryResponse;
 import com.example.da1androidnative.data.model.PaginatedSchedulesResponse;
 import com.example.da1androidnative.data.network.ApiService;
-import com.example.da1androidnative.data.network.NetworkModule;
+import com.example.da1androidnative.ui.home.adapter.ActivityGalleryAdapter;
 import com.example.da1androidnative.ui.home.adapter.ScheduleActivityAdapter;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -38,7 +39,9 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
+import com.google.android.material.button.MaterialButton;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -56,12 +59,20 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
 
     private ActivityDetalleResponse currentDetalle;
     private ScheduleActivityAdapter scheduleActivityAdapter;
+    private ActivityGalleryAdapter galleryAdapter;
     private Toolbar toolbar;
     private long activityId;
-    private ImageView activityImageView;
-    private TextView activityNameText, priceText, fullDescriptionText, meetingPointText, guideNameText, languageText;
-    private Button btnReservar, btnHowToGet;
-    
+    private ViewPager2 galleryViewPager;
+    private LinearLayout galleryDotsContainer;
+    private ViewPager2.OnPageChangeCallback galleryPageChangeCallback;
+    private TextView activityNameText;
+    private TextView priceText;
+    private TextView fullDescriptionText;
+    private TextView meetingPointText;
+    private TextView guideNameText;
+    private TextView languageText;
+    private Button btnReservar;
+    private MaterialButton btnHowToGet;
     private GoogleMap mMap;
 
     @Nullable
@@ -80,6 +91,7 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
         }
 
         initViews(view);
+        setupGalleryPager();
         setupRecyclerView(view);
         
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.activityMap);
@@ -93,8 +105,18 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
         toolbar.setNavigationOnClickListener(v -> NavHostFragment.findNavController(this).navigateUp());
     }
 
+    @Override
+    public void onDestroyView() {
+        if (galleryViewPager != null && galleryPageChangeCallback != null) {
+            galleryViewPager.unregisterOnPageChangeCallback(galleryPageChangeCallback);
+        }
+        super.onDestroyView();
+    }
+
     private void initViews(View view) {
-        activityImageView = view.findViewById(R.id.activityImageView);
+        galleryViewPager = view.findViewById(R.id.galleryViewPager);
+        galleryDotsContainer = view.findViewById(R.id.galleryDotsContainer);
+
         activityNameText = view.findViewById(R.id.activityNameText);
         priceText = view.findViewById(R.id.priceText);
         fullDescriptionText = view.findViewById(R.id.fullDescriptionText);
@@ -104,6 +126,20 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
         toolbar = view.findViewById(R.id.toolbar);
         btnReservar = view.findViewById(R.id.btnReservar);
         btnHowToGet = view.findViewById(R.id.btnHowToGetActivity);
+    }
+
+    private void setupGalleryPager() {
+        galleryAdapter = new ActivityGalleryAdapter();
+        galleryViewPager.setAdapter(galleryAdapter);
+
+        galleryPageChangeCallback = new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                updateGalleryDots(position);
+            }
+        };
+
+        galleryViewPager.registerOnPageChangeCallback(galleryPageChangeCallback);
     }
 
     private void setupRecyclerView(View view) {
@@ -142,11 +178,24 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
         guideNameText.setText("Guía: " + detalle.getGuideName());
         languageText.setText("Idioma: " + detalle.getLanguage());
 
-        String fullImageUrl = NetworkModule.getFullImageUrl(detalle.getFirstImageUrl());
+        List<String> gallery = detalle.getGallery();
 
-        Glide.with(this).load(fullImageUrl)
-                .placeholder(R.drawable.ic_launcher_background)
-                .into(activityImageView);
+        if (gallery != null && !gallery.isEmpty()) {
+            galleryAdapter.setImages(gallery);
+            setupGalleryDots(gallery.size());
+            galleryViewPager.setVisibility(View.VISIBLE);
+            galleryViewPager.setCurrentItem(0, false);
+        } else if (detalle.getFirstImageUrl() != null && !detalle.getFirstImageUrl().isEmpty()) {
+            galleryAdapter.setImages(Collections.singletonList(detalle.getFirstImageUrl()));
+            setupGalleryDots(1);
+            galleryViewPager.setVisibility(View.VISIBLE);
+            galleryViewPager.setCurrentItem(0, false);
+        } else {
+            galleryAdapter.setImages(Collections.emptyList());
+            galleryDotsContainer.removeAllViews();
+            galleryDotsContainer.setVisibility(View.GONE);
+            galleryViewPager.setVisibility(View.GONE);
+        }
 
         btnHowToGet.setOnClickListener(v -> {
             if (detalle.getMeetingPointLatitude() != null && detalle.getMeetingPointLatitude() != 0.0) {
@@ -155,6 +204,54 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
                 Toast.makeText(getContext(), "Ubicacion no disponible", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void setupGalleryDots(int count) {
+        galleryDotsContainer.removeAllViews();
+
+        if (count <= 0) {
+            galleryDotsContainer.setVisibility(View.GONE);
+            return;
+        }
+
+        galleryDotsContainer.setVisibility(View.VISIBLE);
+
+        for (int i = 0; i < count; i++) {
+            ImageView dot = new ImageView(requireContext());
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    dpToPx(8),
+                    dpToPx(8)
+            );
+
+            if (i > 0) {
+                params.leftMargin = dpToPx(6);
+            }
+
+            dot.setLayoutParams(params);
+            dot.setBackgroundResource(i == 0
+                    ? R.drawable.dot_indicator_selected
+                    : R.drawable.dot_indicator_unselected);
+
+            galleryDotsContainer.addView(dot);
+        }
+    }
+
+    private void updateGalleryDots(int selectedPosition) {
+        if (galleryDotsContainer == null) return;
+
+        int count = galleryDotsContainer.getChildCount();
+        for (int i = 0; i < count; i++) {
+            View dot = galleryDotsContainer.getChildAt(i);
+            dot.setBackgroundResource(i == selectedPosition
+                    ? R.drawable.dot_indicator_selected
+                    : R.drawable.dot_indicator_unselected);
+        }
+    }
+
+    private int dpToPx(int dp) {
+        float density = requireContext().getResources().getDisplayMetrics().density;
+        return Math.round(dp * density);
     }
 
     private void openNavigationApp(double lat, double lng) {
