@@ -7,8 +7,10 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.local.FavoritesManager;
@@ -53,11 +55,11 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
         ActivityResponse activity = activities.get(position);
 
         holder.activityTitle.setText(activity.getName());
-        holder.activityDestination.setText(String.format("Destino: %s", activity.getName()));
-        holder.activityCategory.setText(String.format("Categoria: %s", activity.getCategory()));
-        holder.activityDuration.setText(String.format("Duracion en Minutos: %d", activity.getDurationMinutes()));
-        holder.activityPrice.setText(String.format("Precio Base: %f", activity.getBasePrice()));
-        holder.activitySpots.setText(String.format("Lugares Disponibles: %d", activity.getAvailableSpots()));
+        holder.activityDestination.setText("Destino: " + activity.getDestination());
+        holder.activityCategory.setText("Categoría: " + activity.getCategory());
+        holder.activityDuration.setText("Duración: " + activity.getDurationMinutes() + " min");
+        holder.activityPrice.setText("Precio: $" + activity.getBasePrice());
+        holder.activitySpots.setText("Cupos: " + activity.getAvailableSpots());
 
         Glide.with(context)
                 .load(activity.getFirstImageUrl())
@@ -65,22 +67,34 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
                 .error(R.drawable.ic_launcher_background)
                 .into(holder.activityImage);
 
-        // Update heart icon based on favorite status
+        // Favoritos
         boolean isFav = favoritesManager.isFavorite(activity.getId());
-        holder.btnFavorite.setImageResource(isFav ? R.drawable.ic_favorite_filled : R.drawable.ic_favorite_border);
+        holder.btnFavorite.setImageResource(
+                isFav ? R.drawable.ic_favorite_filled : R.drawable.ic_favorite_border
+        );
 
+        // CLICK CARD
         holder.cardView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onActivityClick(activity.getId());
             }
         });
 
+        // CLICK FAVORITE
         holder.btnFavorite.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onFavoriteClick(activity);
                 notifyItemChanged(position);
             }
         });
+
+        // FEATURED (correcto, con reset explícito)
+        if (activity.isFeatured()) {
+            holder.badgeFeatured.setVisibility(View.VISIBLE);
+            holder.badgeFeatured.setText("Destacada");
+        } else {
+            holder.badgeFeatured.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -98,6 +112,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
         TextView activityDuration;
         TextView activityPrice;
         TextView activitySpots;
+        TextView badgeFeatured;
 
         public ActivityViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -110,6 +125,8 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
             activityDuration = itemView.findViewById(R.id.activityDuration);
             activityPrice = itemView.findViewById(R.id.activityPrice);
             activitySpots = itemView.findViewById(R.id.activitySpots);
+
+            badgeFeatured = itemView.findViewById(R.id.badgeFeatured);
         }
     }
 }
