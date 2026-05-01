@@ -36,6 +36,10 @@ public class UserProfileResponse {
     @SerializedName("reservationSummary")
     private ReservationSummary reservationSummary;
 
+    @SerializedName("profilePhoto")
+    private String profilePhoto;
+
+    public String getProfilePhoto() { return profilePhoto; }
     public long getUserId() { return userId; }
     public String getEmail() { return email; }
     public String getFirstName() { return firstName; }

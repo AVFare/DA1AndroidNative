@@ -94,8 +94,8 @@ public class ProfileViewFragment extends Fragment {
             binding.tvReservedCountView.setText(String.valueOf(profile.getReservedActivitiesCount()));
             binding.tvCompletedCountView.setText(String.valueOf(profile.getCompletedActivitiesCount()));
 
-            if (profile.getProfilePictureUrl() != null && !profile.getProfilePictureUrl().isEmpty()) {
-                loadBase64Image(profile.getProfilePictureUrl());
+            if (profile.getProfilePhoto() != null && !profile.getProfilePhoto().isEmpty()) {
+                loadBase64Image(profile.getProfilePhoto());
             }
 
             binding.chipGroupPreferences.removeAllViews();
