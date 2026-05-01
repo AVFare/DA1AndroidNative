@@ -101,7 +101,7 @@ public interface ApiService {
             @Query("fromDate") String fromDate,
             @Query("toDate") String toDate,
             @Query("destinationId") Long destinationId,
-            @Query("status") String status,
+            @Query("status") List<String> status,
             @Query("page") Integer page,
             @Query("size") Integer size
     );

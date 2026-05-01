@@ -51,6 +51,7 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
 
     private final String[] statusOptionsDisplay = {"Todos", "Cancelado", "Completo"};
     private final Map<String, String> statusMap = new HashMap<>();
+    private final Map<String, Long> destinationIdByName = new HashMap<>();
     private List<ActivityHistoryResponse> allActivities = new ArrayList<>();
 
     public ActivityHistoryFragment() {
@@ -126,6 +127,8 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         String end = etEndDate.getText().toString().trim();
         String selectedStatus = spinnerStatus.getText().toString();
         String statusValue = statusMap.get(selectedStatus);
+        String selectedDestination = spinnerDestination.getText().toString();
+        Long destinationId = destinationIdByName.get(selectedDestination);
 
         if ("Todos".equals(selectedStatus)) {
             statusValue = "COMPLETED,CANCELLED";
@@ -134,7 +137,7 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         viewModel.loadHistory(
                 start.isEmpty() ? null : start,
                 end.isEmpty() ? null : end,
-                null,
+                "Todos".equals(selectedDestination) ? null : destinationId,
                 statusValue
         );
     }
@@ -143,9 +146,13 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         if (activities == null) return;
 
         Set<String> destinations = new HashSet<>();
+        destinationIdByName.clear();
         for (ActivityHistoryResponse activity : activities) {
             if (activity.getDestination() != null) {
                 destinations.add(activity.getDestination());
+                if (activity.getDestinationId() != null) {
+                    destinationIdByName.put(activity.getDestination(), activity.getDestinationId());
+                }
             }
         }
 

@@ -9,6 +9,8 @@ public class ActivityHistoryResponse {
     private String activityName;
     @SerializedName("destination")
     private String destination;
+    @SerializedName("destinationId")
+    private Long destinationId;
     @SerializedName("date")
     private String date;
     @SerializedName("guideName")
@@ -44,6 +46,14 @@ public class ActivityHistoryResponse {
 
     public void setDestination(String destination) {
         this.destination = destination;
+    }
+
+    public Long getDestinationId() {
+        return destinationId;
+    }
+
+    public void setDestinationId(Long destinationId) {
+        this.destinationId = destinationId;
     }
 
     public String getDate() {

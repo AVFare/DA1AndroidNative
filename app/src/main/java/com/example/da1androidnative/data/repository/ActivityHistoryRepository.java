@@ -6,6 +6,8 @@ import com.example.da1androidnative.data.network.ApiService;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import java.util.List;
+
 import retrofit2.Call;
 
 @Singleton
@@ -17,7 +19,7 @@ public class ActivityHistoryRepository {
         this.apiService = apiService;
     }
 
-    public Call<PaginatedActivityHistoryResponse> getActivityHistory(String fromDate, String toDate, Long destinationId, String status, Integer page, Integer size) {
+    public Call<PaginatedActivityHistoryResponse> getActivityHistory(String fromDate, String toDate, Long destinationId, List<String> status, Integer page, Integer size) {
         return apiService.getActivityHistory(fromDate, toDate, destinationId, status, page, size);
     }
 }
