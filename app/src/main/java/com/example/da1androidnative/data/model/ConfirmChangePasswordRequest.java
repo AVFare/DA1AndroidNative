@@ -4,16 +4,16 @@ import com.google.gson.annotations.SerializedName;
 
 public class ConfirmChangePasswordRequest {
     @SerializedName("code")
-    private int code;
+    private String code;
     @SerializedName("newPassword")
     private String newPassword;
 
-    public ConfirmChangePasswordRequest(int code, String newPassword) {
+    public ConfirmChangePasswordRequest(String code, String newPassword) {
         this.code = code;
         this.newPassword = newPassword;
     }
 
-    public int getCode() {
+    public String getCode() {
         return code;
     }
 

@@ -49,7 +49,7 @@ public interface ApiService {
     Call<Void> initiateChangePassword();
 
     @POST("profile/me/password-change/confirm")
-    Call<ConfirmChangePasswordResponse> ConfirmChangePassword(@Body ConfirmChangePasswordRequest confirmChangePasswordRequest);
+    Call<ConfirmChangePasswordResponse> confirmChangePassword(@Body ConfirmChangePasswordRequest confirmChangePasswordRequest);
 
     @POST("auth/register")
     Call<AuthResponse> register(@Body RegisterRequest request);

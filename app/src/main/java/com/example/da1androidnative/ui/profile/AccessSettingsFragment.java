@@ -183,9 +183,6 @@ public class AccessSettingsFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                 if (response.isSuccessful()) {
-                    tokenManager.clearToken();
-                    tokenManager.clearCredentials();
-                    tokenManager.setBiometricEnabled(false);
                     NavHostFragment.findNavController(AccessSettingsFragment.this)
                             .navigate(R.id.action_accessSettings_to_changePasswordFragment);
                     Toast.makeText(getContext(), "OTP Enviado Revisa tu Mail!", Toast.LENGTH_SHORT).show();
