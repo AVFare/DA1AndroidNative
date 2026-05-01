@@ -34,7 +34,7 @@ public class ChangePasswordFragment extends Fragment {
     private TextInputEditText confirmPassword;
     private TextInputEditText optCode;
     private Button confirmButton;
-    @Inject private TokenManager tokenManager;
+    @Inject TokenManager tokenManager;
 
     @Nullable
     @Override

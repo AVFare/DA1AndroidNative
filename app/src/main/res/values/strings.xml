@@ -26,7 +26,7 @@
     <string name="otp_verify_button">Verificar codigo</string>
     <string name="otp_resend_button">Reenviar codigo</string>
     <string name="request_login_otp_button">Ingresar con OTP</string>
-    <string name="request_recovery_otp_button">Recuperar acceso con OTP</string>
+    <string name="login_password_recovery_notice">Si olvidaste tu contraseña, inicia sesión con OTP y cambiala desde Mi perfil.</string>
 
     <string name="app_brand_title">XploreNow Argentina</string>
     <string name="nav_reservas">Mis actividades</string>
