@@ -64,7 +64,7 @@
 			android:paddingHorizontal="8dp"
 			android:paddingVertical="4dp"
 			android:text="Destacada"
-			android:textColor="@color/purple_500"
+			android:textColor="?attr/colorPrimary"
 			android:textSize="10sp"
 			android:textStyle="bold"
 			android:visibility="gone"
@@ -87,7 +87,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-                android:textColor="@color/purple_700"
+                android:textColor="?attr/colorPrimaryVariant"
                 android:textStyle="bold" />
 
             <TextView
@@ -131,7 +131,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textColor="@color/purple_700"
+                    android:textColor="?attr/colorPrimaryVariant"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 

@@ -11,7 +11,7 @@
         android:id="@+id/reviewCreateToolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/purple_500"
+        android:background="?attr/colorPrimary"
         app:navigationIcon="@drawable/ic_arrow_back"
         app:navigationIconTint="@android:color/white"
         app:title="@string/review_form_title"
