@@ -17,15 +17,11 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.da1androidnative.R;
-import com.example.da1androidnative.data.local.OfflineReservationStorage;
 import com.example.da1androidnative.data.model.ActivityDetalleResponse;
-import com.example.da1androidnative.data.model.ActivityHistoryDetailResponse;
 import com.example.da1androidnative.data.model.ItineraryResponse;
 import com.example.da1androidnative.data.model.ReservaCancelledResponse;
 import com.example.da1androidnative.data.model.ReservaDetalleResponse;
-import com.example.da1androidnative.data.model.ReviewableReservationResponse;
 import com.example.da1androidnative.data.network.ApiService;
-import com.example.da1androidnative.data.network.NetworkUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -38,6 +34,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import javax.inject.Inject;
@@ -51,14 +48,12 @@ import retrofit2.Response;
 public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallback {
     
     @Inject ApiService apiService;
-    @Inject OfflineReservationStorage offlineStorage;
     
     private long reservationId;
     private TextView reservationActivityNameText, reservationStatusText, reservationDestinationText;
     private TextView reservationIdText, reservationDateText, reservationTimeText, reservationParticipantsText;
     private TextView reservationMeetingPointText, reservationVoucherCodeText, reservationTotalPriceText;
     private TextView reservationCancellationPolicyText;
-    private TextView reservationRatingStatusText, reservationActivityRatingText, reservationGuideRatingText, reservationCommentText;
     private Button cancelReservationButton, btnHowToGet;
     
     private GoogleMap mMap;
@@ -74,7 +69,6 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         initViews(view);
         
         Bundle args = getArguments();
@@ -82,7 +76,6 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
             this.reservationId = args.getLong("reservationId", -1L);
         }
 
-        // Buscamos el mapa con el ID correcto definido en el XML
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.reservaMap);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
@@ -103,10 +96,6 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         reservationVoucherCodeText = view.findViewById(R.id.reservationVoucherCodeText);
         reservationTotalPriceText = view.findViewById(R.id.reservationTotalPriceText);
         reservationCancellationPolicyText = view.findViewById(R.id.reservationCancellationPolicyText);
-        reservationRatingStatusText = view.findViewById(R.id.reservationRatingStatusText);
-        reservationActivityRatingText = view.findViewById(R.id.reservationActivityRatingText);
-        reservationGuideRatingText = view.findViewById(R.id.reservationGuideRatingText);
-        reservationCommentText = view.findViewById(R.id.reservationCommentText);
         cancelReservationButton = view.findViewById(R.id.cancelReservationButton);
         btnHowToGet = view.findViewById(R.id.btnHowToGet);
     }
@@ -114,44 +103,23 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
     private void loadDetalleReserva() {
         if (this.reservationId == -1L) return;
 
-        if (!NetworkUtils.isNetworkAvailable(getContext())) {
-            // Modo Offline: Cargar detalle desde SharedPreferences
-            ReservaDetalleResponse savedDetail = offlineStorage.getSavedReservationDetail(reservationId);
-            if (savedDetail != null) {
-                currentReserva = savedDetail;
-                bindDetalle(currentReserva);
-                updateMap();
-                setupHowToGetButton();
-            } else {
-                Toast.makeText(getContext(), "Detalle no disponible sin conexión", Toast.LENGTH_SHORT).show();
+        apiService.getDetalleReserva(reservationId).enqueue(new Callback<ReservaDetalleResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ReservaDetalleResponse> call, @NonNull Response<ReservaDetalleResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    currentReserva = response.body();
+                    bindDetalle(currentReserva);
+                    updateMap();
+                    fetchActivityDetails(currentReserva.getActivityId());
+                } else {
+                    Toast.makeText(getContext(), "Error al cargar detalle", Toast.LENGTH_SHORT).show();
+                }
             }
-        } else {
-            // Modo Online
-            apiService.getDetalleReserva(reservationId).enqueue(new Callback<ReservaDetalleResponse>() {
-                @Override
-                public void onResponse(@NonNull Call<ReservaDetalleResponse> call, @NonNull Response<ReservaDetalleResponse> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        currentReserva = response.body();
-                        bindDetalle(currentReserva);
-                        // Guardar para offline
-                        offlineStorage.saveReservationDetail(currentReserva);
-                        
-                        fetchActivityDetails(currentReserva.getActivityId());
-                    }
-                }
-                @Override
-                public void onFailure(@NonNull Call<ReservaDetalleResponse> call, @NonNull Throwable t) {
-                    // Fallback a offline si hay error de red
-                    ReservaDetalleResponse savedDetail = offlineStorage.getSavedReservationDetail(reservationId);
-                    if (savedDetail != null) {
-                        currentReserva = savedDetail;
-                        bindDetalle(currentReserva);
-                        updateMap();
-                    }
-                    Toast.makeText(getContext(), "Error al cargar reserva, mostrando datos locales", Toast.LENGTH_SHORT).show();
-                }
-            });
-        }
+            @Override
+            public void onFailure(@NonNull Call<ReservaDetalleResponse> call, @NonNull Throwable t) {
+                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void fetchActivityDetails(long activityId) {
@@ -161,7 +129,6 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
                 if (response.isSuccessful() && response.body() != null) {
                     activityInfo = response.body();
                     updateMap();
-                    setupHowToGetButton();
                 }
             }
             @Override
@@ -172,184 +139,46 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
     private void bindDetalle(ReservaDetalleResponse detalle) {
         reservationActivityNameText.setText(detalle.getActivityName());
         reservationStatusText.setText(detalle.getStatus());
-        reservationDestinationText.setText(detalle.getDestination());
+        reservationDestinationText.setText(String.format("Destino: %s", detalle.getDestination()));
         reservationIdText.setText(getString(R.string.reservation_item_id_label, detalle.getReservationId()));
-        reservationDateText.setText("Fecha: " + (detalle.getDate() != null ? detalle.getDate().toString() : "N/A"));
-        reservationTimeText.setText("Hora: " + detalle.getTime());
-        reservationParticipantsText.setText("Participantes: " + detalle.getParticipantsCount());
-        reservationMeetingPointText.setText("Punto| de encuentro: " + detalle.getMeetingPoint());
-        reservationVoucherCodeText.setText("Voucher: " + detalle.getVoucherCode());
-        reservationTotalPriceText.setText("Total: $" + detalle.getTotalPrice());
+        reservationDateText.setText(String.format("Fecha: %s", (detalle.getDate() != null ? detalle.getDate().toString() : "N/A")));
+        reservationTimeText.setText(String.format("Hora: %s", detalle.getTime()));
+        reservationParticipantsText.setText(String.format("Participantes: %d", detalle.getParticipantsCount()));
+        reservationMeetingPointText.setText(String.format("Punto de encuentro: %s", detalle.getMeetingPoint()));
+        reservationVoucherCodeText.setText(String.format("Voucher: %s", detalle.getVoucherCode()));
+        reservationTotalPriceText.setText(String.format(Locale.getDefault(), "Total: $%.2f", detalle.getTotalPrice()));
         reservationCancellationPolicyText.setText(detalle.getCancellationPolicy());
-        bindInitialRatingState(detalle.getStatus());
 
-        // El botón solo se deshabilita si el status es CANCELLED o COMPLETED.
         if (Objects.equals(detalle.getStatus(), "CANCELLED") || Objects.equals(detalle.getStatus(), "COMPLETED")) {
             cancelReservationButton.setEnabled(false);
             cancelReservationButton.setAlpha(0.5f);
-        } else {
-            // Si el estado permite cancelar, el botón está habilitado (incluso offline)
-            cancelReservationButton.setEnabled(true);
-            cancelReservationButton.setAlpha(1.0f);
         }
 
-        cancelReservationButton.setOnClickListener(v -> {
-            if (NetworkUtils.isNetworkAvailable(getContext())) {
-                cancelReserva();
+        cancelReservationButton.setOnClickListener(v -> cancelReserva());
+        
+        btnHowToGet.setOnClickListener(v -> {
+            Double lat = getSafeLat();
+            Double lng = getSafeLng();
+            if (lat != null) {
+                Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + lat + "," + lng + "(Punto de Encuentro)");
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                startActivity(Intent.createChooser(mapIntent, "Selecciona tu aplicación de mapas"));
             } else {
-                // Modo Offline: Guardar intención de cancelación
-                offlineStorage.addPendingCancellation(reservationId);
-                Toast.makeText(getContext(), "La cancelación se realizará cuando vuelva la conexión", Toast.LENGTH_LONG).show();
-                NavHostFragment.findNavController(this).navigateUp();
-            }
-        });
-        setupHowToGetButton();
-
-        if (NetworkUtils.isNetworkAvailable(getContext())) {
-            loadRatingDetailsIfNeeded(detalle.getStatus());
-        } else {
-            showOfflineRatingMessage(detalle.getStatus());
-        }
-    }
-
-    private void bindInitialRatingState(String status) {
-        if (!isCompleted(status)) {
-            reservationRatingStatusText.setText("No podés calificar una actividad que todavía no se realizó.");
-            reservationActivityRatingText.setText("Actividad: -");
-            reservationGuideRatingText.setText("Guía: -");
-            reservationCommentText.setText("Comentario: disponible cuando la actividad esté finalizada.");
-            return;
-        }
-
-        reservationRatingStatusText.setText("Consultando calificación...");
-        reservationActivityRatingText.setText("Actividad: -");
-        reservationGuideRatingText.setText("Guía: -");
-        reservationCommentText.setText("Comentario: consultando...");
-    }
-
-    private void loadRatingDetailsIfNeeded(String status) {
-        if (!isCompleted(status) || reservationId == -1L) {
-            return;
-        }
-
-        apiService.getActivityHistoryDetail(reservationId).enqueue(new Callback<ActivityHistoryDetailResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<ActivityHistoryDetailResponse> call, @NonNull Response<ActivityHistoryDetailResponse> response) {
-                if (response.isSuccessful() && response.body() != null && response.body().isHasRating()) {
-                    bindSubmittedRating(response.body());
-                } else {
-                    loadPendingRatingWindow();
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ActivityHistoryDetailResponse> call, @NonNull Throwable t) {
-                loadPendingRatingWindow();
+                Toast.makeText(getContext(), "Ubicación no disponible", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void bindSubmittedRating(ActivityHistoryDetailResponse detail) {
-        reservationRatingStatusText.setText("Calificación enviada.");
-        reservationActivityRatingText.setText("Actividad: " + formatStars(detail.getActivityStars()));
-        reservationGuideRatingText.setText("Guía: " + formatStars(detail.getGuideStars()));
-
-        if (isBlank(detail.getComment())) {
-            reservationCommentText.setText("Comentario: no dejaste comentario en el plazo de calificación.");
-        } else {
-            reservationCommentText.setText("Comentario: " + detail.getComment());
-        }
-    }
-
-    private void loadPendingRatingWindow() {
-        apiService.getReviewableReservations().enqueue(new Callback<List<ReviewableReservationResponse>>() {
-            @Override
-            public void onResponse(@NonNull Call<List<ReviewableReservationResponse>> call,
-                                   @NonNull Response<List<ReviewableReservationResponse>> response) {
-                reservationActivityRatingText.setText("Actividad: -");
-                reservationGuideRatingText.setText("Guía: -");
-
-                if (!response.isSuccessful() || response.body() == null) {
-                    reservationRatingStatusText.setText("No se pudo consultar el estado de calificación.");
-                    reservationCommentText.setText("Comentario: revisá la sección Reseñas cuando tengas conexión.");
-                    return;
-                }
-
-                ReviewableReservationResponse pending = findPendingByReservationId(response.body(), reservationId);
-                if (pending != null) {
-                    reservationRatingStatusText.setText("Todavía podés calificar esta actividad.");
-                    reservationCommentText.setText("Comentario: aún estás en plazo (hasta " + pending.getExpiresAt() + ").");
-                } else {
-                    reservationRatingStatusText.setText("Ya venció el plazo para calificar esta actividad.");
-                    reservationCommentText.setText("Comentario: no dejaste comentario en el plazo de calificación.");
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<List<ReviewableReservationResponse>> call, @NonNull Throwable t) {
-                reservationActivityRatingText.setText("Actividad: -");
-                reservationGuideRatingText.setText("Guía: -");
-                reservationRatingStatusText.setText("No se pudo consultar el estado de calificación.");
-                reservationCommentText.setText("Comentario: revisá la sección Reseñas cuando tengas conexión.");
-            }
-        });
-    }
-
-    private void showOfflineRatingMessage(String status) {
-        if (!isCompleted(status)) {
-            return;
-        }
-
-        reservationActivityRatingText.setText("Actividad: -");
-        reservationGuideRatingText.setText("Guía: -");
-        reservationRatingStatusText.setText("Sin conexión: no se pudo consultar la calificación.");
-        reservationCommentText.setText("Comentario: conectate para ver calificación y estado de plazo.");
-    }
-
-    private ReviewableReservationResponse findPendingByReservationId(List<ReviewableReservationResponse> items, long id) {
-        for (ReviewableReservationResponse item : items) {
-            if (item.getReservationId() == id) {
-                return item;
-            }
-        }
+    private Double getSafeLat() {
+        if (activityInfo != null && activityInfo.getMeetingPointLatitude() != null && activityInfo.getMeetingPointLatitude() != 0.0) return activityInfo.getMeetingPointLatitude();
+        if (currentReserva != null && currentReserva.getMeetingPointLatitude() != null && currentReserva.getMeetingPointLatitude() != 0.0) return currentReserva.getMeetingPointLatitude();
         return null;
     }
 
-    private boolean isCompleted(String status) {
-        return status != null && "COMPLETED".equalsIgnoreCase(status);
-    }
-
-    private String formatStars(Integer stars) {
-        return stars == null ? "-" : stars + "/5";
-    }
-
-    private boolean isBlank(String value) {
-        return value == null || value.trim().isEmpty();
-    }
-
-    private void setupHowToGetButton() {
-        btnHowToGet.setOnClickListener(v -> {
-            Double lat = null, lng = null;
-            if (activityInfo != null && activityInfo.getMeetingPointLatitude() != null) {
-                lat = activityInfo.getMeetingPointLatitude();
-                lng = activityInfo.getMeetingPointLongitude();
-            } else if (currentReserva != null && currentReserva.getMeetingPointLatitude() != null) {
-                lat = currentReserva.getMeetingPointLatitude();
-                lng = currentReserva.getMeetingPointLongitude();
-            }
-
-            if (lat != null && lng != null) {
-                openNavigationApp(lat, lng);
-            } else {
-                Toast.makeText(getContext(), "Ubicación no disponible aún", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void openNavigationApp(double lat, double lng) {
-        Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + lat + "," + lng + "(Punto de Encuentro)");
-        Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-        startActivity(Intent.createChooser(mapIntent, "Selecciona tu aplicación de mapas"));
+    private Double getSafeLng() {
+        if (activityInfo != null && activityInfo.getMeetingPointLongitude() != null && activityInfo.getMeetingPointLongitude() != 0.0) return activityInfo.getMeetingPointLongitude();
+        if (currentReserva != null && currentReserva.getMeetingPointLongitude() != null && currentReserva.getMeetingPointLongitude() != 0.0) return currentReserva.getMeetingPointLongitude();
+        return null;
     }
 
     @Override
@@ -361,32 +190,33 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
 
     private void updateMap() {
         if (mMap == null) return;
-
-        Double lat = (activityInfo != null) ? activityInfo.getMeetingPointLatitude() : (currentReserva != null ? currentReserva.getMeetingPointLatitude() : null);
-        Double lng = (activityInfo != null) ? activityInfo.getMeetingPointLongitude() : (currentReserva != null ? currentReserva.getMeetingPointLongitude() : null);
-        List<ItineraryResponse> itineraries = (activityInfo != null) ? activityInfo.getItineraries() : (currentReserva != null ? currentReserva.getItineraries() : null);
-
-        if (lat == null || lng == null) return;
+        Double lat = getSafeLat();
+        Double lng = getSafeLng();
+        if (lat == null) return;
 
         mMap.clear();
         LatLng meetingPoint = new LatLng(lat, lng);
-        
-        mMap.addMarker(new MarkerOptions()
-                .position(meetingPoint)
-                .title("Punto de Encuentro")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         builder.include(meetingPoint);
 
+        List<ItineraryResponse> itineraries = (activityInfo != null && activityInfo.getItineraries() != null) 
+            ? activityInfo.getItineraries() 
+            : (currentReserva != null ? currentReserva.getItineraries() : null);
+
         if (itineraries != null && !itineraries.isEmpty()) {
             PolylineOptions lineOptions = new PolylineOptions()
-                    .width(12).color(Color.parseColor("#4A90E2"))
-                    .startCap(new RoundCap()).endCap(new RoundCap()).geodesic(true);
+                    .width(12)
+                    .color(Color.parseColor("#4A90E2"))
+                    .startCap(new RoundCap())
+                    .endCap(new RoundCap())
+                    .geodesic(true);
 
             for (ItineraryResponse point : itineraries) {
                 LatLng pos = new LatLng(point.getLatitude(), point.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(pos).title(point.getName()));
+                mMap.addMarker(new MarkerOptions()
+                        .position(pos)
+                        .title(point.getName())
+                        .zIndex(1.0f));
                 lineOptions.add(pos);
                 builder.include(pos);
             }
@@ -402,6 +232,13 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         } else {
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(meetingPoint, 15));
         }
+
+        // Agregamos el Punto de Encuentro AL FINAL y con un zIndex mayor para que quede ARRIBA y sea AZUL
+        mMap.addMarker(new MarkerOptions()
+                .position(meetingPoint)
+                .title("Punto de Encuentro")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                .zIndex(2.0f));
     }
 
     private void cancelReserva() {
@@ -410,18 +247,12 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
             public void onResponse(@NonNull Call<ReservaCancelledResponse> call, @NonNull Response<ReservaCancelledResponse> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(getContext(), "Reserva Cancelada", Toast.LENGTH_SHORT).show();
-                    // Al cancelar con éxito, actualizamos el estado en el almacenamiento offline inmediatamente
-                    if (currentReserva != null) {
-                        offlineStorage.clearReservation(reservationId); 
-                    }
                     NavHostFragment.findNavController(ReservaDetalleFragment.this).navigateUp();
-                } else {
-                    Toast.makeText(getContext(), "Error al cancelar la reserva", Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
             public void onFailure(@NonNull Call<ReservaCancelledResponse> call, @NonNull Throwable t) {
-                 Toast.makeText(getContext(), "Error de red al intentar cancelar", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Error al cancelar reserva", Toast.LENGTH_SHORT).show();
             }
         });
     }

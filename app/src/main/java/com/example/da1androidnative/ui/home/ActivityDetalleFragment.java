@@ -25,8 +25,8 @@ import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.ActivityDetalleResponse;
 import com.example.da1androidnative.data.model.ItineraryResponse;
 import com.example.da1androidnative.data.model.PaginatedSchedulesResponse;
-import com.example.da1androidnative.data.model.ScheduleResponse;
 import com.example.da1androidnative.data.network.ApiService;
+import com.example.da1androidnative.data.network.NetworkModule;
 import com.example.da1androidnative.ui.home.adapter.ScheduleActivityAdapter;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -37,8 +37,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.RoundCap;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -54,7 +56,6 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
 
     private ActivityDetalleResponse currentDetalle;
     private ScheduleActivityAdapter scheduleActivityAdapter;
-    private RecyclerView recyclerView;
     private Toolbar toolbar;
     private long activityId;
     private ImageView activityImageView;
@@ -106,7 +107,7 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
     }
 
     private void setupRecyclerView(View view) {
-        recyclerView = view.findViewById(R.id.scheduleRecyclerView);
+        RecyclerView recyclerView = view.findViewById(R.id.scheduleRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         scheduleActivityAdapter = new ScheduleActivityAdapter(getContext(), this);
         recyclerView.setAdapter(scheduleActivityAdapter);
@@ -122,42 +123,44 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
                     currentDetalle = response.body();
                     bindDetalle(currentDetalle);
                     updateMap();
+                } else {
+                    Toast.makeText(getContext(), "Error al cargar detalle", Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
-            public void onFailure(@NonNull Call<ActivityDetalleResponse> call, @NonNull Throwable t) {}
+            public void onFailure(@NonNull Call<ActivityDetalleResponse> call, @NonNull Throwable t) {
+                Toast.makeText(getContext(), "Error de conexion: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
     private void bindDetalle(ActivityDetalleResponse detalle) {
         activityNameText.setText(detalle.getName());
-        priceText.setText(String.format("Precio: %s %.2f", detalle.getCurrency(), detalle.getBasePrice()));
+        priceText.setText(String.format(Locale.getDefault(), "Precio: %s %.2f", detalle.getCurrency(), detalle.getBasePrice()));
         fullDescriptionText.setText(detalle.getFullDescription());
         meetingPointText.setText("Punto de encuentro: " + detalle.getMeetingPoint());
         guideNameText.setText("Guía: " + detalle.getGuideName());
         languageText.setText("Idioma: " + detalle.getLanguage());
 
-        Glide.with(this).load(detalle.getFirstImageUrl())
+        String fullImageUrl = NetworkModule.getFullImageUrl(detalle.getFirstImageUrl());
+
+        Glide.with(this).load(fullImageUrl)
                 .placeholder(R.drawable.ic_launcher_background)
                 .into(activityImageView);
 
         btnHowToGet.setOnClickListener(v -> {
-            if (detalle.getMeetingPointLatitude() != null) {
+            if (detalle.getMeetingPointLatitude() != null && detalle.getMeetingPointLatitude() != 0.0) {
                 openNavigationApp(detalle.getMeetingPointLatitude(), detalle.getMeetingPointLongitude());
+            } else {
+                Toast.makeText(getContext(), "Ubicacion no disponible", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void openNavigationApp(double lat, double lng) {
-        Uri gmmIntentUri = Uri.parse("geo:" + lat + "," + lng + "?q=" + lat + "," + lng + "(Punto de Encuentro)");
+        Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + lat + "," + lng + "(Punto de Encuentro)");
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-        
-        Intent chooser = Intent.createChooser(mapIntent, "Selecciona tu aplicación de mapas");
-        if (mapIntent.resolveActivity(requireActivity().getPackageManager()) != null || chooser.resolveActivity(requireActivity().getPackageManager()) != null) {
-            startActivity(chooser);
-        } else {
-            Toast.makeText(getContext(), "No tienes aplicaciones de mapas instaladas", Toast.LENGTH_SHORT).show();
-        }
+        startActivity(Intent.createChooser(mapIntent, "Selecciona tu aplicación de mapas"));
     }
 
     private void loadHorarios() {
@@ -170,7 +173,9 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
                 }
             }
             @Override
-            public void onFailure(@NonNull Call<PaginatedSchedulesResponse> call, @NonNull Throwable t) {}
+            public void onFailure(@NonNull Call<PaginatedSchedulesResponse> call, @NonNull Throwable t) {
+                Toast.makeText(getContext(), "Error al cargar horarios", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -182,35 +187,65 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
     }
 
     private void updateMap() {
-        if (mMap == null || currentDetalle == null || currentDetalle.getMeetingPointLatitude() == null) return;
+        if (mMap == null || currentDetalle == null) return;
+
+        Double mLat = currentDetalle.getMeetingPointLatitude();
+        Double mLng = currentDetalle.getMeetingPointLongitude();
+        LatLng tempMeetingPoint = (mLat != null && mLat != 0.0) ? new LatLng(mLat, mLng) : null;
+
+        List<ItineraryResponse> itineraries = currentDetalle.getItineraries();
+        
+        if (tempMeetingPoint == null && itineraries != null && !itineraries.isEmpty()) {
+            tempMeetingPoint = new LatLng(itineraries.get(0).getLatitude(), itineraries.get(0).getLongitude());
+        }
+
+        if (tempMeetingPoint == null) return;
+
+        final LatLng meetingPoint = tempMeetingPoint;
 
         mMap.clear();
-        LatLng meetingPoint = new LatLng(currentDetalle.getMeetingPointLatitude(), currentDetalle.getMeetingPointLongitude());
-        
-        mMap.addMarker(new MarkerOptions()
-                .position(meetingPoint)
-                .title("Punto de Encuentro")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         builder.include(meetingPoint);
 
-        List<ItineraryResponse> itineraries = currentDetalle.getItineraries();
         if (itineraries != null && !itineraries.isEmpty()) {
-            PolylineOptions lineOptions = new PolylineOptions().width(8).color(Color.BLUE).geodesic(true);
+            PolylineOptions lineOptions = new PolylineOptions()
+                    .width(12).color(Color.parseColor("#4A90E2")).startCap(new RoundCap()).endCap(new RoundCap()).geodesic(true);
+            
             for (ItineraryResponse point : itineraries) {
                 LatLng pos = new LatLng(point.getLatitude(), point.getLongitude());
-                mMap.addMarker(new MarkerOptions().position(pos).title(point.getName()));
-                lineOptions.add(pos);
                 builder.include(pos);
+                lineOptions.add(pos);
+
+                boolean isMP = isSameLocation(pos, meetingPoint);
+                mMap.addMarker(new MarkerOptions()
+                        .position(pos)
+                        .title(point.getName())
+                        .icon(BitmapDescriptorFactory.defaultMarker(isMP ? BitmapDescriptorFactory.HUE_BLUE : BitmapDescriptorFactory.HUE_RED))
+                        .zIndex(isMP ? 2.0f : 1.0f));
             }
             mMap.addPolyline(lineOptions);
+            
+            mMap.setOnMapLoadedCallback(() -> {
+                try {
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 150));
+                } catch (Exception e) {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(meetingPoint, 15));
+                }
+            });
+        } else {
+            mMap.addMarker(new MarkerOptions()
+                    .position(meetingPoint)
+                    .title("Punto de Encuentro")
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                    .zIndex(2.0f));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(meetingPoint, 15));
         }
+    }
 
-        LatLngBounds bounds = builder.build();
-        mMap.setOnMapLoadedCallback(() -> {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150));
-        });
+    private boolean isSameLocation(LatLng loc1, LatLng loc2) {
+        if (loc1 == null || loc2 == null) return false;
+        return Math.abs(loc1.latitude - loc2.latitude) < 0.0001 && 
+               Math.abs(loc1.longitude - loc2.longitude) < 0.0001;
     }
 
     @Override
