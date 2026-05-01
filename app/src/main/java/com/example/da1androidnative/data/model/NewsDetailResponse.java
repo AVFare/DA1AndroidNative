@@ -4,24 +4,21 @@ import com.google.gson.annotations.SerializedName;
 
 public class NewsDetailResponse extends NewsResponse {
 
-    @SerializedName(value = "fullDescription", alternate = {"content", "body", "fullContent"})
-    private String content;
+    @SerializedName("fullDescription")
+    private String fullDescription;
 
-    @SerializedName(value = "updatedAt", alternate = {"updated_at"})
+    @SerializedName("updatedAt")
     private String updatedAt;
 
-    @SerializedName(value = "author", alternate = {"publishedBy", "source"})
-    private String author;
+    public String getFullDescription() {
+        return fullDescription;
+    }
 
     public String getContent() {
-        return content;
+        return fullDescription;
     }
 
     public String getUpdatedAt() {
         return updatedAt;
-    }
-
-    public String getAuthor() {
-        return author;
     }
 }
