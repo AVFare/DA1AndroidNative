@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
@@ -57,13 +58,23 @@ public class ActivityHistoryViewModelTest {
                 nullable(String.class),
                 nullable(String.class),
                 nullable(Long.class),
-                nullable(String.class),
+                nullable(List.class),
                 any(Integer.class),
                 any(Integer.class)))
                 .thenReturn(mockCall);
 
         // Act
         viewModel.loadHistory(null, null, null, "COMPLETED,CANCELLED");
+
+        ArgumentCaptor<List> statusCaptor = ArgumentCaptor.forClass(List.class);
+        verify(repository).getActivityHistory(
+                nullable(String.class),
+                nullable(String.class),
+                nullable(Long.class),
+                statusCaptor.capture(),
+                any(Integer.class),
+                any(Integer.class));
+        assertEquals(Arrays.asList("COMPLETED", "CANCELLED"), statusCaptor.getValue());
 
         // Capturar el callback de Retrofit
         ArgumentCaptor<Callback<PaginatedActivityHistoryResponse>> captor = ArgumentCaptor.forClass(Callback.class);
@@ -85,7 +96,7 @@ public class ActivityHistoryViewModelTest {
                 nullable(String.class),
                 nullable(String.class),
                 nullable(Long.class),
-                nullable(String.class),
+                nullable(List.class),
                 any(Integer.class),
                 any(Integer.class)))
                 .thenReturn(mockCall);
@@ -121,7 +132,7 @@ public class ActivityHistoryViewModelTest {
                 nullable(String.class),
                 nullable(String.class),
                 nullable(Long.class),
-                nullable(String.class),
+                nullable(List.class),
                 any(Integer.class),
                 any(Integer.class)))
                 .thenReturn(mockCall);

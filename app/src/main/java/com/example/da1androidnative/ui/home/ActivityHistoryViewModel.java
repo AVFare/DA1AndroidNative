@@ -9,7 +9,9 @@ import com.example.da1androidnative.data.model.PaginatedActivityHistoryResponse;
 import com.example.da1androidnative.data.repository.ActivityHistoryRepository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -44,7 +46,7 @@ public class ActivityHistoryViewModel extends ViewModel {
     private String currentFromDate;
     private String currentToDate;
     private Long currentDestinationId;
-    private String currentStatus;
+    private List<String> currentStatus;
 
     @Inject
     public ActivityHistoryViewModel(ActivityHistoryRepository repository) {
@@ -55,7 +57,7 @@ public class ActivityHistoryViewModel extends ViewModel {
         this.currentFromDate = fromDate;
         this.currentToDate = toDate;
         this.currentDestinationId = destinationId;
-        this.currentStatus = status;
+        this.currentStatus = parseStatuses(status);
         _currentPage.setValue(0);
         fetchPage(0);
     }
@@ -90,7 +92,10 @@ public class ActivityHistoryViewModel extends ViewModel {
                     PaginatedActivityHistoryResponse body = response.body();
                     List<ActivityHistoryResponse> content = body.getContent();
                     _activities.setValue(content != null ? content : new ArrayList<>());
-                    
+
+                    if (body.getNumber() != null) {
+                        _currentPage.setValue(body.getNumber());
+                    }
                     _isLastPage.setValue(isLastPage(body, content, page));
                 } else {
                     _error.setValue("Error al cargar el historial: " + response.code());
@@ -116,5 +121,17 @@ public class ActivityHistoryViewModel extends ViewModel {
         }
 
         return content == null || content.size() < PAGE_SIZE;
+    }
+
+    private List<String> parseStatuses(String status) {
+        if (status == null || status.trim().isEmpty()) {
+            return null;
+        }
+
+        List<String> statuses = Arrays.stream(status.split(","))
+                .map(String::trim)
+                .filter(value -> !value.isEmpty())
+                .collect(Collectors.toList());
+        return statuses.isEmpty() ? null : statuses;
     }
 }
