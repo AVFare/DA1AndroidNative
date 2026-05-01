@@ -28,6 +28,13 @@ public class ActivityDetalleResponse extends ActivityResponse {
     @SerializedName("itineraries")
     private List<ItineraryResponse> itineraries;
 
+    @SerializedName("gallery")
+    private List<String> gallery;
+
+    public String getShortDescription() {
+        return shortDescription;
+    }
+
     public String getFullDescription() {
         return fullDescription;
     }
@@ -63,11 +70,10 @@ public class ActivityDetalleResponse extends ActivityResponse {
         return currency;
     }
 
-    public String getShortDescription() {
-        return shortDescription;
-    }
-
     public List<ItineraryResponse> getItineraries() {
         return itineraries;
+    }
+    public List<String> getGallery() {
+        return gallery;
     }
 }
