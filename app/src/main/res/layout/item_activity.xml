@@ -59,17 +59,18 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginStart="8dp"
-			android:layout_marginTop="36dp"
-			android:background="@drawable/bg_badge_primary"
+			android:layout_marginEnd="8dp"
+			android:background="@color/white"
 			android:paddingHorizontal="8dp"
 			android:paddingVertical="4dp"
 			android:text="Destacada"
-			android:textColor="@android:color/white"
+			android:textColor="@color/purple_500"
 			android:textSize="10sp"
 			android:textStyle="bold"
 			android:visibility="gone"
 			app:layout_constraintStart_toStartOf="parent"
-			app:layout_constraintTop_toTopOf="parent" />
+			app:layout_constraintTop_toTopOf="@id/btnFavorite"
+			app:layout_constraintBottom_toBottomOf="@id/btnFavorite" />
 
         <LinearLayout
             android:layout_width="0dp"
