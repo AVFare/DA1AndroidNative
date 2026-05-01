@@ -7,6 +7,9 @@ import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,8 +18,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.da1androidnative.R;
-import com.example.da1androidnative.databinding.FragmentProfileViewBinding;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +30,20 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class ProfileViewFragment extends Fragment {
 
-    private FragmentProfileViewBinding binding;
     private ProfileViewModel viewModel;
+    private ImageView ivProfilePhotoView;
+    private ImageButton btnBack;
+    private TextView tvFirstName;
+    private TextView tvLastName;
+    private TextView tvEmail;
+    private TextView tvPhone;
+    private TextView tvReservedCountView;
+    private TextView tvCompletedCountView;
+    private ChipGroup chipGroupPreferences;
+    private MaterialButton btnEditProfile;
+    private View btnAccessSettings;
+    private View layoutReservadasCard;
+    private View layoutRealizadasCard;
 
     private static final Map<String, Integer> PREFERENCE_COLORS = new HashMap<String, Integer>() {{
         put("AVENTURA", 0xFFFF6D00);
@@ -50,8 +66,7 @@ public class ProfileViewFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        binding = FragmentProfileViewBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+        return inflater.inflate(R.layout.fragment_profile_view, container, false);
     }
 
     @Override
@@ -60,45 +75,62 @@ public class ProfileViewFragment extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 
+        initViews(view);
         observeViewModel();
         viewModel.loadProfile();
 
-        binding.btnEditProfile.setOnClickListener(v ->
+        btnEditProfile.setOnClickListener(v ->
                 NavHostFragment.findNavController(this)
                         .navigate(R.id.action_profileViewFragment_to_profileEditFragment));
 
-        binding.btnBack.setOnClickListener(v ->
+        btnBack.setOnClickListener(v ->
                 NavHostFragment.findNavController(this).navigateUp());
 
-        binding.btnAccessSettings.setOnClickListener(v ->
+        btnAccessSettings.setOnClickListener(v ->
                 NavHostFragment.findNavController(this)
                         .navigate(R.id.action_profileViewFragment_to_accessSettingsFragment));
 
-        binding.layoutReservadasCard.setOnClickListener(v ->
+        layoutReservadasCard.setOnClickListener(v ->
                 NavHostFragment.findNavController(this)
                         .navigate(R.id.action_profileViewFragment_to_reservasFragment));
 
-        binding.layoutRealizadasCard.setOnClickListener(v ->
+        layoutRealizadasCard.setOnClickListener(v ->
                 NavHostFragment.findNavController(this)
                         .navigate(R.id.action_profileViewFragment_to_activityHistoryFragment));
+    }
+
+    private void initViews(View view) {
+        ivProfilePhotoView = view.findViewById(R.id.ivProfilePhotoView);
+        btnBack = view.findViewById(R.id.btnBack);
+        tvFirstName = view.findViewById(R.id.tvFirstName);
+        tvLastName = view.findViewById(R.id.tvLastName);
+        tvEmail = view.findViewById(R.id.tvEmail);
+        tvPhone = view.findViewById(R.id.tvPhone);
+        tvReservedCountView = view.findViewById(R.id.tvReservedCountView);
+        tvCompletedCountView = view.findViewById(R.id.tvCompletedCountView);
+        chipGroupPreferences = view.findViewById(R.id.chipGroupPreferences);
+        btnEditProfile = view.findViewById(R.id.btnEditProfile);
+        btnAccessSettings = view.findViewById(R.id.btnAccessSettings);
+        layoutReservadasCard = view.findViewById(R.id.layoutReservadasCard);
+        layoutRealizadasCard = view.findViewById(R.id.layoutRealizadasCard);
     }
 
     private void observeViewModel() {
         viewModel.getProfileData().observe(getViewLifecycleOwner(), profile -> {
             if (profile == null) return;
 
-            binding.tvFirstName.setText(profile.getFirstName());
-            binding.tvLastName.setText(profile.getLastName());
-            binding.tvEmail.setText(profile.getEmail());
-            binding.tvPhone.setText(profile.getPhone() != null ? profile.getPhone() : "-");
-            binding.tvReservedCountView.setText(String.valueOf(profile.getReservedActivitiesCount()));
-            binding.tvCompletedCountView.setText(String.valueOf(profile.getCompletedActivitiesCount()));
+            tvFirstName.setText(profile.getFirstName());
+            tvLastName.setText(profile.getLastName());
+            tvEmail.setText(profile.getEmail());
+            tvPhone.setText(profile.getPhone() != null ? profile.getPhone() : "-");
+            tvReservedCountView.setText(String.valueOf(profile.getReservedActivitiesCount()));
+            tvCompletedCountView.setText(String.valueOf(profile.getCompletedActivitiesCount()));
 
             if (profile.getProfilePhoto() != null && !profile.getProfilePhoto().isEmpty()) {
                 loadBase64Image(profile.getProfilePhoto());
             }
 
-            binding.chipGroupPreferences.removeAllViews();
+            chipGroupPreferences.removeAllViews();
             if (profile.getTravelPreferences() != null) {
                 for (String pref : profile.getTravelPreferences()) {
                     Chip chip = new Chip(requireContext());
@@ -108,7 +140,7 @@ public class ProfileViewFragment extends Fragment {
                             android.content.res.ColorStateList.valueOf(
                                     PREFERENCE_COLORS.containsKey(pref) ? PREFERENCE_COLORS.get(pref) : 0xFF9E9E9E));
                     chip.setTextColor(0xFFFFFFFF);
-                    binding.chipGroupPreferences.addView(chip);
+                    chipGroupPreferences.addView(chip);
                 }
             }
         });
@@ -118,7 +150,7 @@ public class ProfileViewFragment extends Fragment {
         try {
             byte[] decodedBytes = Base64.decode(base64, Base64.DEFAULT);
             Bitmap bitmap = BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-            binding.ivProfilePhotoView.setImageBitmap(bitmap);
+            ivProfilePhotoView.setImageBitmap(bitmap);
         } catch (Exception e) {
             // queda la silueta por defecto
         }
@@ -127,6 +159,5 @@ public class ProfileViewFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null;
     }
 }
