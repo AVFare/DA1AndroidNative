@@ -14,6 +14,34 @@ import okhttp3.OkHttpClient;
 @InstallIn(SingletonComponent.class)
 public class NetworkModule {
 
+    private static String getBaseUrl() {
+        if (Build.FINGERPRINT.contains("generic")
+                || Build.FINGERPRINT.contains("unknown")
+                || Build.MODEL.contains("google_sdk")
+                || Build.MODEL.contains("Emulator")
+                || Build.MODEL.contains("Android SDK built for x86")
+                || Build.MANUFACTURER.contains("Genymotion")
+                || (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
+                || "google_sdk".equals(Build.PRODUCT)
+                || Build.PRODUCT.contains("sdk")) {
+
+            return "http://10.0.2.2:8080/api/v1/";
+        } else {
+            return "http://192.168.0.209:8080/api/v1/";
+        }
+    }
+
+    public static String getFullImageUrl(String relativePath) {
+        if (relativePath == null || relativePath.isEmpty()) return null;
+        if (relativePath.startsWith("http")) return relativePath;
+        
+        String baseUrl = getBaseUrl();
+        // Remove "api/v1/" to get the server root if images are served from root/media or similar
+        // Typically in this project's backend, it might be served at /media/
+        String rootUrl = baseUrl.replace("api/v1/", "");
+        return rootUrl + "media/activities/" + relativePath;
+    }
+
     @Provides
     @Singleton
     public OkHttpClient provideOkHttpClient(AuthInterceptor authInterceptor) {
@@ -25,25 +53,8 @@ public class NetworkModule {
     @Provides
     @Singleton
     public Retrofit provideRetrofit(OkHttpClient okHttpClient) {
-        String baseUrl;
-        // Detecta si es un emulador para usar 10.0.2.2 o dispositivo fisico para usar la IP de la PC
-        if (Build.FINGERPRINT.contains("generic") 
-            || Build.FINGERPRINT.contains("unknown") 
-            || Build.MODEL.contains("google_sdk") 
-            || Build.MODEL.contains("Emulator") 
-            || Build.MODEL.contains("Android SDK built for x86") 
-            || Build.MANUFACTURER.contains("Genymotion") 
-            || (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic")) 
-            || "google_sdk".equals(Build.PRODUCT)
-            || Build.PRODUCT.contains("sdk")) {
-            
-            baseUrl = "http://10.0.2.2:8080/api/v1/";
-        } else {
-            baseUrl = "http://192.168.0.209:8080/api/v1/";
-        }
-
         return new Retrofit.Builder()
-                .baseUrl(baseUrl)
+                .baseUrl(getBaseUrl())
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
