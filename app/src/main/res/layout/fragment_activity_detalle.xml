@@ -16,11 +16,20 @@
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <ImageView
-                android:id="@+id/activityImageView"
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/galleryViewPager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax" />
+
+            <LinearLayout
+                android:id="@+id/galleryDotsContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="12dp"
+                android:orientation="horizontal"
                 app:layout_collapseMode="parallax" />
 
             <androidx.appcompat.widget.Toolbar
