@@ -197,11 +197,6 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
                     isLastPage = isLastPage(body, content);
                     updatePaginationControls();
 
-                    //Log: featured flag.
-                    for (ActivityResponse a : content != null ? content : new ArrayList<ActivityResponse>()) {
-                        android.util.Log.d("FEATURED_TEST",
-                                a.getName() + " -> featured=" + a.isFeatured());
-                    }
                 }
             }
 

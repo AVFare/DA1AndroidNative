@@ -15,10 +15,10 @@ public class UpdateUserProfileRequest {
     @SerializedName("phone")
     private String phone;
 
-    @SerializedName("profilePhoto")  // era "profilePictureUrl"
+    @SerializedName("profilePhoto")
     private String profilePictureUrl;
 
-    @SerializedName("preferences")  // era "preferences", esto ya estaba bien
+    @SerializedName("preferences")
     private List<String> preferences;
 
     public UpdateUserProfileRequest(
