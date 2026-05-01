@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,7 +38,10 @@ public class NewsFragment extends Fragment {
 
     private NewsAdapter adapter;
     private ProgressBar progressNews;
-    private TextView tvEmptyNews;
+    private View errorStateNews;
+    private TextView tvErrorTitle, tvErrorSubtitle;
+    private Button btnRetryNews;
+    private RecyclerView recyclerView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,19 +58,25 @@ public class NewsFragment extends Fragment {
                 requireActivity().getOnBackPressedDispatcher().onBackPressed());
 
         progressNews = view.findViewById(R.id.progressNews);
-        tvEmptyNews = view.findViewById(R.id.tvEmptyNews);
+        errorStateNews = view.findViewById(R.id.errorStateNews);
+        tvErrorTitle = view.findViewById(R.id.tvErrorTitle);
+        tvErrorSubtitle = view.findViewById(R.id.tvErrorSubtitle);
+        btnRetryNews = view.findViewById(R.id.btnRetryNews);
+        recyclerView = view.findViewById(R.id.newsRecyclerView);
 
-        RecyclerView recyclerView = view.findViewById(R.id.newsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-
-        adapter = new NewsAdapter(requireContext());
+        adapter = new NewsAdapter(requireContext(), this::openNewsDetail);
         recyclerView.setAdapter(adapter);
+
+        btnRetryNews.setOnClickListener(v -> loadNews());
 
         loadNews();
     }
 
     private void loadNews() {
         showLoading(true);
+        errorStateNews.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
 
         apiService.getNews().enqueue(new Callback<List<NewsResponse>>() {
             @Override
@@ -75,27 +86,53 @@ public class NewsFragment extends Fragment {
 
                 if (response.isSuccessful() && response.body() != null) {
                     List<NewsResponse> news = response.body();
-                    adapter.setNews(news);
-                    tvEmptyNews.setVisibility(news.isEmpty() ? View.VISIBLE : View.GONE);
+                    updateUI(news, null);
                 } else {
-                    tvEmptyNews.setVisibility(View.VISIBLE);
+                    updateUI(null, "No se pudieron cargar las noticias.");
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<NewsResponse>> call, @NonNull Throwable t) {
                 showLoading(false);
-                tvEmptyNews.setVisibility(View.VISIBLE);
+                updateUI(null, "Error de red: revisa tu conexión.");
             }
         });
+    }
+
+    private void updateUI(List<NewsResponse> news, String errorMessage) {
+        if (errorMessage != null) {
+            recyclerView.setVisibility(View.GONE);
+            errorStateNews.setVisibility(View.VISIBLE);
+            tvErrorTitle.setText("¡Ups! Algo salió mal");
+            tvErrorSubtitle.setText(errorMessage);
+        } else if (news == null || news.isEmpty()) {
+            recyclerView.setVisibility(View.GONE);
+            errorStateNews.setVisibility(View.VISIBLE);
+            tvErrorTitle.setText("Sin noticias");
+            tvErrorSubtitle.setText("Todavía no hay noticias disponibles.");
+        } else {
+            errorStateNews.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+            adapter.setNews(news);
+        }
+    }
+
+    private void openNewsDetail(NewsResponse news) {
+        Bundle args = new Bundle();
+        args.putLong("newsId", news.getNewsId());
+        args.putString("title", news.getTitle());
+        args.putString("imageUrl", news.getImageUrl());
+        args.putString("summary", news.getSummary());
+        args.putString("date", news.getPublishedAt());
+
+        Navigation.findNavController(requireView())
+                .navigate(R.id.action_newsFragment_to_newsDetailFragment, args);
     }
 
     private void showLoading(boolean loading) {
         if (progressNews != null) {
             progressNews.setVisibility(loading ? View.VISIBLE : View.GONE);
-        }
-        if (tvEmptyNews != null && loading) {
-            tvEmptyNews.setVisibility(View.GONE);
         }
     }
 }
