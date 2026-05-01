@@ -32,26 +32,66 @@ public class ActivityHistoryViewModel extends ViewModel {
     private final MutableLiveData<String> _error = new MutableLiveData<>(null);
     public LiveData<String> error = _error;
 
+    private final MutableLiveData<Integer> _currentPage = new MutableLiveData<>(0);
+    public LiveData<Integer> currentPage = _currentPage;
+
+    private final MutableLiveData<Boolean> _isLastPage = new MutableLiveData<>(false);
+    public LiveData<Boolean> isLastPage = _isLastPage;
+
+    private static final int PAGE_SIZE = 6;
+
+    // Cache para los filtros actuales
+    private String currentFromDate;
+    private String currentToDate;
+    private Long currentDestinationId;
+    private String currentStatus;
+
     @Inject
     public ActivityHistoryViewModel(ActivityHistoryRepository repository) {
         this.repository = repository;
     }
 
-    /**
-     * Carga el historial de actividades finalizadas.
-     * Los parámetros son opcionales.
-     */
-    public void loadHistory(String fromDate, String toDate, Long destinationId, String status, Integer page, Integer size) {
+    public void loadHistory(String fromDate, String toDate, Long destinationId, String status) {
+        this.currentFromDate = fromDate;
+        this.currentToDate = toDate;
+        this.currentDestinationId = destinationId;
+        this.currentStatus = status;
+        _currentPage.setValue(0);
+        fetchPage(0);
+    }
+
+    public void nextPage() {
+        if (!Boolean.TRUE.equals(_isLastPage.getValue())) {
+            int next = (_currentPage.getValue() != null ? _currentPage.getValue() : 0) + 1;
+            _currentPage.setValue(next);
+            fetchPage(next);
+        }
+    }
+
+    public void previousPage() {
+        int current = (_currentPage.getValue() != null ? _currentPage.getValue() : 0);
+        if (current > 0) {
+            int prev = current - 1;
+            _currentPage.setValue(prev);
+            fetchPage(prev);
+        }
+    }
+
+    private void fetchPage(int page) {
         _isLoading.setValue(true);
         _error.setValue(null);
 
-        repository.getActivityHistory(fromDate, toDate, destinationId, status, page, size).enqueue(new Callback<PaginatedActivityHistoryResponse>() {
+        repository.getActivityHistory(currentFromDate, currentToDate, currentDestinationId, currentStatus, page, PAGE_SIZE)
+                .enqueue(new Callback<PaginatedActivityHistoryResponse>() {
             @Override
             public void onResponse(Call<PaginatedActivityHistoryResponse> call, Response<PaginatedActivityHistoryResponse> response) {
                 _isLoading.setValue(false);
                 if (response.isSuccessful() && response.body() != null) {
-                    List<ActivityHistoryResponse> content = response.body().getContent();
+                    PaginatedActivityHistoryResponse body = response.body();
+                    List<ActivityHistoryResponse> content = body.getContent();
                     _activities.setValue(content != null ? content : new ArrayList<>());
+                    
+                    _isLastPage.setValue(isLastPage(body, content, page));
                 } else {
                     _error.setValue("Error al cargar el historial: " + response.code());
                 }
@@ -63,5 +103,18 @@ public class ActivityHistoryViewModel extends ViewModel {
                 _error.setValue("Error de red: " + t.getMessage());
             }
         });
+    }
+
+    private boolean isLastPage(PaginatedActivityHistoryResponse body, List<ActivityHistoryResponse> content, int page) {
+        if (body.getLast() != null) {
+            return body.getLast();
+        }
+
+        Integer totalPages = body.getTotalPages();
+        if (totalPages != null) {
+            return page >= totalPages - 1;
+        }
+
+        return content == null || content.size() < PAGE_SIZE;
     }
 }
