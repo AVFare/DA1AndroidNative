@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.NewsResponse;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 
 import java.text.ParseException;
@@ -24,11 +25,17 @@ import java.util.Locale;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {
 
+    public interface OnNewsClickListener {
+        void onNewsClick(NewsResponse news);
+    }
+
     private final Context context;
+    private final OnNewsClickListener listener;
     private List<NewsResponse> newsList = new ArrayList<>();
 
-    public NewsAdapter(Context context) {
+    public NewsAdapter(Context context, OnNewsClickListener listener) {
         this.context = context;
+        this.listener = listener;
     }
 
     public void setNews(List<NewsResponse> newsList) {
@@ -58,6 +65,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
                 .error(R.drawable.ic_launcher_background)
                 .centerCrop()
                 .into(holder.newsImage);
+
+        holder.btnReadMore.setOnClickListener(v -> listener.onNewsClick(news));
+        
+        holder.newsCard.setOnClickListener(null);
+        holder.newsCard.setClickable(false);
     }
 
     @Override
@@ -82,6 +94,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         MaterialCardView newsCard;
         ImageView newsImage;
         TextView newsTitle, newsSummary, newsDate;
+        MaterialButton btnReadMore;
 
         public NewsViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -90,6 +103,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
             newsTitle = itemView.findViewById(R.id.newsTitle);
             newsSummary = itemView.findViewById(R.id.newsSummary);
             newsDate = itemView.findViewById(R.id.newsDate);
+            btnReadMore = itemView.findViewById(R.id.btnReadMore);
         }
     }
 }

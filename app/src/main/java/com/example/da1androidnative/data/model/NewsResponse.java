@@ -4,19 +4,19 @@ import com.google.gson.annotations.SerializedName;
 
 public class NewsResponse {
 
-    @SerializedName(value = "newsId", alternate = {"id"})
+    @SerializedName("newsId")
     private long newsId;
 
     @SerializedName("title")
     private String title;
 
-    @SerializedName(value = "shortDescription", alternate = {"summary", "description", "excerpt"})
-    private String summary;
+    @SerializedName("shortDescription")
+    private String shortDescription;
 
-    @SerializedName(value = "imageUrl", alternate = {"image", "coverImage"})
+    @SerializedName("imageUrl")
     private String imageUrl;
 
-    @SerializedName(value = "publishedAt", alternate = {"createdAt", "date"})
+    @SerializedName("publishedAt")
     private String publishedAt;
 
     public long getNewsId() {
@@ -27,8 +27,11 @@ public class NewsResponse {
         return title;
     }
 
+    public String getShortDescription() {
+        return shortDescription;
+    }
     public String getSummary() {
-        return summary;
+        return shortDescription;
     }
 
     public String getImageUrl() {

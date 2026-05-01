@@ -1,0 +1,142 @@
+package com.example.da1androidnative.ui.home;
+
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
+
+import com.bumptech.glide.Glide;
+import com.example.da1androidnative.R;
+import com.example.da1androidnative.data.model.NewsDetailResponse;
+import com.example.da1androidnative.data.network.ApiService;
+import com.google.android.material.chip.Chip;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+@AndroidEntryPoint
+public class NewsDetailFragment extends Fragment {
+
+    @Inject
+    ApiService apiService;
+
+    private long newsId;
+    private ImageView ivDetailImage;
+    private Chip tvDetailDate;
+    private TextView tvDetailTitle;
+    private TextView tvDetailSummary;
+    private TextView tvDetailContent;
+    private Toolbar toolbar;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_news_detail, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        initViews(view);
+
+        Bundle args = getArguments();
+        if (args != null) {
+            newsId = args.getLong("newsId", -1L);
+            
+            tvDetailTitle.setText(args.getString("title", ""));
+            tvDetailSummary.setText(args.getString("summary", ""));
+            tvDetailDate.setText(formatDate(args.getString("date", "")));
+            
+            String imageUrl = args.getString("imageUrl", "");
+            if (!TextUtils.isEmpty(imageUrl)) {
+                Glide.with(this).load(imageUrl).into(ivDetailImage);
+            }
+        }
+
+        loadNewsDetail();
+    }
+
+    private void initViews(View view) {
+        ivDetailImage = view.findViewById(R.id.ivDetailImage);
+        tvDetailDate = view.findViewById(R.id.tvDetailDate);
+        tvDetailTitle = view.findViewById(R.id.tvDetailTitle);
+        tvDetailSummary = view.findViewById(R.id.tvDetailSummary);
+        tvDetailContent = view.findViewById(R.id.tvDetailContent);
+        toolbar = view.findViewById(R.id.toolbar);
+
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(v -> NavHostFragment.findNavController(this).navigateUp());
+        }
+    }
+
+    private void loadNewsDetail() {
+        if (newsId == -1L) return;
+
+        apiService.getNewsDetail(newsId).enqueue(new Callback<NewsDetailResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<NewsDetailResponse> call, @NonNull Response<NewsDetailResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    bindFullDetail(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<NewsDetailResponse> call, @NonNull Throwable t) {
+                if (isAdded()) {
+                    Toast.makeText(getContext(), "Error al conectar con el servidor", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void bindFullDetail(NewsDetailResponse news) {
+        tvDetailTitle.setText(news.getTitle());
+        tvDetailDate.setText(formatDate(news.getPublishedAt()));
+        
+        tvDetailSummary.setText(news.getShortDescription());
+        
+        String fullContent = news.getFullDescription();
+        if (!TextUtils.isEmpty(fullContent)) {
+            tvDetailContent.setText(fullContent);
+        } else {
+            tvDetailContent.setText(news.getShortDescription());
+        }
+
+        if (!TextUtils.isEmpty(news.getImageUrl())) {
+            Glide.with(this).load(news.getImageUrl()).into(ivDetailImage);
+        }
+    }
+
+    private String formatDate(String rawDate) {
+        if (rawDate == null || rawDate.isEmpty()) return "";
+        try {
+            String dateStr = rawDate.contains("T") ? rawDate.split("T")[0] : rawDate;
+            SimpleDateFormat input = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            SimpleDateFormat output = new SimpleDateFormat("dd 'de' MMMM, yyyy", new Locale("es", "ES"));
+            Date date = input.parse(dateStr);
+            return date != null ? output.format(date) : rawDate;
+        } catch (ParseException e) {
+            return rawDate;
+        }
+    }
+}
