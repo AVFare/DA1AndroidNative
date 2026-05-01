@@ -80,10 +80,11 @@ public class ProfileEditFragment extends Fragment {
             binding.etEmail.setText(profile.getEmail());
             binding.etPhone.setText(profile.getPhone());
 
-            if (profile.getProfilePictureUrl() != null
-                    && !profile.getProfilePictureUrl().isEmpty()) {
-                currentPhotoBase64 = profile.getProfilePictureUrl();
-                loadBase64Image(profile.getProfilePictureUrl());
+            // Cambiado: usa profilePhoto (base64) en lugar de profilePictureUrl
+            if (profile.getProfilePhoto() != null
+                    && !profile.getProfilePhoto().isEmpty()) {
+                currentPhotoBase64 = profile.getProfilePhoto();
+                loadBase64Image(profile.getProfilePhoto());
             }
 
             if (profile.getTravelPreferences() != null) {
@@ -154,36 +155,20 @@ public class ProfileEditFragment extends Fragment {
 
             List<String> preferences = new ArrayList<>();
 
-            if (binding.cbAventura.isChecked()) {
-                preferences.add("AVENTURA");
-            }
+            if (binding.cbAventura.isChecked()) preferences.add("AVENTURA");
+            if (binding.cbCultura.isChecked()) preferences.add("CULTURA");
+            if (binding.cbGastronomia.isChecked()) preferences.add("GASTRONOMIA");
+            if (binding.cbNaturaleza.isChecked()) preferences.add("NATURALEZA");
+            if (binding.cbRelax.isChecked()) preferences.add("RELAX");
 
-            if (binding.cbCultura.isChecked()) {
-                preferences.add("CULTURA");
-            }
+            UpdateUserProfileRequest request = new UpdateUserProfileRequest(
+                    firstName,
+                    lastName,
+                    phone,
+                    currentPhotoBase64,
+                    preferences
+            );
 
-            if (binding.cbGastronomia.isChecked()) {
-                preferences.add("GASTRONOMIA");
-            }
-
-            if (binding.cbNaturaleza.isChecked()) {
-                preferences.add("NATURALEZA");
-            }
-
-            if (binding.cbRelax.isChecked()) {
-                preferences.add("RELAX");
-            }
-
-            UpdateUserProfileRequest request =
-                    new UpdateUserProfileRequest(
-                            firstName,
-                            lastName,
-                            phone,
-                            currentPhotoBase64,
-                            preferences
-                    );
-
-            android.util.Log.d("DEBUG_PREFS", "Preferences: " + preferences.toString());
             viewModel.updateProfile(request);
         });
 
@@ -203,18 +188,11 @@ public class ProfileEditFragment extends Fragment {
             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(
-                    Bitmap.CompressFormat.JPEG,
-                    80,
-                    baos
-            );
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos);
 
             byte[] imageBytes = baos.toByteArray();
 
-            currentPhotoBase64 = Base64.encodeToString(
-                    imageBytes,
-                    Base64.DEFAULT
-            );
+            currentPhotoBase64 = Base64.encodeToString(imageBytes, Base64.DEFAULT);
 
             binding.ivProfilePhoto.setImageBitmap(bitmap);
 
@@ -229,10 +207,7 @@ public class ProfileEditFragment extends Fragment {
 
     private void loadBase64Image(String base64) {
         try {
-            byte[] decodedBytes = Base64.decode(
-                    base64,
-                    Base64.DEFAULT
-            );
+            byte[] decodedBytes = Base64.decode(base64, Base64.DEFAULT);
 
             Bitmap bitmap = BitmapFactory.decodeByteArray(
                     decodedBytes,
