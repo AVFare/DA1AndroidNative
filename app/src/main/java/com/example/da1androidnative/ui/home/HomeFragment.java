@@ -37,6 +37,7 @@ import com.example.da1androidnative.data.model.PaginatedActivitiesResponse;
 import com.example.da1androidnative.data.network.ApiService;
 import com.example.da1androidnative.data.network.NetworkUtils;
 import com.example.da1androidnative.ui.home.adapter.ActivityAdapter;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
@@ -67,13 +68,8 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     private TextView tvPageNumber;
     private Button btnPreviousPage;
     private Button btnNextPage;
-    private Button btnApplyFilters;
-    private Button btnClearFilters;
-    private AutoCompleteTextView destinationFilter;
-    private AutoCompleteTextView categoryFilter;
-    private EditText dateFilter;
-    private EditText minPriceFilter;
-    private EditText maxPriceFilter;
+    private Button btnOpenFilters;
+    private TextView tvFilterSummary;
     private SwitchMaterial biometricSwitch;
     private ConnectivityManager.NetworkCallback networkCallback;
     private int currentPage = 0;
@@ -82,6 +78,13 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     private static final String ALL_FILTERS_LABEL = "Todos";
     private final Map<String, Long> destinationIdByName = new HashMap<>();
     private final Map<String, String> categoryValueByLabel = new HashMap<>();
+    private List<String> destinationLabels = new ArrayList<>();
+    private List<String> categoryLabels = new ArrayList<>();
+    private String selectedDestination = ALL_FILTERS_LABEL;
+    private String selectedCategory = ALL_FILTERS_LABEL;
+    private String selectedDate = "";
+    private String selectedMinPrice = "";
+    private String selectedMaxPrice = "";
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -170,32 +173,14 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     }
 
     private void setupFilters(View view) {
-        destinationFilter = view.findViewById(R.id.homeDestinationFilter);
-        categoryFilter = view.findViewById(R.id.homeCategoryFilter);
-        dateFilter = view.findViewById(R.id.homeDateFilter);
-        minPriceFilter = view.findViewById(R.id.homeMinPriceFilter);
-        maxPriceFilter = view.findViewById(R.id.homeMaxPriceFilter);
-        btnApplyFilters = view.findViewById(R.id.homeApplyFiltersButton);
-        btnClearFilters = view.findViewById(R.id.homeClearFiltersButton);
+        tvFilterSummary = view.findViewById(R.id.homeFilterSummaryText);
+        btnOpenFilters = view.findViewById(R.id.homeOpenFiltersButton);
 
         setupDestinationOptions(Collections.emptyList());
         setupCategoryOptions(Arrays.asList("AVENTURA", "CULTURA", "GASTRONOMIA", "NATURALEZA", "RELAX"));
+        updateFilterSummary();
 
-        dateFilter.setOnClickListener(v -> showDatePicker());
-        btnApplyFilters.setOnClickListener(v -> {
-            if (!validatePriceRange()) return;
-            currentPage = 0;
-            loadActivities();
-        });
-        btnClearFilters.setOnClickListener(v -> {
-            destinationFilter.setText(ALL_FILTERS_LABEL, false);
-            categoryFilter.setText(ALL_FILTERS_LABEL, false);
-            dateFilter.setText("");
-            minPriceFilter.setText("");
-            maxPriceFilter.setText("");
-            currentPage = 0;
-            loadActivities();
-        });
+        btnOpenFilters.setOnClickListener(v -> showFiltersDialog());
     }
 
     private void loadFilterOptions() {
@@ -222,43 +207,41 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
 
     private void setupDestinationOptions(List<DestinationOptionResponse> destinations) {
         destinationIdByName.clear();
-        List<String> labels = new ArrayList<>();
-        labels.add(ALL_FILTERS_LABEL);
+        destinationLabels = new ArrayList<>();
+        destinationLabels.add(ALL_FILTERS_LABEL);
 
         if (destinations != null) {
             for (DestinationOptionResponse destination : destinations) {
                 if (destination.getName() == null) continue;
-                labels.add(destination.getName());
+                destinationLabels.add(destination.getName());
                 destinationIdByName.put(destination.getName(), destination.getDestinationId());
             }
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, labels);
-        destinationFilter.setAdapter(adapter);
-        if (destinationFilter.getText().toString().isEmpty()) {
-            destinationFilter.setText(ALL_FILTERS_LABEL, false);
+        if (!destinationLabels.contains(selectedDestination)) {
+            selectedDestination = ALL_FILTERS_LABEL;
         }
+        updateFilterSummary();
     }
 
     private void setupCategoryOptions(List<String> categories) {
         categoryValueByLabel.clear();
-        List<String> labels = new ArrayList<>();
-        labels.add(ALL_FILTERS_LABEL);
+        categoryLabels = new ArrayList<>();
+        categoryLabels.add(ALL_FILTERS_LABEL);
 
         if (categories != null) {
             for (String category : categories) {
                 if (category == null) continue;
                 String label = formatCategory(category);
-                labels.add(label);
+                categoryLabels.add(label);
                 categoryValueByLabel.put(label, category);
             }
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, labels);
-        categoryFilter.setAdapter(adapter);
-        if (categoryFilter.getText().toString().isEmpty()) {
-            categoryFilter.setText(ALL_FILTERS_LABEL, false);
+        if (!categoryLabels.contains(selectedCategory)) {
+            selectedCategory = ALL_FILTERS_LABEL;
         }
+        updateFilterSummary();
     }
 
     private String formatCategory(String category) {
@@ -266,17 +249,17 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         return lower.substring(0, 1).toUpperCase(Locale.ROOT) + lower.substring(1);
     }
 
-    private void showDatePicker() {
+    private void showDatePicker(EditText target) {
         Calendar calendar = Calendar.getInstance();
         new DatePickerDialog(requireContext(), (v, year, month, dayOfMonth) -> {
             String date = String.format(Locale.getDefault(), "%04d-%02d-%02d", year, month + 1, dayOfMonth);
-            dateFilter.setText(date);
+            target.setText(date);
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
-    private boolean validatePriceRange() {
-        Double minPrice = parsePrice(minPriceFilter.getText().toString());
-        Double maxPrice = parsePrice(maxPriceFilter.getText().toString());
+    private boolean validatePriceRange(String minPriceValue, String maxPriceValue) {
+        Double minPrice = parsePrice(minPriceValue);
+        Double maxPrice = parsePrice(maxPriceValue);
         if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
             Toast.makeText(getContext(), "El precio mínimo no puede superar al máximo", Toast.LENGTH_SHORT).show();
             return false;
@@ -285,6 +268,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     }
 
     private Double parsePrice(String value) {
+        if (value == null) return null;
         String trimmed = value.trim();
         if (trimmed.isEmpty()) return null;
         try {
@@ -295,23 +279,99 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     }
 
     private Long getSelectedDestinationId() {
-        if (destinationFilter == null) return null;
-        String selected = destinationFilter.getText().toString();
-        if (selected.isEmpty() || ALL_FILTERS_LABEL.equals(selected)) return null;
-        return destinationIdByName.get(selected);
+        if (selectedDestination == null || selectedDestination.isEmpty() || ALL_FILTERS_LABEL.equals(selectedDestination)) {
+            return null;
+        }
+        return destinationIdByName.get(selectedDestination);
     }
 
     private String getSelectedCategory() {
-        if (categoryFilter == null) return null;
-        String selected = categoryFilter.getText().toString();
-        if (selected.isEmpty() || ALL_FILTERS_LABEL.equals(selected)) return null;
-        return categoryValueByLabel.get(selected);
+        if (selectedCategory == null || selectedCategory.isEmpty() || ALL_FILTERS_LABEL.equals(selectedCategory)) {
+            return null;
+        }
+        return categoryValueByLabel.get(selectedCategory);
     }
 
-    private String getTextFilter(EditText editText) {
-        if (editText == null) return null;
-        String value = editText.getText().toString().trim();
+    private String nullableFilter(String value) {
+        if (value == null) return null;
+        value = value.trim();
         return value.isEmpty() ? null : value;
+    }
+
+    private void showFiltersDialog() {
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_home_filters, null, false);
+
+        AutoCompleteTextView dialogDestination = dialogView.findViewById(R.id.dialogDestinationFilter);
+        AutoCompleteTextView dialogCategory = dialogView.findViewById(R.id.dialogCategoryFilter);
+        EditText dialogDate = dialogView.findViewById(R.id.dialogDateFilter);
+        EditText dialogMinPrice = dialogView.findViewById(R.id.dialogMinPriceFilter);
+        EditText dialogMaxPrice = dialogView.findViewById(R.id.dialogMaxPriceFilter);
+        Button dialogClear = dialogView.findViewById(R.id.dialogClearFiltersButton);
+        Button dialogApply = dialogView.findViewById(R.id.dialogApplyFiltersButton);
+
+        dialogDestination.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, destinationLabels));
+        dialogCategory.setAdapter(new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, categoryLabels));
+        dialogDestination.setText(selectedDestination, false);
+        dialogCategory.setText(selectedCategory, false);
+        dialogDate.setText(selectedDate);
+        dialogMinPrice.setText(selectedMinPrice);
+        dialogMaxPrice.setText(selectedMaxPrice);
+        dialogDate.setOnClickListener(v -> showDatePicker(dialogDate));
+
+        var dialog = new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Filtros")
+                .setView(dialogView)
+                .create();
+
+        dialogClear.setOnClickListener(v -> {
+            clearSelectedFilters();
+            currentPage = 0;
+            updateFilterSummary();
+            dialog.dismiss();
+            loadActivities();
+        });
+
+        dialogApply.setOnClickListener(v -> {
+            String minPrice = dialogMinPrice.getText().toString().trim();
+            String maxPrice = dialogMaxPrice.getText().toString().trim();
+            if (!validatePriceRange(minPrice, maxPrice)) return;
+
+            selectedDestination = dialogDestination.getText().toString();
+            selectedCategory = dialogCategory.getText().toString();
+            selectedDate = dialogDate.getText().toString().trim();
+            selectedMinPrice = minPrice;
+            selectedMaxPrice = maxPrice;
+
+            currentPage = 0;
+            updateFilterSummary();
+            dialog.dismiss();
+            loadActivities();
+        });
+
+        dialog.show();
+    }
+
+    private void clearSelectedFilters() {
+        selectedDestination = ALL_FILTERS_LABEL;
+        selectedCategory = ALL_FILTERS_LABEL;
+        selectedDate = "";
+        selectedMinPrice = "";
+        selectedMaxPrice = "";
+    }
+
+    private void updateFilterSummary() {
+        if (tvFilterSummary == null) return;
+
+        List<String> activeFilters = new ArrayList<>();
+        if (!ALL_FILTERS_LABEL.equals(selectedDestination)) activeFilters.add(selectedDestination);
+        if (!ALL_FILTERS_LABEL.equals(selectedCategory)) activeFilters.add(selectedCategory);
+        if (!selectedDate.isEmpty()) activeFilters.add(selectedDate);
+        if (!selectedMinPrice.isEmpty()) activeFilters.add("Min $" + selectedMinPrice);
+        if (!selectedMaxPrice.isEmpty()) activeFilters.add("Max $" + selectedMaxPrice);
+
+        tvFilterSummary.setText(activeFilters.isEmpty()
+                ? "Filtros: todos"
+                : "Filtros: " + String.join(" · ", activeFilters));
     }
 
     private void registerNetworkCallback() {
@@ -353,9 +413,9 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
                 userId != -1 ? userId : null,
                 getSelectedDestinationId(),
                 getSelectedCategory(),
-                getTextFilter(dateFilter),
-                getTextFilter(minPriceFilter),
-                getTextFilter(maxPriceFilter),
+                nullableFilter(selectedDate),
+                nullableFilter(selectedMinPrice),
+                nullableFilter(selectedMaxPrice),
                 currentPage,
                 PAGE_SIZE
         ).enqueue(new Callback<PaginatedActivitiesResponse>() {
