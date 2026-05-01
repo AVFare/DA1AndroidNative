@@ -1,6 +1,7 @@
 package com.example.da1androidnative.data.network;
 
 import com.example.da1androidnative.data.model.ActivityDetalleResponse;
+import com.example.da1androidnative.data.model.ActivityFilterOptionsResponse;
 import com.example.da1androidnative.data.model.ActivityHistoryDetailResponse;
 import com.example.da1androidnative.data.model.ActivityHistoryResponse;
 import com.example.da1androidnative.data.model.AuthResponse;
@@ -62,6 +63,21 @@ public interface ApiService {
             @Query("page") Integer page,
             @Query("size") Integer size
     );
+
+    @GET("activities")
+    Call<PaginatedActivitiesResponse> getAllActivities(
+            @Query("userId") Long userId,
+            @Query("destinationId") Long destinationId,
+            @Query("category") String category,
+            @Query("date") String date,
+            @Query("minPrice") String minPrice,
+            @Query("maxPrice") String maxPrice,
+            @Query("page") Integer page,
+            @Query("size") Integer size
+    );
+
+    @GET("activities/filter-options")
+    Call<ActivityFilterOptionsResponse> getActivityFilterOptions();
 
     @GET("activities/{activityId}")
     Call<ActivityDetalleResponse> getDetalleActivity(@Path("activityId") long activityId);
