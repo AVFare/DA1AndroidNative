@@ -7,7 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -44,6 +46,8 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
     private EditText etStartDate, etEndDate;
     private AutoCompleteTextView spinnerStatus, spinnerDestination;
     private View progressBar, tvEmptyState, tvError;
+    private Button btnPreviousPage, btnNextPage;
+    private TextView tvPageNumber;
 
     private final String[] statusOptionsDisplay = {"Todos", "Cancelado", "Completo"};
     private final Map<String, String> statusMap = new HashMap<>();
@@ -65,20 +69,21 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         super.onViewCreated(view, savedInstanceState);
 
         viewModel = new ViewModelProvider(this).get(ActivityHistoryViewModel.class);
-        
-        setupToolbar(view); // volver atras
+
+        setupToolbar(view);
         setupViews(view);
         setupRecyclerView(view);
         observeViewModel();
 
-        viewModel.loadHistory(null, null, null, "COMPLETED,CANCELLED", null, null);
+        // Carga inicial: Historial filtrado por completados y cancelados
+        viewModel.loadHistory(null, null, null, "COMPLETED,CANCELLED");
     }
 
     private void setupToolbar(View view) {
         Toolbar toolbar = view.findViewById(R.id.historyToolbar);
         if (toolbar != null) {
-            toolbar.setNavigationOnClickListener(v -> 
-                NavHostFragment.findNavController(this).navigateUp());
+            toolbar.setNavigationOnClickListener(v ->
+                    NavHostFragment.findNavController(this).navigateUp());
         }
     }
 
@@ -90,6 +95,10 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         progressBar = view.findViewById(R.id.progressBar);
         tvEmptyState = view.findViewById(R.id.tvEmptyState);
         tvError = view.findViewById(R.id.tvError);
+
+        btnPreviousPage = view.findViewById(R.id.btnPreviousPage);
+        btnNextPage = view.findViewById(R.id.btnNextPage);
+        tvPageNumber = view.findViewById(R.id.tvPageNumber);
 
         ArrayAdapter<String> adapterStatus = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, statusOptionsDisplay);
         spinnerStatus.setAdapter(adapterStatus);
@@ -105,8 +114,11 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
             etStartDate.setText("");
             etEndDate.setText("");
             spinnerStatus.setText(statusOptionsDisplay[0], false);
-            viewModel.loadHistory(null, null, null, "COMPLETED,CANCELLED", null, null);
+            viewModel.loadHistory(null, null, null, "COMPLETED,CANCELLED");
         });
+
+        btnPreviousPage.setOnClickListener(v -> viewModel.previousPage());
+        btnNextPage.setOnClickListener(v -> viewModel.nextPage());
     }
 
     private void applyFilters() {
@@ -120,33 +132,31 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         }
 
         viewModel.loadHistory(
-            start.isEmpty() ? null : start,
-            end.isEmpty() ? null : end,
-            null,
-            statusValue,
-            null,
-            null
+                start.isEmpty() ? null : start,
+                end.isEmpty() ? null : end,
+                null,
+                statusValue
         );
     }
 
     private void updateDestinationSpinner(List<ActivityHistoryResponse> activities) {
         if (activities == null) return;
-        
+
         Set<String> destinations = new HashSet<>();
         for (ActivityHistoryResponse activity : activities) {
             if (activity.getDestination() != null) {
                 destinations.add(activity.getDestination());
             }
         }
-        
+
         List<String> destinationList = new ArrayList<>(destinations);
         Collections.sort(destinationList);
         destinationList.add(0, "Todos");
 
-        ArrayAdapter<String> destAdapter = new ArrayAdapter<>(requireContext(), 
+        ArrayAdapter<String> destAdapter = new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_dropdown_item_1line, destinationList);
         spinnerDestination.setAdapter(destAdapter);
-        
+
         if (spinnerDestination.getText().toString().isEmpty()) {
             spinnerDestination.setText("Todos", false);
         }
@@ -195,6 +205,15 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
             if (error != null) {
                 Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
             }
+        });
+
+        viewModel.currentPage.observe(getViewLifecycleOwner(), page -> {
+            tvPageNumber.setText(String.format(Locale.getDefault(), "Página %d", page + 1));
+            btnPreviousPage.setEnabled(page > 0);
+        });
+
+        viewModel.isLastPage.observe(getViewLifecycleOwner(), isLast -> {
+            btnNextPage.setEnabled(!isLast);
         });
 
         spinnerDestination.setOnItemClickListener((parent, v, position, id) -> {
