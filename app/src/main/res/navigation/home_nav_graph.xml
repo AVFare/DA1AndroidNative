@@ -252,7 +252,27 @@
     <fragment
         android:id="@+id/newsFragment"
         android:name="com.example.da1androidnative.ui.home.NewsFragment"
-        android:label="Noticias" >
+        android:label="Noticias">
+        <action
+            android:id="@+id/action_newsFragment_to_newsDetailFragment"
+            app:destination="@id/newsDetailFragment" />
+    </fragment>
 
+    <fragment
+        android:id="@+id/newsDetailFragment"
+        android:name="com.example.da1androidnative.ui.home.NewsDetailFragment"
+        android:label="Detalle de Noticia">
+        <argument
+            android:name="newsId"
+            app:argType="long" />
+        <argument
+            android:name="title"
+            app:argType="string" />
+        <argument
+            android:name="imageUrl"
+            app:argType="string" />
+        <argument
+            android:name="date"
+            app:argType="string" />
     </fragment>
 </navigation>
