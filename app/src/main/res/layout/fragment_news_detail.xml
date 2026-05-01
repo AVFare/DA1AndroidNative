@@ -15,7 +15,7 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:contentScrim="@color/purple_500"
+            app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:titleEnabled="false">
 
@@ -59,7 +59,7 @@
                 style="@style/Widget.Material3.Chip.Assist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/purple_500"
+                android:textColor="?attr/colorPrimary"
                 app:chipStrokeWidth="0dp"
                 tools:text="15 de Mayo, 2024" />
 
@@ -88,7 +88,7 @@
                 android:layout_width="60dp"
                 android:layout_height="4dp"
                 android:layout_marginTop="16dp"
-                android:background="@color/purple_500" />
+                android:background="?attr/colorPrimary" />
 
             <TextView
                 android:id="@+id/tvDetailContent"

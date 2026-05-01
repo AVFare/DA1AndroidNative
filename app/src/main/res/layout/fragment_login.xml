@@ -62,6 +62,7 @@
                 app:cardCornerRadius="22dp"
                 app:cardElevation="3dp"
                 app:strokeColor="?attr/colorOutlineVariant"
+                app:cardBackgroundColor="@color/background"
                 app:strokeWidth="1dp">
 
                 <LinearLayout

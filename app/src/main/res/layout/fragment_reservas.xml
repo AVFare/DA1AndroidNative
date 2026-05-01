@@ -10,7 +10,7 @@
         android:id="@+id/reservasToolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/purple_500"
+        android:background="?attr/colorPrimary"
         app:navigationIcon="@drawable/ic_arrow_back"
         app:navigationIconTint="@android:color/white"
         app:title="Mis actividades"
@@ -98,7 +98,7 @@
                     android:text="0"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="@color/teal_700"/>
+                    android:textColor="?attr/colorSecondary"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
