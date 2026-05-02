@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -73,6 +74,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViews(view);
+        setupToolbar(view);
         
         Bundle args = getArguments();
         if (args != null) {
@@ -105,6 +107,13 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         reservationCommentText = view.findViewById(R.id.reservationCommentText);
         cancelReservationButton = view.findViewById(R.id.cancelReservationButton);
         btnHowToGet = view.findViewById(R.id.btnHowToGet);
+    }
+
+    private void setupToolbar(View view) {
+        Toolbar toolbar = view.findViewById(R.id.reservaDetalleToolbar);
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(v -> NavHostFragment.findNavController(this).navigateUp());
+        }
     }
 
     private void loadDetalleReserva() {
