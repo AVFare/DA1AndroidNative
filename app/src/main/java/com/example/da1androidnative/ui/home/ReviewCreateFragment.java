@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,7 +20,9 @@ import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.ReviewRequest;
 import com.example.da1androidnative.data.model.ReviewResponse;
 import com.example.da1androidnative.data.network.ApiService;
+import com.example.da1androidnative.ui.util.ToastHelper;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import javax.inject.Inject;
 
@@ -44,6 +45,7 @@ public class ReviewCreateFragment extends Fragment {
     private EditText commentEditText;
     private TextView commentCounterText;
     private MaterialButton submitButton;
+    private LinearProgressIndicator progressIndicator;
 
     @Nullable
     @Override
@@ -57,6 +59,8 @@ public class ReviewCreateFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        progressIndicator = view.findViewById(R.id.progressIndicator);
+
         Toolbar toolbar = view.findViewById(R.id.reviewCreateToolbar);
         toolbar.setNavigationOnClickListener(v -> NavHostFragment.findNavController(this).navigateUp());
 
@@ -69,6 +73,11 @@ public class ReviewCreateFragment extends Fragment {
         bindArguments(view);
         setupCommentCounter();
         submitButton.setOnClickListener(v -> submitReview());
+    }
+
+    private void setLoading(boolean loading) {
+        progressIndicator.setVisibility(loading ? View.VISIBLE : View.GONE);
+        submitButton.setEnabled(!loading);
     }
 
     private void bindArguments(View view) {
@@ -126,12 +135,12 @@ public class ReviewCreateFragment extends Fragment {
             comment = null;
         }
 
-        submitButton.setEnabled(false);
+        setLoading(true);
         ReviewRequest request = new ReviewRequest(reservationId, activityRating, guideRating, comment);
         apiService.createReview(request).enqueue(new Callback<ReviewResponse>() {
             @Override
             public void onResponse(@NonNull Call<ReviewResponse> call, @NonNull Response<ReviewResponse> response) {
-                submitButton.setEnabled(true);
+                setLoading(false);
                 if (response.isSuccessful()) {
                     ToastHelper.show(getContext(), R.string.review_submit_success);
                     NavHostFragment.findNavController(ReviewCreateFragment.this).navigateUp();
@@ -142,7 +151,7 @@ public class ReviewCreateFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<ReviewResponse> call, @NonNull Throwable t) {
-                submitButton.setEnabled(true);
+                setLoading(false);
                 ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
             }
         });
