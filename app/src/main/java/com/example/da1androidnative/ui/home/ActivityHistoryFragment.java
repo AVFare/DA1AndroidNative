@@ -1,6 +1,7 @@
 package com.example.da1androidnative.ui.home;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +28,7 @@ import com.example.da1androidnative.data.model.ActivityHistoryResponse;
 import com.example.da1androidnative.ui.home.adapter.ActivityHistoryAdapter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -107,13 +110,12 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         btnNextPage = view.findViewById(R.id.btnNextPage);
         tvPageNumber = view.findViewById(R.id.tvPageNumber);
 
-        ArrayAdapter<String> adapterStatus = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, statusOptionsDisplay);
+        ArrayAdapter<String> adapterStatus = new NoFilterArrayAdapter(requireContext(), Arrays.asList(statusOptionsDisplay));
         spinnerStatus.setAdapter(adapterStatus);
         spinnerStatus.setText(statusOptionsDisplay[0], false);
 
         // Crear adapter de destinos solo una vez
-        destAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_dropdown_item_1line, destinationList);
+        destAdapter = new NoFilterArrayAdapter(requireContext(), destinationList);
         spinnerDestination.setAdapter(destAdapter);
         
         // Configurar listener del spinner de destinos aquí, no en observeViewModel
@@ -262,5 +264,33 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         Bundle args = new Bundle();
         args.putLong("reservationId", reservationId);
         NavHostFragment.findNavController(this).navigate(R.id.action_activityHistory_to_reservaDetalleFragment, args);
+    }
+
+    private static class NoFilterArrayAdapter extends ArrayAdapter<String> {
+        private final List<String> items;
+
+        NoFilterArrayAdapter(@NonNull Context context, @NonNull List<String> items) {
+            super(context, android.R.layout.simple_dropdown_item_1line, items);
+            this.items = items;
+        }
+
+        @NonNull
+        @Override
+        public Filter getFilter() {
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    FilterResults results = new FilterResults();
+                    results.values = items;
+                    results.count = items.size();
+                    return results;
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    notifyDataSetChanged();
+                }
+            };
+        }
     }
 }
