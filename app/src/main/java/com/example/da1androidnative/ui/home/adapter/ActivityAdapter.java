@@ -43,6 +43,10 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
         notifyDataSetChanged();
     }
 
+    public void refreshFavorites() {
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ActivityViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -95,6 +99,14 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
         } else {
             holder.badgeFeatured.setVisibility(View.GONE);
         }
+
+        String updateMessage = favoritesManager.getUpdateMessage(activity.getId());
+        if (updateMessage != null && !updateMessage.trim().isEmpty()) {
+            holder.badgePriceChange.setVisibility(View.VISIBLE);
+            holder.badgePriceChange.setText(updateMessage);
+        } else {
+            holder.badgePriceChange.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -113,6 +125,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
         TextView activityPrice;
         TextView activitySpots;
         TextView badgeFeatured;
+        TextView badgePriceChange;
 
         public ActivityViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -127,6 +140,7 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
             activitySpots = itemView.findViewById(R.id.activitySpots);
 
             badgeFeatured = itemView.findViewById(R.id.badgeFeatured);
+            badgePriceChange = itemView.findViewById(R.id.badgePriceChange);
         }
     }
 }

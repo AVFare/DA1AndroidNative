@@ -27,6 +27,7 @@ import com.example.da1androidnative.data.model.ReservaRequest;
 import com.example.da1androidnative.data.model.ReviewRequest;
 import com.example.da1androidnative.data.model.ReviewResponse;
 import com.example.da1androidnative.data.model.ReviewableReservationResponse;
+import com.example.da1androidnative.data.model.SavedActivityCheckResponse;
 import com.example.da1androidnative.data.model.UpdateUserPreferencesRequest;
 import com.example.da1androidnative.data.model.UserProfileResponse;
 import com.example.da1androidnative.data.model.UpdateUserProfileRequest;
@@ -84,6 +85,9 @@ public interface ApiService {
 
     @GET("activities/{activityId}/schedules")
     Call<PaginatedSchedulesResponse> getHorariosActivity(@Path("activityId") long activityId);
+
+    @GET("activities/saved-activities/batch")
+    Call<SavedActivityCheckResponse> checkSavedActivities(@Query("ids") String ids);
 
     @GET("reservations/my")
     Call<PaginatedReservasResponse> getAllReservas();

@@ -18,6 +18,7 @@ import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.local.FavoritesManager;
 import com.example.da1androidnative.data.model.ActivityResponse;
 import com.example.da1androidnative.data.model.PaginatedActivitiesResponse;
+import com.example.da1androidnative.data.model.SavedActivityCheckResponse;
 import com.example.da1androidnative.data.network.ApiService;
 import com.example.da1androidnative.ui.home.adapter.ActivityAdapter;
 
@@ -34,6 +35,8 @@ import retrofit2.Response;
 
 @AndroidEntryPoint
 public class FavoritesFragment extends Fragment implements ActivityAdapter.OnActivityClickListener {
+
+    private static final int FAVORITES_PAGE_SIZE = 50;
 
     @Inject ApiService apiService;
     @Inject FavoritesManager favoritesManager;
@@ -74,22 +77,42 @@ public class FavoritesFragment extends Fragment implements ActivityAdapter.OnAct
     }
 
     private void loadFavorites() {
-        apiService.getAllActivities().enqueue(new Callback<PaginatedActivitiesResponse>() {
+        Set<String> favIds = favoritesManager.getFavoriteIds();
+        if (favIds.isEmpty()) {
+            adapter.setActivities(new ArrayList<>());
+            updateUI(true);
+            return;
+        }
+
+        loadFavoritePage(0, favIds, new ArrayList<>());
+    }
+
+    private void loadFavoritePage(int page, Set<String> favIds, List<ActivityResponse> favoriteActivities) {
+        apiService.getAllActivities(null, page, FAVORITES_PAGE_SIZE).enqueue(new Callback<PaginatedActivitiesResponse>() {
             @Override
             public void onResponse(@NonNull Call<PaginatedActivitiesResponse> call, @NonNull Response<PaginatedActivitiesResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<ActivityResponse> allActivities = response.body().getContent();
-                    Set<String> favIds = favoritesManager.getFavoriteIds();
-                    
-                    List<ActivityResponse> favoriteActivities = new ArrayList<>();
-                    for (ActivityResponse activity : allActivities) {
-                        if (favIds.contains(String.valueOf(activity.getId()))) {
-                            favoriteActivities.add(activity);
+                    PaginatedActivitiesResponse body = response.body();
+                    List<ActivityResponse> pageActivities = body.getContent();
+
+                    if (pageActivities != null) {
+                        for (ActivityResponse activity : pageActivities) {
+                            if (favIds.contains(String.valueOf(activity.getId()))) {
+                                favoritesManager.saveSnapshot(activity);
+                                favoriteActivities.add(activity);
+                            }
                         }
                     }
 
-                    adapter.setActivities(favoriteActivities);
-                    updateUI(favoriteActivities.isEmpty());
+                    if (isLastPage(body, pageActivities, page)) {
+                        adapter.setActivities(favoriteActivities);
+                        updateUI(favoriteActivities.isEmpty());
+                        checkFavoriteUpdates();
+                    } else {
+                        loadFavoritePage(page + 1, favIds, favoriteActivities);
+                    }
+                } else {
+                    ToastHelper.show(getContext(), "No se pudieron cargar favoritos");
                 }
             }
 
@@ -100,6 +123,40 @@ public class FavoritesFragment extends Fragment implements ActivityAdapter.OnAct
                 }
             }
         });
+    }
+
+    private void checkFavoriteUpdates() {
+        String ids = favoritesManager.getFavoriteIdsCsv();
+        if (ids.isEmpty()) return;
+
+        apiService.checkSavedActivities(ids).enqueue(new Callback<SavedActivityCheckResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<SavedActivityCheckResponse> call,
+                                   @NonNull Response<SavedActivityCheckResponse> response) {
+                if (!isAdded() || !response.isSuccessful() || response.body() == null) return;
+                favoritesManager.applyBatchState(response.body().getContent());
+                adapter.refreshFavorites();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<SavedActivityCheckResponse> call,
+                                  @NonNull Throwable t) {
+                if (isAdded()) {
+                    ToastHelper.show(getContext(), "Error al validar favoritos");
+                }
+            }
+        });
+    }
+
+    private boolean isLastPage(PaginatedActivitiesResponse body, List<ActivityResponse> content, int page) {
+        if (body.getLast() != null) {
+            return body.getLast();
+        }
+        Integer totalPages = body.getTotalPages();
+        if (totalPages != null) {
+            return page >= totalPages - 1;
+        }
+        return content == null || content.size() < FAVORITES_PAGE_SIZE;
     }
 
     private void updateUI(boolean isEmpty) {
