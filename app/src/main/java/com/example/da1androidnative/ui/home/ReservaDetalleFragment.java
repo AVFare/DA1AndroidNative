@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.List;
 import java.util.Locale;
@@ -154,7 +155,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
             cancelReservationButton.setAlpha(0.5f);
         }
 
-        cancelReservationButton.setOnClickListener(v -> cancelReserva());
+        cancelReservationButton.setOnClickListener(v -> showCancelConfirmationDialog(detalle));
         
         btnHowToGet.setOnClickListener(v -> {
             Double lat = getSafeLat();
@@ -239,6 +240,20 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
                 .title("Punto de Encuentro")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
                 .zIndex(2.0f));
+    }
+
+    private void showCancelConfirmationDialog(ReservaDetalleResponse detalle) {
+        String cancellationPolicy = detalle.getCancellationPolicy();
+        if (cancellationPolicy == null || cancellationPolicy.trim().isEmpty()) {
+            cancellationPolicy = "No hay una politica de cancelacion disponible para esta reserva.";
+        }
+
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Cancelar reserva")
+                .setMessage("Politica de cancelacion aplicable:\n\n" + cancellationPolicy)
+                .setNegativeButton("Volver", null)
+                .setPositiveButton("Cancelar reserva", (dialog, which) -> cancelReserva())
+                .show();
     }
 
     private void cancelReserva() {
