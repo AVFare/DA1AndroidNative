@@ -505,7 +505,8 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
 
     @Override
     public void onFavoriteClick(ActivityResponse activity) {
-        favoritesManager.toggleFavorite(activity.getId());
-        ToastHelper.show(getContext(), favoritesManager.isFavorite(activity.getId()) ? "Agregado a favoritos" : "Quitado de favoritos");
+        boolean favorite = favoritesManager.toggleFavorite(activity);
+        adapter.refreshFavorites();
+        ToastHelper.show(getContext(), favorite ? "Agregado a favoritos" : "Quitado de favoritos");
     }
 }

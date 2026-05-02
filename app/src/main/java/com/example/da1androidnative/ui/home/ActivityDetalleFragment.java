@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.da1androidnative.R;
+import com.example.da1androidnative.data.local.FavoritesManager;
 import com.example.da1androidnative.data.model.ActivityDetalleResponse;
 import com.example.da1androidnative.data.model.ItineraryResponse;
 import com.example.da1androidnative.data.model.PaginatedSchedulesResponse;
@@ -56,11 +58,13 @@ import retrofit2.Response;
 public class ActivityDetalleFragment extends Fragment implements ScheduleActivityAdapter.OnScheduleClickListener, OnMapReadyCallback {
 
     @Inject ApiService apiService;
+    @Inject FavoritesManager favoritesManager;
 
     private ActivityDetalleResponse currentDetalle;
     private ScheduleActivityAdapter scheduleActivityAdapter;
     private ActivityGalleryAdapter galleryAdapter;
     private Toolbar toolbar;
+    private ImageButton btnFavoriteDetail;
     private long activityId;
     private ViewPager2 galleryViewPager;
     private LinearLayout galleryDotsContainer;
@@ -124,8 +128,11 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
         guideNameText = view.findViewById(R.id.guideNameText);
         languageText = view.findViewById(R.id.languageText);
         toolbar = view.findViewById(R.id.toolbar);
+        btnFavoriteDetail = view.findViewById(R.id.btnFavoriteDetail);
         btnReservar = view.findViewById(R.id.btnReservar);
         btnHowToGet = view.findViewById(R.id.btnHowToGetActivity);
+
+        btnFavoriteDetail.setOnClickListener(v -> toggleFavoriteDetail());
     }
 
     private void setupGalleryPager() {
@@ -177,6 +184,7 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
         meetingPointText.setText("Punto de encuentro: " + detalle.getMeetingPoint());
         guideNameText.setText("Guía: " + detalle.getGuideName());
         languageText.setText("Idioma: " + detalle.getLanguage());
+        updateFavoriteButton();
 
         List<String> gallery = detalle.getGallery();
 
@@ -258,6 +266,26 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
         Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + lat + "," + lng + "(Punto de Encuentro)");
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
         startActivity(Intent.createChooser(mapIntent, "Selecciona tu aplicación de mapas"));
+    }
+
+    private void toggleFavoriteDetail() {
+        if (activityId == -1L) return;
+        boolean favorite = currentDetalle != null
+                ? favoritesManager.toggleFavorite(currentDetalle)
+                : toggleFavoriteById();
+        updateFavoriteButton();
+        ToastHelper.show(getContext(), favorite ? "Agregado a favoritos" : "Quitado de favoritos");
+    }
+
+    private boolean toggleFavoriteById() {
+        favoritesManager.toggleFavorite(activityId);
+        return favoritesManager.isFavorite(activityId);
+    }
+
+    private void updateFavoriteButton() {
+        if (btnFavoriteDetail == null || activityId == -1L) return;
+        boolean favorite = favoritesManager.isFavorite(activityId);
+        btnFavoriteDetail.setImageResource(favorite ? R.drawable.ic_favorite_filled : R.drawable.ic_favorite_border);
     }
 
     private void loadHorarios() {
