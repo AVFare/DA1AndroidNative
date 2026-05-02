@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +25,8 @@ import com.example.da1androidnative.data.model.ReservaResponse;
 import com.example.da1androidnative.data.network.ApiService;
 import com.example.da1androidnative.data.network.NetworkUtils;
 import com.example.da1androidnative.ui.home.adapter.ReservasAdapter;
+import com.example.da1androidnative.ui.util.ToastHelper;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.util.List;
 
@@ -41,14 +42,14 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
 
     @Inject ApiService apiService;
     @Inject OfflineReservationStorage offlineStorage;
-    
+
     private ReservasAdapter reservasAdapter;
     private RecyclerView recyclerView;
     private TextView tvOfflineBanner;
-    
     private TextView tvTotalCount, tvPendingCount;
     private View summaryCard, emptyState;
-    
+    private LinearProgressIndicator progressIndicator;
+
     private ConnectivityManager.NetworkCallback networkCallback;
 
     @Nullable
@@ -60,7 +61,8 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        
+
+        progressIndicator = view.findViewById(R.id.progressIndicator);
         tvOfflineBanner = view.findViewById(R.id.tvOfflineBanner);
         tvTotalCount = view.findViewById(R.id.tvTotalCount);
         tvPendingCount = view.findViewById(R.id.tvPendingCount);
@@ -68,11 +70,10 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
         emptyState = view.findViewById(R.id.emptyState);
         recyclerView = view.findViewById(R.id.reservasRecyclerView);
 
-        // configuracion de toolbar y retroceso...
         Toolbar toolbar = view.findViewById(R.id.reservasToolbar);
         if (toolbar != null) {
-            toolbar.setNavigationOnClickListener(v -> 
-                NavHostFragment.findNavController(this).navigateUp());
+            toolbar.setNavigationOnClickListener(v ->
+                    NavHostFragment.findNavController(this).navigateUp());
         }
 
         setupRecyclerView(view);
@@ -90,6 +91,10 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
     public void onDestroyView() {
         super.onDestroyView();
         unregisterNetworkCallback();
+    }
+
+    private void setLoading(boolean loading) {
+        progressIndicator.setVisibility(loading ? View.VISIBLE : View.GONE);
     }
 
     private void setupRecyclerView(View view) {
@@ -138,9 +143,7 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
                 @Override
                 public void onLost(@NonNull Network network) {
                     if (getActivity() != null) {
-                        getActivity().runOnUiThread(() -> {
-                            showOfflineMode(true);
-                        });
+                        getActivity().runOnUiThread(() -> showOfflineMode(true));
                     }
                 }
             };
@@ -186,9 +189,11 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
             updateUIState(savedReservas);
         } else {
             showOfflineMode(false);
+            setLoading(true);
             apiService.getAllReservas().enqueue(new Callback<PaginatedReservasResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<PaginatedReservasResponse> call, @NonNull Response<PaginatedReservasResponse> response) {
+                    setLoading(false);
                     if (response.isSuccessful() && response.body() != null) {
                         List<ReservaResponse> listaReservas = response.body().getContent();
                         reservasAdapter.setReservas(listaReservas);
@@ -201,6 +206,7 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
 
                 @Override
                 public void onFailure(@NonNull Call<PaginatedReservasResponse> call, @NonNull Throwable t) {
+                    setLoading(false);
                     List<ReservaResponse> savedReservas = offlineStorage.getSavedReservations();
                     reservasAdapter.setReservas(savedReservas);
                     updateUIState(savedReservas);

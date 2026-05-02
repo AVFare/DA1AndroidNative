@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +23,7 @@ import com.example.da1androidnative.data.model.ItineraryResponse;
 import com.example.da1androidnative.data.model.ReservaCancelledResponse;
 import com.example.da1androidnative.data.model.ReservaDetalleResponse;
 import com.example.da1androidnative.data.network.ApiService;
+import com.example.da1androidnative.ui.util.ToastHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -35,6 +35,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.util.List;
 import java.util.Locale;
@@ -49,9 +50,9 @@ import retrofit2.Response;
 
 @AndroidEntryPoint
 public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallback {
-    
+
     @Inject ApiService apiService;
-    
+
     private long reservationId;
     private TextView reservationActivityNameText, reservationStatusText, reservationDestinationText;
     private TextView reservationIdText, reservationDateText, reservationTimeText, reservationParticipantsText;
@@ -59,7 +60,8 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
     private TextView reservationCancellationPolicyText;
     private TextView reservationRatingStatusText, reservationActivityRatingText, reservationGuideRatingText, reservationCommentText;
     private Button cancelReservationButton, btnHowToGet;
-    
+    private LinearProgressIndicator progressIndicator;
+
     private GoogleMap mMap;
     private ReservaDetalleResponse currentReserva;
     private ActivityDetalleResponse activityInfo;
@@ -75,7 +77,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         super.onViewCreated(view, savedInstanceState);
         initViews(view);
         setupToolbar(view);
-        
+
         Bundle args = getArguments();
         if (args != null) {
             this.reservationId = args.getLong("reservationId", -1L);
@@ -90,6 +92,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
     }
 
     private void initViews(View view) {
+        progressIndicator = view.findViewById(R.id.progressIndicator);
         reservationActivityNameText = view.findViewById(R.id.reservationActivityNameText);
         reservationStatusText = view.findViewById(R.id.reservationStatusText);
         reservationDestinationText = view.findViewById(R.id.reservationDestinationText);
@@ -109,6 +112,10 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         btnHowToGet = view.findViewById(R.id.btnHowToGet);
     }
 
+    private void setLoading(boolean loading) {
+        progressIndicator.setVisibility(loading ? View.VISIBLE : View.GONE);
+    }
+
     private void setupToolbar(View view) {
         Toolbar toolbar = view.findViewById(R.id.reservaDetalleToolbar);
         if (toolbar != null) {
@@ -118,10 +125,11 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
 
     private void loadDetalleReserva() {
         if (this.reservationId == -1L) return;
-
+        setLoading(true);
         apiService.getDetalleReserva(reservationId).enqueue(new Callback<ReservaDetalleResponse>() {
             @Override
             public void onResponse(@NonNull Call<ReservaDetalleResponse> call, @NonNull Response<ReservaDetalleResponse> response) {
+                setLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
                     currentReserva = response.body();
                     bindDetalle(currentReserva);
@@ -132,8 +140,10 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
                     ToastHelper.show(getContext(), "Error al cargar detalle");
                 }
             }
+
             @Override
             public void onFailure(@NonNull Call<ReservaDetalleResponse> call, @NonNull Throwable t) {
+                setLoading(false);
                 ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
             }
         });
@@ -166,6 +176,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
                     updateMap();
                 }
             }
+
             @Override
             public void onFailure(@NonNull Call<ActivityDetalleResponse> call, @NonNull Throwable t) {}
         });
@@ -191,7 +202,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         }
 
         cancelReservationButton.setOnClickListener(v -> showCancelConfirmationDialog(detalle));
-        
+
         btnHowToGet.setOnClickListener(v -> {
             Double lat = getSafeLat();
             Double lng = getSafeLng();
@@ -265,9 +276,9 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
         builder.include(meetingPoint);
 
-        List<ItineraryResponse> itineraries = (activityInfo != null && activityInfo.getItineraries() != null) 
-            ? activityInfo.getItineraries() 
-            : (currentReserva != null ? currentReserva.getItineraries() : null);
+        List<ItineraryResponse> itineraries = (activityInfo != null && activityInfo.getItineraries() != null)
+                ? activityInfo.getItineraries()
+                : (currentReserva != null ? currentReserva.getItineraries() : null);
 
         if (itineraries != null && !itineraries.isEmpty()) {
             PolylineOptions lineOptions = new PolylineOptions()
@@ -287,7 +298,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
                 builder.include(pos);
             }
             mMap.addPolyline(lineOptions);
-            
+
             mMap.setOnMapLoadedCallback(() -> {
                 try {
                     mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 150));
@@ -299,7 +310,6 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
             mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(meetingPoint, 15));
         }
 
-        // Agregamos el Punto de Encuentro AL FINAL y con un zIndex mayor para que quede ARRIBA y sea AZUL
         mMap.addMarker(new MarkerOptions()
                 .position(meetingPoint)
                 .title("Punto de Encuentro")
@@ -322,16 +332,20 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
     }
 
     private void cancelReserva() {
+        setLoading(true);
         apiService.cancelReserva(reservationId).enqueue(new Callback<ReservaCancelledResponse>() {
             @Override
             public void onResponse(@NonNull Call<ReservaCancelledResponse> call, @NonNull Response<ReservaCancelledResponse> response) {
+                setLoading(false);
                 if (response.isSuccessful()) {
                     ToastHelper.show(getContext(), "Reserva Cancelada");
                     NavHostFragment.findNavController(ReservaDetalleFragment.this).navigateUp();
                 }
             }
+
             @Override
             public void onFailure(@NonNull Call<ReservaCancelledResponse> call, @NonNull Throwable t) {
+                setLoading(false);
                 ToastHelper.show(getContext(), "Error al cancelar reserva");
             }
         });
