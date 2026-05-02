@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,7 +18,9 @@ import com.bumptech.glide.Glide;
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.NewsDetailResponse;
 import com.example.da1androidnative.data.network.ApiService;
+import com.example.da1androidnative.ui.util.ToastHelper;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,6 +47,7 @@ public class NewsDetailFragment extends Fragment {
     private TextView tvDetailSummary;
     private TextView tvDetailContent;
     private Toolbar toolbar;
+    private LinearProgressIndicator progressIndicator;
 
     @Nullable
     @Override
@@ -62,11 +64,10 @@ public class NewsDetailFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             newsId = args.getLong("newsId", -1L);
-            
             tvDetailTitle.setText(args.getString("title", ""));
             tvDetailSummary.setText(args.getString("summary", ""));
             tvDetailDate.setText(formatDate(args.getString("date", "")));
-            
+
             String imageUrl = args.getString("imageUrl", "");
             if (!TextUtils.isEmpty(imageUrl)) {
                 Glide.with(this).load(imageUrl).into(ivDetailImage);
@@ -77,6 +78,7 @@ public class NewsDetailFragment extends Fragment {
     }
 
     private void initViews(View view) {
+        progressIndicator = view.findViewById(R.id.progressIndicator);
         ivDetailImage = view.findViewById(R.id.ivDetailImage);
         tvDetailDate = view.findViewById(R.id.tvDetailDate);
         tvDetailTitle = view.findViewById(R.id.tvDetailTitle);
@@ -89,12 +91,17 @@ public class NewsDetailFragment extends Fragment {
         }
     }
 
+    private void setLoading(boolean loading) {
+        progressIndicator.setVisibility(loading ? View.VISIBLE : View.GONE);
+    }
+
     private void loadNewsDetail() {
         if (newsId == -1L) return;
-
+        setLoading(true);
         apiService.getNewsDetail(newsId).enqueue(new Callback<NewsDetailResponse>() {
             @Override
             public void onResponse(@NonNull Call<NewsDetailResponse> call, @NonNull Response<NewsDetailResponse> response) {
+                setLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
                     bindFullDetail(response.body());
                 }
@@ -102,6 +109,7 @@ public class NewsDetailFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<NewsDetailResponse> call, @NonNull Throwable t) {
+                setLoading(false);
                 if (isAdded()) {
                     ToastHelper.show(getContext(), "Error al conectar con el servidor");
                 }
@@ -112,9 +120,8 @@ public class NewsDetailFragment extends Fragment {
     private void bindFullDetail(NewsDetailResponse news) {
         tvDetailTitle.setText(news.getTitle());
         tvDetailDate.setText(formatDate(news.getPublishedAt()));
-        
         tvDetailSummary.setText(news.getShortDescription());
-        
+
         String fullContent = news.getFullDescription();
         if (!TextUtils.isEmpty(fullContent)) {
             tvDetailContent.setText(fullContent);
