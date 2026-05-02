@@ -52,6 +52,7 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
     private final String[] statusOptionsDisplay = {"Todos", "Cancelado", "Completo"};
     private final Map<String, String> statusMap = new HashMap<>();
     private final Map<String, Long> destinationIdByName = new HashMap<>();
+    private final Set<String> cachedDestinations = new HashSet<>();
     private List<ActivityHistoryResponse> allActivities = new ArrayList<>();
     private ArrayAdapter<String> destAdapter;
     private List<String> destinationList = new ArrayList<>();
@@ -167,11 +168,9 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
     private void updateDestinationSpinner(List<ActivityHistoryResponse> activities) {
         if (activities == null) return;
 
-        Set<String> destinations = new HashSet<>();
-        destinationIdByName.clear();
         for (ActivityHistoryResponse activity : activities) {
             if (activity.getDestination() != null) {
-                destinations.add(activity.getDestination());
+                cachedDestinations.add(activity.getDestination());
                 if (activity.getDestinationId() != null) {
                     destinationIdByName.put(activity.getDestination(), activity.getDestinationId());
                 }
@@ -180,7 +179,7 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
 
         // Actualizar la lista del adapter existente en lugar de crear uno nuevo
         destinationList.clear();
-        destinationList.addAll(destinations);
+        destinationList.addAll(cachedDestinations);
         Collections.sort(destinationList);
         destinationList.add(0, "Todos");
 
