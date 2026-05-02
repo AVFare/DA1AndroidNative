@@ -22,6 +22,7 @@ public class FavoritesManager {
     private static final String KEY_FAVORITES = "favorite_ids";
     private static final String KEY_SNAPSHOTS = "favorite_snapshots";
     private static final String KEY_UPDATE_MESSAGES = "favorite_update_messages";
+    private static final String KEY_BATCH_BASELINED = "favorite_batch_baselined_ids";
     private final SharedPreferences sharedPreferences;
     private final Gson gson = new Gson();
 
@@ -66,14 +67,17 @@ public class FavoritesManager {
 
         Map<String, FavoriteSnapshot> snapshots = getSnapshots();
         Map<String, String> updateMessages = getUpdateMessages();
+        Set<String> baselinedIds = getBatchBaselinedIds();
 
         for (SavedActivityCheckItem current : currentStates) {
             String id = String.valueOf(current.getActivityId());
             FavoriteSnapshot previous = snapshots.get(id);
             FavoriteSnapshot updated = new FavoriteSnapshot(current.getPrice(), current.getAvailableSpots());
 
-            if (previous == null) {
+            if (!baselinedIds.contains(id) || previous == null) {
                 snapshots.put(id, updated);
+                updateMessages.remove(id);
+                baselinedIds.add(id);
                 continue;
             }
 
@@ -87,11 +91,14 @@ public class FavoritesManager {
             if (priceChanged || spotsIncreased) {
                 updateMessages.put(id, buildUpdateMessage(priceChanged, spotsIncreased));
                 snapshots.put(id, updated);
+            } else {
+                updateMessages.remove(id);
             }
         }
 
         saveSnapshots(snapshots);
         saveUpdateMessages(updateMessages);
+        saveBatchBaselinedIds(baselinedIds);
     }
 
     public boolean isFavorite(Long activityId) {
@@ -112,9 +119,18 @@ public class FavoritesManager {
     }
 
     private void addFavoriteId(Long activityId) {
+        String id = String.valueOf(activityId);
         Set<String> favorites = getFavoriteIds();
-        favorites.add(String.valueOf(activityId));
+        Map<String, String> updateMessages = getUpdateMessages();
+        Set<String> baselinedIds = getBatchBaselinedIds();
+
+        favorites.add(id);
+        updateMessages.remove(id);
+        baselinedIds.remove(id);
+
         sharedPreferences.edit().putStringSet(KEY_FAVORITES, favorites).apply();
+        saveUpdateMessages(updateMessages);
+        saveBatchBaselinedIds(baselinedIds);
     }
 
     private void removeFavorite(Long activityId) {
@@ -122,14 +138,17 @@ public class FavoritesManager {
         Set<String> favorites = getFavoriteIds();
         Map<String, FavoriteSnapshot> snapshots = getSnapshots();
         Map<String, String> updateMessages = getUpdateMessages();
+        Set<String> baselinedIds = getBatchBaselinedIds();
 
         favorites.remove(id);
         snapshots.remove(id);
         updateMessages.remove(id);
+        baselinedIds.remove(id);
 
         sharedPreferences.edit().putStringSet(KEY_FAVORITES, favorites).apply();
         saveSnapshots(snapshots);
         saveUpdateMessages(updateMessages);
+        saveBatchBaselinedIds(baselinedIds);
     }
 
     private Map<String, FavoriteSnapshot> getSnapshots() {
@@ -152,6 +171,14 @@ public class FavoritesManager {
 
     private void saveUpdateMessages(Map<String, String> updateMessages) {
         sharedPreferences.edit().putString(KEY_UPDATE_MESSAGES, gson.toJson(updateMessages)).apply();
+    }
+
+    private Set<String> getBatchBaselinedIds() {
+        return new HashSet<>(sharedPreferences.getStringSet(KEY_BATCH_BASELINED, new HashSet<>()));
+    }
+
+    private void saveBatchBaselinedIds(Set<String> baselinedIds) {
+        sharedPreferences.edit().putStringSet(KEY_BATCH_BASELINED, new HashSet<>(baselinedIds)).apply();
     }
 
     private String buildUpdateMessage(boolean priceChanged, boolean spotsIncreased) {
