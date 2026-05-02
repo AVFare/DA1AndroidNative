@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,6 +23,7 @@ import com.example.da1androidnative.data.model.OtpChallengeResponse;
 import com.example.da1androidnative.data.model.OtpPurpose;
 import com.example.da1androidnative.data.model.OtpRequest;
 import com.example.da1androidnative.data.network.ApiService;
+import com.example.da1androidnative.ui.util.ToastHelper;
 
 import java.util.concurrent.Executor;
 
@@ -62,18 +62,18 @@ public class LoginFragment extends Fragment {
             String email = mailEdit.getText().toString().trim();
             String password = passEdit.getText().toString().trim();
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(getContext(), R.string.invalid_username, Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), R.string.invalid_username);
                 return;
             }
             performLogin(email, password);
         });
 
         view.findViewById(R.id.otpLoginButton).setOnClickListener(v -> requestOtp(mailEdit.getText().toString().trim(), OtpPurpose.LOGIN));
-        view.findViewById(R.id.registerButton).setOnClickListener(v -> 
+        view.findViewById(R.id.registerButton).setOnClickListener(v ->
             NavHostFragment.findNavController(this).navigate(R.id.action_login_to_register));
 
         setupBiometrics();
-        
+
         if (tokenManager.isBiometricEnabled()) {
             biometricPrompt.authenticate(promptInfo);
         }
@@ -87,11 +87,11 @@ public class LoginFragment extends Fragment {
                 super.onAuthenticationSucceeded(result);
                 String savedEmail = tokenManager.getSavedEmail();
                 String savedPass = tokenManager.getSavedPassword();
-                
+
                 if (savedEmail != null && savedPass != null) {
                     performLogin(savedEmail, savedPass);
                 } else {
-                    Toast.makeText(getContext(), R.string.biometric_credentials_not_found, Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), R.string.biometric_credentials_not_found);
                 }
             }
 
@@ -119,22 +119,22 @@ public class LoginFragment extends Fragment {
                         tokenManager.saveUserId(response.body().getUserId());
                     }
                     tokenManager.saveCredentials(email, password);
-                    Toast.makeText(getContext(), R.string.welcome, Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), R.string.welcome);
                     NavHostFragment.findNavController(LoginFragment.this).navigate(R.id.action_login_to_home);
                 } else {
-                    Toast.makeText(getContext(), "Error: Credenciales invalidas", Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), "Error: Credenciales invalidas");
                 }
             }
             @Override
             public void onFailure(@NonNull Call<AuthResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
             }
         });
     }
 
     private void requestOtp(String email, OtpPurpose purpose) {
         if (email.isEmpty()) {
-            Toast.makeText(getContext(), "Ingresa un email", Toast.LENGTH_SHORT).show();
+            ToastHelper.show(getContext(), "Ingresa un email");
             return;
         }
         apiService.requestOtp(new OtpRequest(email, purpose)).enqueue(new Callback<OtpChallengeResponse>() {
@@ -146,12 +146,12 @@ public class LoginFragment extends Fragment {
                             OtpVerificationFragment.createArgs(email, purpose)
                     );
                 } else {
-                    Toast.makeText(getContext(), "No se pudo solicitar el codigo OTP", Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), "No se pudo solicitar el codigo OTP");
                 }
             }
             @Override
             public void onFailure(@NonNull Call<OtpChallengeResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error de conexion: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "Error de conexion: " + t.getMessage());
             }
         });
     }

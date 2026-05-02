@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -103,7 +103,7 @@ public class NewsDetailFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call<NewsDetailResponse> call, @NonNull Throwable t) {
                 if (isAdded()) {
-                    Toast.makeText(getContext(), "Error al conectar con el servidor", Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), "Error al conectar con el servidor");
                 }
             }
         });

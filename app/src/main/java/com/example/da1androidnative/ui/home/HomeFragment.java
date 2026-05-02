@@ -15,7 +15,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -91,7 +91,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
                 if (isGranted) {
                     enableBiometricIfPossible();
                 } else {
-                    Toast.makeText(getContext(), R.string.biometric_permission_denied, Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), R.string.biometric_permission_denied);
                     biometricSwitch.setChecked(false);
                 }
             });
@@ -132,7 +132,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         biometricSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 if (tokenManager.getSavedPassword() == null) {
-                    Toast.makeText(getContext(), "Inicia sesión con contraseña una vez para habilitar biometría", Toast.LENGTH_LONG).show();
+                    ToastHelper.show(getContext(), "Inicia sesión con contraseña una vez para habilitar biometría");
                     biometricSwitch.setChecked(false);
                     return;
                 }
@@ -148,10 +148,10 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         BiometricManager manager = BiometricManager.from(requireContext());
         if (manager.canAuthenticate(Authenticators.BIOMETRIC_STRONG | Authenticators.DEVICE_CREDENTIAL) == BiometricManager.BIOMETRIC_SUCCESS) {
             tokenManager.setBiometricEnabled(true);
-            Toast.makeText(getContext(), R.string.biometric_enabled_msg, Toast.LENGTH_SHORT).show();
+            ToastHelper.show(getContext(), R.string.biometric_enabled_msg);
         } else {
             biometricSwitch.setChecked(false);
-            Toast.makeText(getContext(), R.string.biometric_error_not_available, Toast.LENGTH_SHORT).show();
+            ToastHelper.show(getContext(), R.string.biometric_error_not_available);
         }
     }
 
@@ -199,7 +199,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
             public void onFailure(@NonNull Call<ActivityFilterOptionsResponse> call,
                                   @NonNull Throwable t) {
                 if (isAdded()) {
-                    Toast.makeText(getContext(), "Fallo al cargar filtros", Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), "Fallo al cargar filtros");
                 }
             }
         });
@@ -261,7 +261,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         Double minPrice = parsePrice(minPriceValue);
         Double maxPrice = parsePrice(maxPriceValue);
         if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
-            Toast.makeText(getContext(), "El precio mínimo no puede superar al máximo", Toast.LENGTH_SHORT).show();
+            ToastHelper.show(getContext(), "El precio mínimo no puede superar al máximo");
             return false;
         }
         return true;
@@ -437,7 +437,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
             public void onFailure(@NonNull Call<PaginatedActivitiesResponse> call,
                                   @NonNull Throwable t) {
                 if (isAdded()) {
-                    Toast.makeText(getContext(), "Fallo al cargar actividades", Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), "Fallo al cargar actividades");
                 }
             }
         });
@@ -498,6 +498,6 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     @Override
     public void onFavoriteClick(ActivityResponse activity) {
         favoritesManager.toggleFavorite(activity.getId());
-        Toast.makeText(getContext(), favoritesManager.isFavorite(activity.getId()) ? "Agregado a favoritos" : "Quitado de favoritos", Toast.LENGTH_SHORT).show();
+        ToastHelper.show(getContext(), favoritesManager.isFavorite(activity.getId()) ? "Agregado a favoritos" : "Quitado de favoritos");
     }
 }

@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -113,12 +113,12 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
                     updateMap();
                     fetchActivityDetails(currentReserva.getActivityId());
                 } else {
-                    Toast.makeText(getContext(), "Error al cargar detalle", Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), "Error al cargar detalle");
                 }
             }
             @Override
             public void onFailure(@NonNull Call<ReservaDetalleResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
             }
         });
     }
@@ -165,7 +165,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 startActivity(Intent.createChooser(mapIntent, "Selecciona tu aplicación de mapas"));
             } else {
-                Toast.makeText(getContext(), "Ubicación no disponible", Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "Ubicación no disponible");
             }
         });
     }
@@ -261,13 +261,13 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
             @Override
             public void onResponse(@NonNull Call<ReservaCancelledResponse> call, @NonNull Response<ReservaCancelledResponse> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Reserva Cancelada", Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), "Reserva Cancelada");
                     NavHostFragment.findNavController(ReservaDetalleFragment.this).navigateUp();
                 }
             }
             @Override
             public void onFailure(@NonNull Call<ReservaCancelledResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error al cancelar reserva", Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "Error al cancelar reserva");
             }
         });
     }

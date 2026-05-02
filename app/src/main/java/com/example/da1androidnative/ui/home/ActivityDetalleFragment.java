@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -160,12 +160,12 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
                     bindDetalle(currentDetalle);
                     updateMap();
                 } else {
-                    Toast.makeText(getContext(), "Error al cargar detalle", Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), "Error al cargar detalle");
                 }
             }
             @Override
             public void onFailure(@NonNull Call<ActivityDetalleResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error de conexion: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "Error de conexion: " + t.getMessage());
             }
         });
     }
@@ -201,7 +201,7 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
             if (detalle.getMeetingPointLatitude() != null && detalle.getMeetingPointLatitude() != 0.0) {
                 openNavigationApp(detalle.getMeetingPointLatitude(), detalle.getMeetingPointLongitude());
             } else {
-                Toast.makeText(getContext(), "Ubicacion no disponible", Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "Ubicacion no disponible");
             }
         });
     }
@@ -271,7 +271,7 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
             }
             @Override
             public void onFailure(@NonNull Call<PaginatedSchedulesResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error al cargar horarios", Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "Error al cargar horarios");
             }
         });
     }

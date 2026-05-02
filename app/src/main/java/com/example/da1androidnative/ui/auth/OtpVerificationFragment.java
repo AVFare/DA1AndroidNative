@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -106,7 +106,7 @@ public class OtpVerificationFragment extends Fragment {
 
     private void verifyOtp(String code) {
         if (code.length() != 6) {
-            Toast.makeText(getContext(), "Ingresa un codigo de 6 digitos", Toast.LENGTH_SHORT).show();
+            ToastHelper.show(getContext(), "Ingresa un codigo de 6 digitos");
             return;
         }
 
@@ -116,17 +116,17 @@ public class OtpVerificationFragment extends Fragment {
             public void onResponse(@NonNull Call<AuthResponse> call, @NonNull Response<AuthResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     tokenManager.saveToken(response.body().getToken());
-                    Toast.makeText(getContext(), "Acceso verificado", Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), "Acceso verificado");
                     NavHostFragment.findNavController(OtpVerificationFragment.this)
                             .navigate(R.id.action_otpVerificationFragment_to_home_nav_graph);
                 } else {
-                    Toast.makeText(getContext(), "Codigo invalido o expirado", Toast.LENGTH_LONG).show();
+                    ToastHelper.show(getContext(), "Codigo invalido o expirado");
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<AuthResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
             }
         });
     }
@@ -137,15 +137,15 @@ public class OtpVerificationFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<OtpChallengeResponse> call, @NonNull Response<OtpChallengeResponse> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), "Se genero un nuevo codigo. Revisa tu email.", Toast.LENGTH_LONG).show();
+                    ToastHelper.show(getContext(), "Se genero un nuevo codigo. Revisa tu email.");
                 } else {
-                    Toast.makeText(getContext(), "No se pudo reenviar el codigo", Toast.LENGTH_LONG).show();
+                    ToastHelper.show(getContext(), "No se pudo reenviar el codigo");
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<OtpChallengeResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
             }
         });
     }

@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -123,18 +123,18 @@ public class ActivityCreateReservationFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<ReservaRequest> call, @NonNull Response<ReservaRequest> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    Toast.makeText(getContext(), "Reserva Creada con Exito!", Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), "Reserva Creada con Exito!");
 
                     NavHostFragment.findNavController(ActivityCreateReservationFragment.this)
                             .navigate(R.id.action_createReservationFragment_to_reservasFragment);
                 } else {
-                    Toast.makeText(getContext(), "Error: Error Creando la Reserva", Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), "Error: Error Creando la Reserva");
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ReservaRequest> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
             }
         });
 

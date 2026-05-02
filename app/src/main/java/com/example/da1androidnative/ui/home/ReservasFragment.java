@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -195,7 +195,7 @@ public class ReservasFragment extends Fragment implements ReservasAdapter.OnRese
                         offlineStorage.updateReservations(listaReservas);
                         updateUIState(listaReservas);
                     } else {
-                        Toast.makeText(getContext(), "Error al cargar reservas", Toast.LENGTH_SHORT).show();
+                        ToastHelper.show(getContext(), "Error al cargar reservas");
                     }
                 }
 

@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -56,12 +56,12 @@ public class RegisterFragment extends Fragment {
             String confirm = confirmPassEdit.getText().toString().trim();
 
             if (name.isEmpty() || email.isEmpty() || pass.isEmpty()) {
-                Toast.makeText(getContext(), "Completa los campos obligatorios", Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "Completa los campos obligatorios");
                 return;
             }
 
             if (!pass.equals(confirm)) {
-                Toast.makeText(getContext(), "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "Las contraseñas no coinciden");
                 return;
             }
 
@@ -78,16 +78,16 @@ public class RegisterFragment extends Fragment {
                     // Guardamos credenciales para que la biometria funcione despues de registrarse
                     tokenManager.saveCredentials(request.getEmail(), request.getPassword());
                     
-                    Toast.makeText(getContext(), "Cuenta creada con éxito", Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), "Cuenta creada con éxito");
                     NavHostFragment.findNavController(RegisterFragment.this).navigate(R.id.action_register_to_home);
                 } else {
-                    Toast.makeText(getContext(), "Error: el usuario ya existe o los datos son inválidos", Toast.LENGTH_LONG).show();
+                    ToastHelper.show(getContext(), "Error: el usuario ya existe o los datos son inválidos");
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<AuthResponse> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
             }
         });
     }

@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.Toast;
+import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -112,7 +112,6 @@ public class ProfileEditFragment extends Fragment {
             etEmail.setText(profile.getEmail());
             etPhone.setText(profile.getPhone());
 
-            // Cambiado: usa profilePhoto (base64) en lugar de profilePictureUrl
             if (profile.getProfilePhoto() != null
                     && !profile.getProfilePhoto().isEmpty()) {
                 currentPhotoBase64 = profile.getProfilePhoto();
@@ -144,22 +143,13 @@ public class ProfileEditFragment extends Fragment {
 
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
-                Toast.makeText(
-                        requireContext(),
-                        error,
-                        Toast.LENGTH_SHORT
-                ).show();
+                ToastHelper.show(requireContext(), error);
             }
         });
 
         viewModel.getUpdateSuccess().observe(getViewLifecycleOwner(), success -> {
             if (Boolean.TRUE.equals(success)) {
-                Toast.makeText(
-                        requireContext(),
-                        "Perfil actualizado",
-                        Toast.LENGTH_SHORT
-                ).show();
-
+                ToastHelper.show(requireContext(), "Perfil actualizado");
                 NavHostFragment
                         .findNavController(ProfileEditFragment.this)
                         .navigateUp();
@@ -229,11 +219,7 @@ public class ProfileEditFragment extends Fragment {
             ivProfilePhoto.setImageBitmap(bitmap);
 
         } catch (IOException e) {
-            Toast.makeText(
-                    requireContext(),
-                    "Error al cargar la imagen",
-                    Toast.LENGTH_SHORT
-            ).show();
+            ToastHelper.show(requireContext(), "Error al cargar la imagen");
         }
     }
 
