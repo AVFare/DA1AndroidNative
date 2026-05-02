@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +20,8 @@ import com.example.da1androidnative.data.model.PaginatedActivitiesResponse;
 import com.example.da1androidnative.data.model.SavedActivityCheckResponse;
 import com.example.da1androidnative.data.network.ApiService;
 import com.example.da1androidnative.ui.home.adapter.ActivityAdapter;
+import com.example.da1androidnative.ui.util.ToastHelper;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,10 +41,11 @@ public class FavoritesFragment extends Fragment implements ActivityAdapter.OnAct
 
     @Inject ApiService apiService;
     @Inject FavoritesManager favoritesManager;
-    
+
     private ActivityAdapter adapter;
     private RecyclerView recyclerView;
     private View emptyState;
+    private LinearProgressIndicator progressIndicator;
 
     @Nullable
     @Override
@@ -54,18 +56,23 @@ public class FavoritesFragment extends Fragment implements ActivityAdapter.OnAct
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        
+
+        progressIndicator = view.findViewById(R.id.progressIndicator);
         emptyState = view.findViewById(R.id.emptyFavoritesState);
         setupToolbar(view);
         setupRecyclerView(view);
         loadFavorites();
     }
 
+    private void setLoading(boolean loading) {
+        progressIndicator.setVisibility(loading ? View.VISIBLE : View.GONE);
+    }
+
     private void setupToolbar(View view) {
         Toolbar toolbar = view.findViewById(R.id.favoritesToolbar);
         if (toolbar != null) {
             toolbar.setNavigationOnClickListener(v ->
-                NavHostFragment.findNavController(this).navigateUp());
+                    NavHostFragment.findNavController(this).navigateUp());
         }
     }
 
@@ -84,6 +91,7 @@ public class FavoritesFragment extends Fragment implements ActivityAdapter.OnAct
             return;
         }
 
+        setLoading(true);
         loadFavoritePage(0, favIds, new ArrayList<>());
     }
 
@@ -105,6 +113,7 @@ public class FavoritesFragment extends Fragment implements ActivityAdapter.OnAct
                     }
 
                     if (isLastPage(body, pageActivities, page)) {
+                        setLoading(false);
                         adapter.setActivities(favoriteActivities);
                         updateUI(favoriteActivities.isEmpty());
                         checkFavoriteUpdates();
@@ -112,12 +121,14 @@ public class FavoritesFragment extends Fragment implements ActivityAdapter.OnAct
                         loadFavoritePage(page + 1, favIds, favoriteActivities);
                     }
                 } else {
+                    setLoading(false);
                     ToastHelper.show(getContext(), "No se pudieron cargar favoritos");
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<PaginatedActivitiesResponse> call, @NonNull Throwable t) {
+                setLoading(false);
                 if (isAdded()) {
                     ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
                 }
