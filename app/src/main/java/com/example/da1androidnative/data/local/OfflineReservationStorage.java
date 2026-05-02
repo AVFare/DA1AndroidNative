@@ -38,6 +38,7 @@ public class OfflineReservationStorage {
 
     // Guarda una reserva individual en la lista resumen
     public void saveReservation(ReservaResponse reservation) {
+        if (reservation == null) return;
         List<ReservaResponse> currentReservations = getSavedReservations();
         currentReservations.removeIf(r -> r.getReservationId() == reservation.getReservationId());
         currentReservations.add(reservation);
@@ -46,6 +47,7 @@ public class OfflineReservationStorage {
 
     // Guarda o actualiza la lista completa de reservas (resumen)
     public void updateReservations(List<ReservaResponse> reservations) {
+        if (reservations == null) reservations = new ArrayList<>();
         String json = gson.toJson(reservations);
         sharedPreferences.edit().putString(KEY_RESERVATIONS, json).apply();
     }
@@ -56,7 +58,8 @@ public class OfflineReservationStorage {
         if (json == null) return new ArrayList<>();
         try {
             Type type = new TypeToken<List<ReservaResponse>>() {}.getType();
-            return gson.fromJson(json, type);
+            List<ReservaResponse> reservations = gson.fromJson(json, type);
+            return reservations != null ? reservations : new ArrayList<>();
         } catch (Exception e) {
             return new ArrayList<>();
         }
@@ -75,6 +78,7 @@ public class OfflineReservationStorage {
 
     // Guarda el detalle completo de una reserva específica
     public void saveReservationDetail(ReservaDetalleResponse detail) {
+        if (detail == null) return;
         Map<Long, ReservaDetalleResponse> details = getSavedDetailsMap();
         details.put(detail.getReservationId(), detail);
         saveDetailsMap(details);
@@ -83,6 +87,35 @@ public class OfflineReservationStorage {
     // Obtiene el detalle guardado de una reserva
     public ReservaDetalleResponse getSavedReservationDetail(long reservationId) {
         return getSavedDetailsMap().get(reservationId);
+    }
+
+    public ReservaDetalleResponse getSavedReservationDetailOrSummary(long reservationId) {
+        ReservaDetalleResponse detail = getSavedReservationDetail(reservationId);
+        if (detail != null) return detail;
+
+        for (ReservaResponse reservation : getSavedReservations()) {
+            if (reservation.getReservationId() == reservationId) {
+                return ReservaDetalleResponse.fromSummary(reservation);
+            }
+        }
+        return null;
+    }
+
+    public void updateReservationStatus(long reservationId, String status) {
+        List<ReservaResponse> reservations = getSavedReservations();
+        for (ReservaResponse reservation : reservations) {
+            if (reservation.getReservationId() == reservationId) {
+                reservation.setStatus(status);
+                break;
+            }
+        }
+        updateReservations(reservations);
+
+        ReservaDetalleResponse detail = getSavedReservationDetail(reservationId);
+        if (detail != null) {
+            detail.setStatus(status);
+            saveReservationDetail(detail);
+        }
     }
 
     public void addPendingCancellation(long reservationId) {
@@ -113,7 +146,8 @@ public class OfflineReservationStorage {
         if (json == null) return new HashMap<>();
         try {
             Type type = new TypeToken<Map<Long, ReservaDetalleResponse>>() {}.getType();
-            return gson.fromJson(json, type);
+            Map<Long, ReservaDetalleResponse> details = gson.fromJson(json, type);
+            return details != null ? details : new HashMap<>();
         } catch (Exception e) {
             return new HashMap<>();
         }

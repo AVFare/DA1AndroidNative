@@ -115,9 +115,16 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         setupFilters(view);
         setupBiometricSwitch();
         registerNetworkCallback();
+        updateOfflineBanner();
         loadFilterOptions();
         loadActivities();
         setupNavigationButtons(view);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateOfflineBanner();
     }
 
     private void setLoading(boolean loading) {
