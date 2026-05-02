@@ -60,7 +60,7 @@ public class ReservasAdapter extends RecyclerView.Adapter<ReservasAdapter.Reserv
         this.listener = listener;
     }
     public void setReservas(List<ReservaResponse> reservas) {
-        this.reservas = reservas;
+        this.reservas = reservas != null ? reservas : new ArrayList<>();
         notifyDataSetChanged();
     }
 
@@ -82,13 +82,13 @@ public class ReservasAdapter extends RecyclerView.Adapter<ReservasAdapter.Reserv
 
         ReservaResponse reserva = reservas.get(position);
 
-        holder.reservationActivityName.setText(reserva.getActivityName());
-        holder.reservationStatus.setText(reserva.getStatus());
-        holder.reservationDestination.setText(reserva.getDestination());
-        holder.reservationDate.setText(reserva.getDate().toString());
-        holder.reservationTime.setText(reserva.getTime());
+        holder.reservationActivityName.setText(valueOrFallback(reserva.getActivityName()));
+        holder.reservationStatus.setText(valueOrFallback(reserva.getStatus()));
+        holder.reservationDestination.setText(valueOrFallback(reserva.getDestination()));
+        holder.reservationDate.setText(reserva.getDate() != null ? reserva.getDate().toString() : "Fecha no disponible");
+        holder.reservationTime.setText(valueOrFallback(reserva.getTime()));
         holder.reservationParticipants.setText(String.format("Cantidad de Participantes: %d", reserva.getParticipantsCount()));
-        holder.reservationVoucherCode.setText(reserva.getVoucherCode());
+        holder.reservationVoucherCode.setText(valueOrFallback(reserva.getVoucherCode()));
         holder.reservationId.setText(String.format("ID Reserva: %d", reserva.getReservationId()));
 
         holder.cardView.setOnClickListener(v -> {
@@ -96,6 +96,10 @@ public class ReservasAdapter extends RecyclerView.Adapter<ReservasAdapter.Reserv
                 listener.onReservaClick(reserva.getReservationId());
             }
         });
+    }
+
+    private String valueOrFallback(String value) {
+        return value == null || value.trim().isEmpty() ? "No disponible" : value;
     }
 
 
