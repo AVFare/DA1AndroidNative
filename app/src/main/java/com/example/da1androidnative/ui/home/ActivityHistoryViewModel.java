@@ -47,6 +47,9 @@ public class ActivityHistoryViewModel extends ViewModel {
     private String currentToDate;
     private Long currentDestinationId;
     private List<String> currentStatus;
+    private String selectedDestinationName = "Todos";
+    private String selectedStatusDisplay = "Todos";
+    private boolean historyLoaded = false;
 
     @Inject
     public ActivityHistoryViewModel(ActivityHistoryRepository repository) {
@@ -92,6 +95,7 @@ public class ActivityHistoryViewModel extends ViewModel {
                     PaginatedActivityHistoryResponse body = response.body();
                     List<ActivityHistoryResponse> content = body.getContent();
                     _activities.setValue(content != null ? content : new ArrayList<>());
+                    historyLoaded = true;
 
                     if (body.getNumber() != null) {
                         _currentPage.setValue(body.getNumber());
@@ -108,6 +112,39 @@ public class ActivityHistoryViewModel extends ViewModel {
                 _error.setValue("Error de red: " + t.getMessage());
             }
         });
+    }
+
+    public boolean hasHistoryLoaded() {
+        return historyLoaded;
+    }
+
+    public String getCurrentFromDate() {
+        return currentFromDate;
+    }
+
+    public String getCurrentToDate() {
+        return currentToDate;
+    }
+
+    public Long getCurrentDestinationId() {
+        return currentDestinationId;
+    }
+
+    public String getSelectedDestinationName() {
+        return selectedDestinationName;
+    }
+
+    public String getSelectedStatusDisplay() {
+        return selectedStatusDisplay;
+    }
+
+    public void setSelectedFilters(String destinationName, String statusDisplay) {
+        selectedDestinationName = destinationName != null && !destinationName.trim().isEmpty()
+                ? destinationName
+                : "Todos";
+        selectedStatusDisplay = statusDisplay != null && !statusDisplay.trim().isEmpty()
+                ? statusDisplay
+                : "Todos";
     }
 
     private boolean isLastPage(PaginatedActivityHistoryResponse body, List<ActivityHistoryResponse> content, int page) {
