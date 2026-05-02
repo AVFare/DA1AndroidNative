@@ -38,6 +38,7 @@ import com.example.da1androidnative.data.network.ApiService;
 import com.example.da1androidnative.data.network.NetworkUtils;
 import com.example.da1androidnative.ui.home.adapter.ActivityAdapter;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
@@ -71,6 +72,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     private Button btnOpenFilters;
     private TextView tvFilterSummary;
     private SwitchMaterial biometricSwitch;
+    private LinearProgressIndicator progressIndicator;
     private ConnectivityManager.NetworkCallback networkCallback;
     private int currentPage = 0;
     private boolean isLastPage = false;
@@ -106,6 +108,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         super.onViewCreated(view, savedInstanceState);
         tvOfflineBanner = view.findViewById(R.id.tvOfflineBanner);
         biometricSwitch = view.findViewById(R.id.biometricSwitch);
+        progressIndicator = view.findViewById(R.id.progressIndicator);
 
         setupRecyclerView(view);
         setupPagination(view);
@@ -115,6 +118,12 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         loadFilterOptions();
         loadActivities();
         setupNavigationButtons(view);
+    }
+
+    private void setLoading(boolean loading) {
+        if (progressIndicator != null) {
+            progressIndicator.setVisibility(loading ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void setupNavigationButtons(View view) {
@@ -407,6 +416,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     private void loadActivities() {
         if (!NetworkUtils.isNetworkAvailable(getContext())) return;
 
+        setLoading(true);
         long userId = tokenManager.getUserId();
 
         apiService.getAllActivities(
@@ -422,20 +432,20 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
             @Override
             public void onResponse(@NonNull Call<PaginatedActivitiesResponse> call,
                                    @NonNull Response<PaginatedActivitiesResponse> response) {
-
+                setLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
                     PaginatedActivitiesResponse body = response.body();
                     List<ActivityResponse> content = body.getContent();
                     adapter.setActivities(content != null ? content : new ArrayList<>());
                     isLastPage = isLastPage(body, content);
                     updatePaginationControls();
-
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<PaginatedActivitiesResponse> call,
                                   @NonNull Throwable t) {
+                setLoading(false);
                 if (isAdded()) {
                     ToastHelper.show(getContext(), "Fallo al cargar actividades");
                 }
@@ -461,7 +471,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
 
     private void updatePaginationControls() {
         if (tvPageNumber != null) {
-            tvPageNumber.setText(String.format(Locale.getDefault(), "P\u00e1gina %d", currentPage + 1));
+            tvPageNumber.setText(String.format(Locale.getDefault(), "Página %d", currentPage + 1));
         }
         if (btnPreviousPage != null) {
             btnPreviousPage.setEnabled(currentPage > 0);
@@ -475,12 +485,10 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         if (body.getLast() != null) {
             return body.getLast();
         }
-
         Integer totalPages = body.getTotalPages();
         if (totalPages != null) {
             return currentPage >= totalPages - 1;
         }
-
         return content == null || content.size() < PAGE_SIZE;
     }
 
