@@ -75,9 +75,12 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         setupViews(view);
         setupRecyclerView(view);
         observeViewModel();
+        restoreFilterControls();
 
-        // Carga inicial: Historial filtrado por completados y cancelados
-        viewModel.loadHistory(null, null, null, "COMPLETED,CANCELLED");
+        if (!viewModel.hasHistoryLoaded()) {
+            // Carga inicial: Historial filtrado por completados y cancelados
+            viewModel.loadHistory(null, null, null, "COMPLETED,CANCELLED");
+        }
     }
 
     private void setupToolbar(View view) {
@@ -115,6 +118,7 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
             etStartDate.setText("");
             etEndDate.setText("");
             spinnerStatus.setText(statusOptionsDisplay[0], false);
+            viewModel.setSelectedFilters("Todos", statusOptionsDisplay[0]);
             viewModel.loadHistory(null, null, null, "COMPLETED,CANCELLED");
         });
 
@@ -129,11 +133,15 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         String statusValue = statusMap.get(selectedStatus);
         String selectedDestination = spinnerDestination.getText().toString();
         Long destinationId = destinationIdByName.get(selectedDestination);
+        if (destinationId == null && selectedDestination.equals(viewModel.getSelectedDestinationName())) {
+            destinationId = viewModel.getCurrentDestinationId();
+        }
 
         if ("Todos".equals(selectedStatus)) {
             statusValue = "COMPLETED,CANCELLED";
         }
 
+        viewModel.setSelectedFilters(selectedDestination, selectedStatus);
         viewModel.loadHistory(
                 start.isEmpty() ? null : start,
                 end.isEmpty() ? null : end,
@@ -164,9 +172,24 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
                 android.R.layout.simple_dropdown_item_1line, destinationList);
         spinnerDestination.setAdapter(destAdapter);
 
-        if (spinnerDestination.getText().toString().isEmpty()) {
-            spinnerDestination.setText("Todos", false);
+        String selectedDestination = viewModel.getSelectedDestinationName();
+        if (!"Todos".equals(selectedDestination) && !destinationList.contains(selectedDestination)) {
+            destinationList.add(selectedDestination);
+            Collections.sort(destinationList.subList(1, destinationList.size()));
+            destAdapter.notifyDataSetChanged();
         }
+
+        if (spinnerDestination.getText().toString().isEmpty()
+                || !spinnerDestination.getText().toString().equals(selectedDestination)) {
+            spinnerDestination.setText(selectedDestination, false);
+        }
+    }
+
+    private void restoreFilterControls() {
+        etStartDate.setText(viewModel.getCurrentFromDate() != null ? viewModel.getCurrentFromDate() : "");
+        etEndDate.setText(viewModel.getCurrentToDate() != null ? viewModel.getCurrentToDate() : "");
+        spinnerStatus.setText(viewModel.getSelectedStatusDisplay(), false);
+        spinnerDestination.setText(viewModel.getSelectedDestinationName(), false);
     }
 
     private void filterByDestinationLocally(String destination) {
@@ -225,6 +248,7 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
 
         spinnerDestination.setOnItemClickListener((parent, v, position, id) -> {
             String selected = (String) parent.getItemAtPosition(position);
+            viewModel.setSelectedFilters(selected, spinnerStatus.getText().toString());
             filterByDestinationLocally(selected);
         });
     }
