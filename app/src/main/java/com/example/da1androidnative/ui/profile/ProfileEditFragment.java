@@ -23,6 +23,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.UpdateUserProfileRequest;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.ByteArrayOutputStream;
@@ -51,6 +52,7 @@ public class ProfileEditFragment extends Fragment {
     private MaterialButton btnChangePhoto;
     private MaterialButton btnSaveProfile;
     private MaterialButton btnCancelEdit;
+    private LinearProgressIndicator progressIndicator;
 
     private final ActivityResultLauncher<String> pickImageLauncher =
             registerForActivityResult(
@@ -101,6 +103,7 @@ public class ProfileEditFragment extends Fragment {
         btnChangePhoto = view.findViewById(R.id.btnChangePhoto);
         btnSaveProfile = view.findViewById(R.id.btnSaveProfile);
         btnCancelEdit = view.findViewById(R.id.btnCancelEdit);
+        progressIndicator = view.findViewById(R.id.progressIndicator);
     }
 
     private void observeViewModel() {
@@ -137,8 +140,11 @@ public class ProfileEditFragment extends Fragment {
             }
         });
 
-        viewModel.getIsLoading().observe(getViewLifecycleOwner(), isLoading -> {
-            btnSaveProfile.setEnabled(!Boolean.TRUE.equals(isLoading));
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), loading -> {
+            progressIndicator.setVisibility(
+                    loading != null && loading ? View.VISIBLE : View.GONE
+            );
+            btnSaveProfile.setEnabled(!Boolean.TRUE.equals(loading));
         });
 
         viewModel.getErrorMessage().observe(getViewLifecycleOwner(), error -> {
