@@ -11,12 +11,12 @@
         android:id="@+id/reservaDetalleToolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorSurface"
+        android:background="?attr/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_arrow_back"
-        app:navigationIconTint="#1F1F1F" />
+        app:navigationIconTint="@android:color/white" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
