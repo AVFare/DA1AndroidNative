@@ -21,6 +21,8 @@ import com.example.da1androidnative.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +46,7 @@ public class ProfileViewFragment extends Fragment {
     private View btnAccessSettings;
     private View layoutReservadasCard;
     private View layoutRealizadasCard;
+    private LinearProgressIndicator progressIndicator;
 
     private static final Map<String, Integer> PREFERENCE_COLORS = new HashMap<String, Integer>() {{
         put("AVENTURA", 0xFFFF6D00);
@@ -97,6 +100,13 @@ public class ProfileViewFragment extends Fragment {
         layoutRealizadasCard.setOnClickListener(v ->
                 NavHostFragment.findNavController(this)
                         .navigate(R.id.action_profileViewFragment_to_activityHistoryFragment));
+        progressIndicator.setVisibility(View.VISIBLE);
+        if (progressIndicator == null) {
+            android.util.Log.e("DEBUG", "progressIndicator es NULL");
+        } else {
+            android.util.Log.e("DEBUG", "progressIndicator encontrado, forzando VISIBLE");
+            progressIndicator.setVisibility(View.VISIBLE);
+        }
     }
 
     private void initViews(View view) {
@@ -113,6 +123,7 @@ public class ProfileViewFragment extends Fragment {
         btnAccessSettings = view.findViewById(R.id.btnAccessSettings);
         layoutReservadasCard = view.findViewById(R.id.layoutReservadasCard);
         layoutRealizadasCard = view.findViewById(R.id.layoutRealizadasCard);
+        progressIndicator = view.findViewById(R.id.progressIndicator);
     }
 
     private void observeViewModel() {
@@ -143,6 +154,9 @@ public class ProfileViewFragment extends Fragment {
                     chipGroupPreferences.addView(chip);
                 }
             }
+        });
+        viewModel.getIsLoading().observe(getViewLifecycleOwner(), loading -> {
+            progressIndicator.setVisibility(loading != null && loading ? View.VISIBLE : View.GONE);
         });
     }
 
