@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.ActivityHistoryResponse;
 import com.example.da1androidnative.ui.home.adapter.ActivityHistoryAdapter;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,7 +49,8 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
     private ActivityHistoryAdapter adapter;
     private EditText etStartDate, etEndDate;
     private AutoCompleteTextView spinnerStatus, spinnerDestination;
-    private View progressBar, tvEmptyState, tvError;
+    private LinearProgressIndicator progressBar;
+    private View tvEmptyState, tvError;
     private Button btnPreviousPage, btnNextPage;
     private TextView tvPageNumber;
 
@@ -84,7 +86,6 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         restoreFilterControls();
 
         if (!viewModel.hasHistoryLoaded()) {
-            // Carga inicial: Historial filtrado por completados y cancelados
             viewModel.loadHistory(null, null, null, "COMPLETED,CANCELLED");
         }
     }
@@ -114,11 +115,9 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         spinnerStatus.setAdapter(adapterStatus);
         spinnerStatus.setText(statusOptionsDisplay[0], false);
 
-        // Crear adapter de destinos solo una vez
         destAdapter = new NoFilterArrayAdapter(requireContext(), destinationList);
         spinnerDestination.setAdapter(destAdapter);
-        
-        // Configurar listener del spinner de destinos aquí, no en observeViewModel
+
         spinnerDestination.setOnItemClickListener((parent, v, position, id) -> {
             String selected = (String) parent.getItemAtPosition(position);
             viewModel.setSelectedFilters(selected, spinnerStatus.getText().toString());
@@ -179,18 +178,14 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
             }
         }
 
-        // Actualizar la lista del adapter existente en lugar de crear uno nuevo
         destinationList.clear();
         destinationList.addAll(cachedDestinations);
         Collections.sort(destinationList);
         destinationList.add(0, "Todos");
 
-        // Notificar al adapter que los datos cambiaron
         destAdapter.notifyDataSetChanged();
 
         String selectedDestination = viewModel.getSelectedDestinationName();
-        
-        // Restaurar el texto seleccionado si es necesario
         String currentText = spinnerDestination.getText().toString();
         if (currentText.isEmpty() || !currentText.equals(selectedDestination)) {
             spinnerDestination.setText(selectedDestination, false);
