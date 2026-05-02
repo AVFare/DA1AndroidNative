@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.example.da1androidnative.R;
 
 public class ToastHelper {
@@ -21,5 +22,9 @@ public class ToastHelper {
         toast.setDuration(Toast.LENGTH_SHORT);
         toast.setView(layout);
         toast.show();
+    }
+
+    public static void show(Context context, int resId) {
+        show(context, context.getString(resId));
     }
 }
