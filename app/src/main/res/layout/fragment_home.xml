@@ -251,4 +251,14 @@
         app:icon="@android:drawable/ic_menu_info_details"
         app:backgroundTint="?attr/colorPrimary"
         app:iconTint="@android:color/white" />
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progressIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:elevation="20dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:indicatorColor="?attr/colorPrimary" />
 </FrameLayout>

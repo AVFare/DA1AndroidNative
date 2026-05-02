@@ -25,6 +25,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.local.TokenManager;
 import com.example.da1androidnative.data.network.ApiService;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.concurrent.Executor;
@@ -43,6 +44,11 @@ public class AccessSettingsFragment extends Fragment {
     @Inject ApiService apiService;
 
     private SwitchMaterial biometricSwitch;
+    private LinearProgressIndicator progressIndicator;
+    private View btnChangePassword;
+    private View btnDeleteAccount;
+    private View btnChangeEmail;
+    private View btnLogout;
     private Executor executor;
     private BiometricPrompt biometricPrompt;
     private BiometricPrompt.PromptInfo promptInfo;
@@ -69,23 +75,37 @@ public class AccessSettingsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        progressIndicator = view.findViewById(R.id.progressIndicator);
+        btnChangePassword = view.findViewById(R.id.btnChangePassword);
+        btnDeleteAccount = view.findViewById(R.id.btnDeleteAccount);
+        btnChangeEmail = view.findViewById(R.id.btnChangeEmail);
+        btnLogout = view.findViewById(R.id.btnLogout);
+
         view.findViewById(R.id.btnBack).setOnClickListener(v ->
                 NavHostFragment.findNavController(this).navigateUp());
 
         setupBiometricSwitch(view);
 
-        view.findViewById(R.id.btnChangeEmail).setOnClickListener(v ->
+        btnChangeEmail.setOnClickListener(v ->
                 NavHostFragment.findNavController(this)
                         .navigate(R.id.action_accessSettings_to_changeEmailFragment));
 
-        view.findViewById(R.id.btnLogout).setOnClickListener(v -> confirmLogout());
+        btnLogout.setOnClickListener(v -> confirmLogout());
 
-        view.findViewById(R.id.btnChangePassword).setOnClickListener(v -> initiateChangePassword());
+        btnChangePassword.setOnClickListener(v -> initiateChangePassword());
 
-        view.findViewById(R.id.btnDeleteAccount).setOnClickListener(v -> confirmDeleteAccount());
+        btnDeleteAccount.setOnClickListener(v -> confirmDeleteAccount());
     }
 
-    // — Biometría (movida de HomeFragment) —
+    private void setLoading(boolean loading) {
+        progressIndicator.setVisibility(loading ? View.VISIBLE : View.GONE);
+        btnChangePassword.setEnabled(!loading);
+        btnDeleteAccount.setEnabled(!loading);
+        btnChangeEmail.setEnabled(!loading);
+        btnLogout.setEnabled(!loading);
+    }
+
+    // — Biometría —
 
     private void setupBiometricSwitch(View view) {
         biometricSwitch = view.findViewById(R.id.biometricSwitch);
@@ -179,9 +199,11 @@ public class AccessSettingsFragment extends Fragment {
     }
 
     private void performPasswordChangeInitialization() {
+        setLoading(true);
         apiService.initiateChangePassword().enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                setLoading(false);
                 if (response.isSuccessful()) {
                     NavHostFragment.findNavController(AccessSettingsFragment.this)
                             .navigate(R.id.action_accessSettings_to_changePasswordFragment);
@@ -193,10 +215,10 @@ public class AccessSettingsFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                setLoading(false);
                 ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
             }
         });
-
     }
 
     private void performLogout() {
@@ -208,7 +230,6 @@ public class AccessSettingsFragment extends Fragment {
 
     // — Eliminar cuenta —
 
-
     private void confirmDeleteAccount() {
         new AlertDialog.Builder(requireContext())
                 .setTitle("Eliminar cuenta")
@@ -218,12 +239,12 @@ public class AccessSettingsFragment extends Fragment {
                 .show();
     }
 
-
-
     private void performDeleteAccount() {
+        setLoading(true);
         apiService.deleteAccount().enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                setLoading(false);
                 if (response.isSuccessful()) {
                     tokenManager.clearToken();
                     tokenManager.clearCredentials();
@@ -237,6 +258,7 @@ public class AccessSettingsFragment extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                setLoading(false);
                 ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
             }
         });
