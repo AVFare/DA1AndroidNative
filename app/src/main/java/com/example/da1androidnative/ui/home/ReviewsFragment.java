@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,6 +18,8 @@ import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.ReviewableReservationResponse;
 import com.example.da1androidnative.data.network.ApiService;
 import com.example.da1androidnative.ui.home.adapter.ReviewableReservationsAdapter;
+import com.example.da1androidnative.ui.util.ToastHelper;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,7 @@ public class ReviewsFragment extends Fragment implements ReviewableReservationsA
 
     private ReviewableReservationsAdapter reviewableAdapter;
     private TextView emptyReviewableText;
+    private LinearProgressIndicator progressIndicator;
 
     @Nullable
     @Override
@@ -50,6 +52,8 @@ public class ReviewsFragment extends Fragment implements ReviewableReservationsA
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        progressIndicator = view.findViewById(R.id.progressIndicator);
 
         Toolbar toolbar = view.findViewById(R.id.reviewsToolbar);
         toolbar.setNavigationOnClickListener(v -> NavHostFragment.findNavController(this).navigateUp());
@@ -67,6 +71,10 @@ public class ReviewsFragment extends Fragment implements ReviewableReservationsA
         }
     }
 
+    private void setLoading(boolean loading) {
+        progressIndicator.setVisibility(loading ? View.VISIBLE : View.GONE);
+    }
+
     private void setupRecyclerView(View view) {
         RecyclerView reviewableRecyclerView = view.findViewById(R.id.reviewableReservationsRecyclerView);
         reviewableRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -76,10 +84,12 @@ public class ReviewsFragment extends Fragment implements ReviewableReservationsA
     }
 
     private void loadReviewableReservations() {
+        setLoading(true);
         apiService.getReviewableReservations().enqueue(new Callback<List<ReviewableReservationResponse>>() {
             @Override
             public void onResponse(@NonNull Call<List<ReviewableReservationResponse>> call,
                                    @NonNull Response<List<ReviewableReservationResponse>> response) {
+                setLoading(false);
                 if (response.isSuccessful() && response.body() != null) {
                     List<ReviewableReservationResponse> items = response.body();
                     if (items == null) {
@@ -94,6 +104,7 @@ public class ReviewsFragment extends Fragment implements ReviewableReservationsA
 
             @Override
             public void onFailure(@NonNull Call<List<ReviewableReservationResponse>> call, @NonNull Throwable t) {
+                setLoading(false);
                 ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
             }
         });

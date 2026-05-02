@@ -221,7 +221,7 @@
         android:id="@+id/progressIndicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
+        android:layout_gravity="center"
         android:elevation="20dp"
         android:indeterminate="true"
         android:visibility="gone"
