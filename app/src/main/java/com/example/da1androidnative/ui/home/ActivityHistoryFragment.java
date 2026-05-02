@@ -53,6 +53,8 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
     private final Map<String, String> statusMap = new HashMap<>();
     private final Map<String, Long> destinationIdByName = new HashMap<>();
     private List<ActivityHistoryResponse> allActivities = new ArrayList<>();
+    private ArrayAdapter<String> destAdapter;
+    private List<String> destinationList = new ArrayList<>();
 
     public ActivityHistoryFragment() {
         statusMap.put("Cancelado", "CANCELLED");
@@ -107,6 +109,18 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         ArrayAdapter<String> adapterStatus = new ArrayAdapter<>(requireContext(), android.R.layout.simple_dropdown_item_1line, statusOptionsDisplay);
         spinnerStatus.setAdapter(adapterStatus);
         spinnerStatus.setText(statusOptionsDisplay[0], false);
+
+        // Crear adapter de destinos solo una vez
+        destAdapter = new ArrayAdapter<>(requireContext(),
+                android.R.layout.simple_dropdown_item_1line, destinationList);
+        spinnerDestination.setAdapter(destAdapter);
+        
+        // Configurar listener del spinner de destinos aquí, no en observeViewModel
+        spinnerDestination.setOnItemClickListener((parent, v, position, id) -> {
+            String selected = (String) parent.getItemAtPosition(position);
+            viewModel.setSelectedFilters(selected, spinnerStatus.getText().toString());
+            filterByDestinationLocally(selected);
+        });
 
         etStartDate.setOnClickListener(v -> showDatePicker(etStartDate));
         etEndDate.setOnClickListener(v -> showDatePicker(etEndDate));
@@ -164,23 +178,20 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
             }
         }
 
-        List<String> destinationList = new ArrayList<>(destinations);
+        // Actualizar la lista del adapter existente en lugar de crear uno nuevo
+        destinationList.clear();
+        destinationList.addAll(destinations);
         Collections.sort(destinationList);
         destinationList.add(0, "Todos");
 
-        ArrayAdapter<String> destAdapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_dropdown_item_1line, destinationList);
-        spinnerDestination.setAdapter(destAdapter);
+        // Notificar al adapter que los datos cambiaron
+        destAdapter.notifyDataSetChanged();
 
         String selectedDestination = viewModel.getSelectedDestinationName();
-        if (!"Todos".equals(selectedDestination) && !destinationList.contains(selectedDestination)) {
-            destinationList.add(selectedDestination);
-            Collections.sort(destinationList.subList(1, destinationList.size()));
-            destAdapter.notifyDataSetChanged();
-        }
-
-        if (spinnerDestination.getText().toString().isEmpty()
-                || !spinnerDestination.getText().toString().equals(selectedDestination)) {
+        
+        // Restaurar el texto seleccionado si es necesario
+        String currentText = spinnerDestination.getText().toString();
+        if (currentText.isEmpty() || !currentText.equals(selectedDestination)) {
             spinnerDestination.setText(selectedDestination, false);
         }
     }
@@ -244,12 +255,6 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
 
         viewModel.isLastPage.observe(getViewLifecycleOwner(), isLast -> {
             btnNextPage.setEnabled(!isLast);
-        });
-
-        spinnerDestination.setOnItemClickListener((parent, v, position, id) -> {
-            String selected = (String) parent.getItemAtPosition(position);
-            viewModel.setSelectedFilters(selected, spinnerStatus.getText().toString());
-            filterByDestinationLocally(selected);
         });
     }
 
