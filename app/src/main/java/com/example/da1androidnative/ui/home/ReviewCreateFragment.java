@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -74,7 +74,7 @@ public class ReviewCreateFragment extends Fragment {
     private void bindArguments(View view) {
         Bundle args = getArguments();
         if (args == null) {
-            Toast.makeText(getContext(), "Reserva invalida", Toast.LENGTH_SHORT).show();
+            ToastHelper.show(getContext(), "Reserva invalida");
             NavHostFragment.findNavController(this).navigateUp();
             return;
         }
@@ -85,7 +85,7 @@ public class ReviewCreateFragment extends Fragment {
         ((TextView) view.findViewById(R.id.reviewCreateDeadlineText)).setText("Disponible hasta: " + formatDateTime(args.getString("expiresAt", "")));
 
         if (reservationId == -1L) {
-            Toast.makeText(getContext(), "Reserva invalida", Toast.LENGTH_SHORT).show();
+            ToastHelper.show(getContext(), "Reserva invalida");
             NavHostFragment.findNavController(this).navigateUp();
         }
     }
@@ -117,7 +117,7 @@ public class ReviewCreateFragment extends Fragment {
         int guideRating = Math.round(guideRatingBar.getRating());
 
         if (activityRating < 1 || guideRating < 1) {
-            Toast.makeText(getContext(), R.string.review_rating_required, Toast.LENGTH_SHORT).show();
+            ToastHelper.show(getContext(), R.string.review_rating_required);
             return;
         }
 
@@ -133,17 +133,17 @@ public class ReviewCreateFragment extends Fragment {
             public void onResponse(@NonNull Call<ReviewResponse> call, @NonNull Response<ReviewResponse> response) {
                 submitButton.setEnabled(true);
                 if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), R.string.review_submit_success, Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), R.string.review_submit_success);
                     NavHostFragment.findNavController(ReviewCreateFragment.this).navigateUp();
                 } else {
-                    Toast.makeText(getContext(), R.string.review_submit_error, Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), R.string.review_submit_error);
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<ReviewResponse> call, @NonNull Throwable t) {
                 submitButton.setEnabled(true);
-                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
             }
         });
     }

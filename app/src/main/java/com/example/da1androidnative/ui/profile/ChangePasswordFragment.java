@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
+import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -60,17 +60,17 @@ public class ChangePasswordFragment extends Fragment {
             String otpText = optCode.getText() != null ? optCode.getText().toString().trim() : "";
 
             if (newPassword.isEmpty() || repeatedPassword.isEmpty() || otpText.isEmpty()) {
-                Toast.makeText(getContext(), "Completá todos los campos", Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "Completá todos los campos");
                 return;
             }
 
             if (newPassword.length() < 8) {
-                Toast.makeText(getContext(), "La contraseña debe tener al menos 8 caracteres", Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "La contraseña debe tener al menos 8 caracteres");
                 return;
             }
 
             if (!newPassword.equals(repeatedPassword)) {
-                Toast.makeText(getContext(), "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "Las contraseñas no coinciden");
                 return;
             }
 
@@ -87,14 +87,14 @@ public class ChangePasswordFragment extends Fragment {
                     public void onResponse(@NonNull Call<ConfirmChangePasswordResponse> call,
                                            @NonNull Response<ConfirmChangePasswordResponse> response) {
                         if (response.isSuccessful()) {
-                            Toast.makeText(getContext(), "Contraseña actualizada correctamente, Ingrese Nuevamente", Toast.LENGTH_SHORT).show();
+                            ToastHelper.show(getContext(), "Contraseña actualizada correctamente, Ingrese Nuevamente");
                             performLogout();
                         } else {
                             try {
                                 String errorBody = response.errorBody() != null ? response.errorBody().string() : "No error body";
                                 System.err.println("Error response: " + errorBody);
                             } catch (Exception e) {
-                                Toast.makeText(getContext(), "No se pudo cambiar la contraseña, Verifique el OTP", Toast.LENGTH_SHORT).show();
+                                ToastHelper.show(getContext(), "No se pudo cambiar la contraseña, Verifique el OTP");
                                 e.printStackTrace();
                             }
                         }
@@ -102,7 +102,7 @@ public class ChangePasswordFragment extends Fragment {
 
                     @Override
                     public void onFailure(@NonNull Call<ConfirmChangePasswordResponse> call, @NonNull Throwable t) {
-                        Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
                         NavHostFragment.findNavController(ChangePasswordFragment.this)
                                 .navigate(R.id.action_changePassword_to_accessSettingsFragment);
                     }

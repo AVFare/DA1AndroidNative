@@ -10,7 +10,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -210,7 +210,7 @@ public class ActivityHistoryFragment extends Fragment implements ActivityHistory
         viewModel.error.observe(getViewLifecycleOwner(), error -> {
             tvError.setVisibility(error != null ? View.VISIBLE : View.GONE);
             if (error != null) {
-                Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+                ToastHelper.show(getContext(), error);
             }
         });
 

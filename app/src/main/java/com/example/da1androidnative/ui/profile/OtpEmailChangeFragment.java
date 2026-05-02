@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -65,7 +65,7 @@ public class OtpEmailChangeFragment extends Fragment {
                     : "";
 
             if (code.length() != 6) {
-                Toast.makeText(getContext(), "Ingresá un código de 6 dígitos", Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "Ingresá un código de 6 dígitos");
                 return;
             }
 
@@ -82,23 +82,23 @@ public class OtpEmailChangeFragment extends Fragment {
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if (response.isSuccessful()) {
-                            Toast.makeText(getContext(), "Correo actualizado. Iniciá sesión con tu nuevo correo.", Toast.LENGTH_LONG).show();
+                            ToastHelper.show(getContext(), "Correo actualizado. Iniciá sesión con tu nuevo correo.");
                             tokenManager.clearToken();
                             tokenManager.clearCredentials();
                             NavHostFragment.findNavController(OtpEmailChangeFragment.this)
                                     .navigate(R.id.action_global_to_auth);
                         } else if (response.code() == 400) {
-                            Toast.makeText(getContext(), "Código inválido o expirado", Toast.LENGTH_SHORT).show();
+                            ToastHelper.show(getContext(), "Código inválido o expirado");
                         } else if (response.code() == 409) {
-                            Toast.makeText(getContext(), "Ese correo ya está registrado", Toast.LENGTH_SHORT).show();
+                            ToastHelper.show(getContext(), "Ese correo ya está registrado");
                         } else {
-                            Toast.makeText(getContext(), "No se pudo actualizar el correo", Toast.LENGTH_SHORT).show();
+                            ToastHelper.show(getContext(), "No se pudo actualizar el correo");
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                        Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
                     }
                 });
     }
@@ -109,15 +109,15 @@ public class OtpEmailChangeFragment extends Fragment {
                     @Override
                     public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
                         if (response.isSuccessful()) {
-                            Toast.makeText(getContext(), "Se reenvió el código. Revisá tu email.", Toast.LENGTH_LONG).show();
+                            ToastHelper.show(getContext(), "Se reenvió el código. Revisá tu email.");
                         } else {
-                            Toast.makeText(getContext(), "No se pudo reenviar el código", Toast.LENGTH_SHORT).show();
+                            ToastHelper.show(getContext(), "No se pudo reenviar el código");
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                        Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
                     }
                 });
     }

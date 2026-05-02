@@ -8,7 +8,7 @@ import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -52,7 +52,7 @@ public class AccessSettingsFragment extends Fragment {
                 if (isGranted) {
                     checkBiometricHardware();
                 } else {
-                    Toast.makeText(getContext(), R.string.biometric_permission_denied, Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), R.string.biometric_permission_denied);
                     biometricSwitch.setChecked(false);
                 }
             });
@@ -100,7 +100,7 @@ public class AccessSettingsFragment extends Fragment {
             } else {
                 tokenManager.setBiometricEnabled(false);
                 tokenManager.clearCredentials();
-                Toast.makeText(getContext(), R.string.biometric_disabled_msg, Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), R.string.biometric_disabled_msg);
             }
         });
     }
@@ -114,7 +114,7 @@ public class AccessSettingsFragment extends Fragment {
                 showBiometricPromptToEnable();
                 break;
             case BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE:
-                Toast.makeText(getContext(), R.string.biometric_error_not_available, Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), R.string.biometric_error_not_available);
                 biometricSwitch.setChecked(false);
                 break;
             case BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED:
@@ -139,7 +139,7 @@ public class AccessSettingsFragment extends Fragment {
                     public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
                         super.onAuthenticationSucceeded(result);
                         tokenManager.setBiometricEnabled(true);
-                        Toast.makeText(getContext(), R.string.biometric_enabled_msg, Toast.LENGTH_SHORT).show();
+                        ToastHelper.show(getContext(), R.string.biometric_enabled_msg);
                     }
 
                     @Override
@@ -185,15 +185,15 @@ public class AccessSettingsFragment extends Fragment {
                 if (response.isSuccessful()) {
                     NavHostFragment.findNavController(AccessSettingsFragment.this)
                             .navigate(R.id.action_accessSettings_to_changePasswordFragment);
-                    Toast.makeText(getContext(), "OTP Enviado Revisa tu Mail!", Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), "OTP Enviado Revisa tu Mail!");
                 } else {
-                    Toast.makeText(getContext(), "No se pudo iniciar el cambio de contraseña", Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), "No se pudo iniciar el cambio de contraseña");
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
             }
         });
 
@@ -231,13 +231,13 @@ public class AccessSettingsFragment extends Fragment {
                     NavHostFragment.findNavController(AccessSettingsFragment.this)
                             .navigate(R.id.action_global_to_auth);
                 } else {
-                    Toast.makeText(getContext(), "No se pudo eliminar la cuenta", Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), "No se pudo eliminar la cuenta");
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
             }
         });
     }

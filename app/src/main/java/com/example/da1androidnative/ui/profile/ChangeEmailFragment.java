@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -51,7 +51,7 @@ public class ChangeEmailFragment extends Fragment {
                     : "";
 
             if (newEmail.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(newEmail).matches()) {
-                Toast.makeText(getContext(), "Ingresá un email válido", Toast.LENGTH_SHORT).show();
+                ToastHelper.show(getContext(), "Ingresá un email válido");
                 return;
             }
 
@@ -73,15 +73,15 @@ public class ChangeEmailFragment extends Fragment {
                             NavHostFragment.findNavController(ChangeEmailFragment.this)
                                     .navigate(R.id.action_changeEmail_to_otpEmailChangeFragment, args);
                         } else if (response.code() == 409) {
-                            Toast.makeText(getContext(), "Ese correo ya está registrado", Toast.LENGTH_SHORT).show();
+                            ToastHelper.show(getContext(), "Ese correo ya está registrado");
                         } else {
-                            Toast.makeText(getContext(), "No se pudo enviar el código", Toast.LENGTH_SHORT).show();
+                            ToastHelper.show(getContext(), "No se pudo enviar el código");
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
-                        Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
                     }
                 });
     }

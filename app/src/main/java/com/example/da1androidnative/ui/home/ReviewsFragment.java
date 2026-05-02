@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -88,13 +88,13 @@ public class ReviewsFragment extends Fragment implements ReviewableReservationsA
                     reviewableAdapter.setReservations(items);
                     emptyReviewableText.setVisibility(items.isEmpty() ? View.VISIBLE : View.GONE);
                 } else {
-                    Toast.makeText(getContext(), "Error al cargar actividades para calificar", Toast.LENGTH_SHORT).show();
+                    ToastHelper.show(getContext(), "Error al cargar actividades para calificar");
                 }
             }
 
             @Override
             public void onFailure(@NonNull Call<List<ReviewableReservationResponse>> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Error de red: " + t.getMessage(), Toast.LENGTH_LONG).show();
+                ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
             }
         });
     }
