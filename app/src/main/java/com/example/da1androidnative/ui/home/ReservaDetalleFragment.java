@@ -13,11 +13,13 @@ import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.ActivityDetalleResponse;
+import com.example.da1androidnative.data.model.ActivityHistoryDetailResponse;
 import com.example.da1androidnative.data.model.ItineraryResponse;
 import com.example.da1androidnative.data.model.ReservaCancelledResponse;
 import com.example.da1androidnative.data.model.ReservaDetalleResponse;
@@ -55,6 +57,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
     private TextView reservationIdText, reservationDateText, reservationTimeText, reservationParticipantsText;
     private TextView reservationMeetingPointText, reservationVoucherCodeText, reservationTotalPriceText;
     private TextView reservationCancellationPolicyText;
+    private TextView reservationRatingStatusText, reservationActivityRatingText, reservationGuideRatingText, reservationCommentText;
     private Button cancelReservationButton, btnHowToGet;
     
     private GoogleMap mMap;
@@ -71,6 +74,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initViews(view);
+        setupToolbar(view);
         
         Bundle args = getArguments();
         if (args != null) {
@@ -97,8 +101,19 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         reservationVoucherCodeText = view.findViewById(R.id.reservationVoucherCodeText);
         reservationTotalPriceText = view.findViewById(R.id.reservationTotalPriceText);
         reservationCancellationPolicyText = view.findViewById(R.id.reservationCancellationPolicyText);
+        reservationRatingStatusText = view.findViewById(R.id.reservationRatingStatusText);
+        reservationActivityRatingText = view.findViewById(R.id.reservationActivityRatingText);
+        reservationGuideRatingText = view.findViewById(R.id.reservationGuideRatingText);
+        reservationCommentText = view.findViewById(R.id.reservationCommentText);
         cancelReservationButton = view.findViewById(R.id.cancelReservationButton);
         btnHowToGet = view.findViewById(R.id.btnHowToGet);
+    }
+
+    private void setupToolbar(View view) {
+        Toolbar toolbar = view.findViewById(R.id.reservaDetalleToolbar);
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(v -> NavHostFragment.findNavController(this).navigateUp());
+        }
     }
 
     private void loadDetalleReserva() {
@@ -112,6 +127,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
                     bindDetalle(currentReserva);
                     updateMap();
                     fetchActivityDetails(currentReserva.getActivityId());
+                    fetchHistoryDetail(currentReserva.getReservationId());
                 } else {
                     ToastHelper.show(getContext(), "Error al cargar detalle");
                 }
@@ -119,6 +135,24 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
             @Override
             public void onFailure(@NonNull Call<ReservaDetalleResponse> call, @NonNull Throwable t) {
                 ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
+            }
+        });
+    }
+
+    private void fetchHistoryDetail(long reservationId) {
+        apiService.getActivityHistoryDetail(reservationId).enqueue(new Callback<ActivityHistoryDetailResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ActivityHistoryDetailResponse> call, @NonNull Response<ActivityHistoryDetailResponse> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    bindHistoryRating(response.body());
+                } else {
+                    bindEmptyRating();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ActivityHistoryDetailResponse> call, @NonNull Throwable t) {
+                bindEmptyRating();
             }
         });
     }
@@ -149,6 +183,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         reservationVoucherCodeText.setText(String.format("Voucher: %s", detalle.getVoucherCode()));
         reservationTotalPriceText.setText(String.format(Locale.getDefault(), "Total: $%.2f", detalle.getTotalPrice()));
         reservationCancellationPolicyText.setText(detalle.getCancellationPolicy());
+        bindEmptyRating();
 
         if (Objects.equals(detalle.getStatus(), "CANCELLED") || Objects.equals(detalle.getStatus(), "COMPLETED")) {
             cancelReservationButton.setEnabled(false);
@@ -168,6 +203,36 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
                 ToastHelper.show(getContext(), "Ubicación no disponible");
             }
         });
+    }
+
+    private void bindHistoryRating(ActivityHistoryDetailResponse detail) {
+        if (detail == null || !detail.isHasRating()) {
+            bindEmptyRating();
+            return;
+        }
+
+        reservationRatingStatusText.setText("Calificacion enviada.");
+        reservationActivityRatingText.setVisibility(View.VISIBLE);
+        reservationGuideRatingText.setVisibility(View.VISIBLE);
+        reservationCommentText.setVisibility(View.VISIBLE);
+        reservationActivityRatingText.setText("Actividad: " + formatRating(detail.getActivityStars()));
+        reservationGuideRatingText.setText("Guia: " + formatRating(detail.getGuideStars()));
+
+        String comment = detail.getComment();
+        reservationCommentText.setText(comment == null || comment.trim().isEmpty()
+                ? "Comentario: Sin comentario."
+                : "Comentario: " + comment);
+    }
+
+    private void bindEmptyRating() {
+        reservationRatingStatusText.setText("Sin calificacion registrada.");
+        reservationActivityRatingText.setVisibility(View.GONE);
+        reservationGuideRatingText.setVisibility(View.GONE);
+        reservationCommentText.setVisibility(View.GONE);
+    }
+
+    private String formatRating(Integer rating) {
+        return rating != null ? String.format(Locale.getDefault(), "%d/5", rating) : "N/A";
     }
 
     private Double getSafeLat() {
