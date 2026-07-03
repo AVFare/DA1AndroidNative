@@ -78,9 +78,12 @@ public class VoucherFragment extends Fragment {
                 NavHostFragment.findNavController(this).navigateUp()
         );
 
-        btnScanQr.setOnClickListener(v ->
-                ToastHelper.show(getContext(), "Escáner QR pendiente de implementar")
-        );
+        btnScanQr.setOnClickListener(v -> {
+            Bundle scanArgs = new Bundle();
+            scanArgs.putLong("reservationId", reservationId);
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_voucherFragment_to_qrScannerFragment, scanArgs);
+        });
     }
 
     private void initViews(View view) {
