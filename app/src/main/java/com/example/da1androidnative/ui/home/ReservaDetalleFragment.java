@@ -249,6 +249,15 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
             }
         });
 
+        if (Objects.equals(detalle.getStatus(), "CONFIRMED") || Objects.equals(detalle.getStatus(), "COMPLETED")) {
+            viewVoucherButton.setEnabled(true);
+            viewVoucherButton.setAlpha(1.0f);
+        } else {
+            viewVoucherButton.setEnabled(false);
+            viewVoucherButton.setAlpha(0.5f);
+        }
+
+
         viewVoucherButton.setOnClickListener(v -> {
             Bundle args = new Bundle();
             args.putLong("reservationId", reservationId);
