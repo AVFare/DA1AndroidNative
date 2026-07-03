@@ -28,6 +28,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 @AndroidEntryPoint
 public class VoucherFragment extends Fragment {
 
@@ -164,14 +167,32 @@ public class VoucherFragment extends Fragment {
 
     private void bindDetalle(ReservaDetalleResponse detalle) {
         reservationActivityNameText.setText(valueOrFallback(detalle.getActivityName()));
-        reservationDateText.setText("Fecha: " + (detalle.getDate() != null ? detalle.getDate().toString() : "N/A"));
-        reservationTimeText.setText("Hora: " + valueOrFallback(detalle.getTime()));
-        reservationParticipantsText.setText("Participantes: " + detalle.getParticipantsCount());
-        reservationMeetingPointText.setText("Punto de encuentro: " + valueOrFallback(detalle.getMeetingPoint()));
-        reservationVoucherCodeText.setText("Voucher: " + valueOrFallback(detalle.getVoucherCode()));
-        reservationGuideText.setText("Guía: A confirmar");
-    }
 
+        SimpleDateFormat formatter =
+                new SimpleDateFormat("dd MMM yyyy", new Locale("es", "AR"));
+
+        reservationDateText.setText(
+                detalle.getDate() != null
+                        ? formatter.format(detalle.getDate())
+                        : "N/A"
+        );
+
+        reservationTimeText.setText(valueOrFallback(detalle.getTime()));
+
+        reservationParticipantsText.setText(
+                String.valueOf(detalle.getParticipantsCount())
+        );
+
+        reservationMeetingPointText.setText(
+                valueOrFallback(detalle.getMeetingPoint())
+        );
+
+        reservationVoucherCodeText.setText(
+                valueOrFallback(detalle.getVoucherCode())
+        );
+
+        reservationGuideText.setText("A confirmar");
+    }
     private String valueOrFallback(String value) {
         return value == null || value.trim().isEmpty()
                 ? "No disponible sin conexión"
