@@ -32,6 +32,7 @@
     <string name="nav_reservas">Mis actividades</string>
     <string name="nav_favoritos">Favoritos</string>
     <string name="nav_perfil">Perfil</string>
+    <string name="nav_voucher">Ver voucher</string>
 
     <string name="reservas_title">Mis reservas</string>
     <string name="reservas_subtitle">Listado de las reservas realizadas por el usuario.</string>
@@ -110,6 +111,7 @@
     <string name="voucher_detail_section_data">Volver a detalles</string>
     <string name="voucher_scan_qr">Escanear QR</string>
     <string name="voucher_back_to_detail">Escanear QR</string>
+
 
     <!-- Change Password Strings -->
     <string name="change_password_title">Cambiar contraseña</string>
