@@ -68,7 +68,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:padding="20dp">
 
@@ -147,15 +147,6 @@
                             tools:text="Participantes: 2" />
 
                         <TextView
-                            android:id="@+id/reservationVoucherCodeText"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                            android:textColor="?attr/colorOnSurfaceVariant"
-                            tools:text="Voucher: ABC123" />
-
-                        <TextView
                             android:id="@+id/reservationGuideText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -170,20 +161,37 @@
                             android:layout_marginTop="16dp"
                             android:background="?attr/colorOutlineVariant" />
 
+                        <TextView
+                            android:id="@+id/reservationVoucherCodeText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textColor="?attr/colorOnSurfaceVariant"
+                            tools:text="Voucher: ABC123" />
+
+                        <View
+                            android:id="@+id/view"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="16dp"
+                            android:background="?attr/colorOutlineVariant" />
+
+                        <Button
+                            android:id="@+id/btnScanQr"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/voucher_back_to_detail" />
+
+                        <Button
+                            android:id="@+id/btnBackToDetail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/voucher_detail_section_data" />
+
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <Button
-                    android:id="@+id/btnBackToDetail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/voucher_detail_section_data" />
-
-                <Button
-                    android:id="@+id/btnScanQr"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/voucher_back_to_detail" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
