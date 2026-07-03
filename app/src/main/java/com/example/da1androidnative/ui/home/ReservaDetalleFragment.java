@@ -62,7 +62,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
     private TextView reservationMeetingPointText, reservationVoucherCodeText, reservationTotalPriceText;
     private TextView reservationCancellationPolicyText;
     private TextView reservationRatingStatusText, reservationActivityRatingText, reservationGuideRatingText, reservationCommentText;
-    private Button cancelReservationButton, btnHowToGet;
+    private Button cancelReservationButton, btnHowToGet, viewVoucherButton;
     private LinearProgressIndicator progressIndicator;
 
     private GoogleMap mMap;
@@ -113,6 +113,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         reservationCommentText = view.findViewById(R.id.reservationCommentText);
         cancelReservationButton = view.findViewById(R.id.cancelReservationButton);
         btnHowToGet = view.findViewById(R.id.btnHowToGet);
+        viewVoucherButton = view.findViewById(R.id.viewVoucherButton);
     }
 
     private void setLoading(boolean loading) {
@@ -246,6 +247,23 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
             } else {
                 ToastHelper.show(getContext(), "Ubicación no disponible");
             }
+        });
+
+        if (Objects.equals(detalle.getStatus(), "CONFIRMED") || Objects.equals(detalle.getStatus(), "COMPLETED")) {
+            viewVoucherButton.setEnabled(true);
+            viewVoucherButton.setAlpha(1.0f);
+        } else {
+            viewVoucherButton.setEnabled(false);
+            viewVoucherButton.setAlpha(0.5f);
+        }
+
+
+        viewVoucherButton.setOnClickListener(v -> {
+            Bundle args = new Bundle();
+            args.putLong("reservationId", reservationId);
+
+            NavHostFragment.findNavController(this)
+                    .navigate(R.id.action_reservaDetalleFragment_to_voucherFragment, args);
         });
     }
 

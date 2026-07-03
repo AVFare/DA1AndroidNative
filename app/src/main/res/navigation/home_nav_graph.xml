@@ -159,6 +159,21 @@
             android:name="reservationId"
             app:argType="long"
             android:defaultValue="-1L" />
+        <action
+            android:id="@+id/action_reservaDetalleFragment_to_voucherFragment"
+            app:destination="@id/voucherFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/voucherFragment"
+        android:name="com.example.da1androidnative.ui.home.VoucherFragment"
+        android:label="Voucher Digital">
+
+        <argument
+            android:name="reservationId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+
     </fragment>
 
     <fragment
