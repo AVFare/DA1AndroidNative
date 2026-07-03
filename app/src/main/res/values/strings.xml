@@ -107,7 +107,7 @@
     <string name="biometric_switch_label">Habilitar Biometría</string>
 
     <string name="voucher_detail_title">Voucher Digital</string>
-    <string name="voucher_detail_section_data">Detalles del Voucher</string>
+    <string name="voucher_detail_section_data">Volver a detalles</string>
     <string name="voucher_scan_qr">Escanear QR</string>
     <string name="voucher_back_to_detail">Escanear QR</string>
 

@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/reservaDetalleToolbar"
+            android:id="@+id/voucherToolbar"
             android:layout_width="0dp"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -29,7 +29,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/reservaDetalleToolbar">
+            app:layout_constraintTop_toBottomOf="@id/voucherToolbar">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -174,13 +174,13 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <Button
-                    android:id="@+id/button3"
+                    android:id="@+id/btnBackToDetail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/voucher_detail_section_data" />
 
                 <Button
-                    android:id="@+id/button4"
+                    android:id="@+id/btnScanQr"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/voucher_back_to_detail" />
