@@ -15,6 +15,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.example.da1androidnative.data.network.NotificationPollingWorker;
 import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -26,6 +28,10 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.work.BackoffPolicy;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.local.FavoritesManager;
@@ -49,6 +55,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -63,6 +71,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     @Inject ApiService apiService;
     @Inject TokenManager tokenManager;
     @Inject FavoritesManager favoritesManager;
+    @Inject NotificationPollingWorker notificationPollingWorker;
 
     private ActivityAdapter adapter;
     private TextView tvOfflineBanner;
@@ -119,6 +128,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         loadFilterOptions();
         loadActivities();
         setupNavigationButtons(view);
+        enableNotifications();
     }
 
     @Override
@@ -131,6 +141,12 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         if (progressIndicator != null) {
             progressIndicator.setVisibility(loading ? View.VISIBLE : View.GONE);
         }
+    }
+
+    private void enableNotifications() {
+        OneTimeWorkRequest inicial = new OneTimeWorkRequest.Builder(NotificationPollingWorker.class).setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS).build();
+
+        WorkManager.getInstance(requireContext()).enqueueUniqueWork("notificationPolling", ExistingWorkPolicy.REPLACE, inicial);
     }
 
     private void setupNavigationButtons(View view) {
