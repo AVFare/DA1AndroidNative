@@ -38,6 +38,7 @@ public class NotificationPollingWorker extends Worker {
             if (response.isSuccessful()) {
                 //Jordi aca va lo tuyo
                 //mostrarNotificacion(parametros);
+                //TODO: Mostrar Notificacion
 
                 enqueueNextPoll();
                 return Result.success();
