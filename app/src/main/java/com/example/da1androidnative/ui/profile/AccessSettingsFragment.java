@@ -257,6 +257,7 @@ public class AccessSettingsFragment extends Fragment {
                     tokenManager.setBiometricEnabled(false);
                     NavHostFragment.findNavController(AccessSettingsFragment.this)
                             .navigate(R.id.action_global_to_auth);
+                    disableNotifications();
                 } else {
                     ToastHelper.show(getContext(), "No se pudo eliminar la cuenta");
                 }

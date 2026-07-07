@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.work.WorkManager;
 
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.local.TokenManager;
@@ -87,6 +88,7 @@ public class OtpEmailChangeFragment extends Fragment {
                             tokenManager.clearCredentials();
                             NavHostFragment.findNavController(OtpEmailChangeFragment.this)
                                     .navigate(R.id.action_global_to_auth);
+                            disableNotifications();
                         } else if (response.code() == 400) {
                             ToastHelper.show(getContext(), "Código inválido o expirado");
                         } else if (response.code() == 409) {
@@ -101,6 +103,10 @@ public class OtpEmailChangeFragment extends Fragment {
                         ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
                     }
                 });
+    }
+
+    private void disableNotifications(){
+        WorkManager.getInstance(requireContext()).cancelUniqueWork("notification_polling");
     }
 
     private void resendCode() {
