@@ -3,6 +3,7 @@ package com.example.da1androidnative.data.network;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.hilt.work.HiltWorker;
 import androidx.work.Constraints;
 import androidx.work.ExistingWorkPolicy;
 import androidx.work.NetworkType;
@@ -15,16 +16,18 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
+import dagger.assisted.Assisted;
+import dagger.assisted.AssistedInject;
 import dagger.hilt.android.AndroidEntryPoint;
 import okhttp3.Response;
 
-@AndroidEntryPoint
+@HiltWorker
 public class NotificationPollingWorker extends Worker {
     private final String nombreTrabajoUnico = "notificationPolling";
-    @Inject
     private final NotificationPollingClient pollingClient;
 
-    public NotificationPollingWorker(@NonNull Context context, @NonNull WorkerParameters parameters, NotificationPollingClient pollingClient) {
+    @AssistedInject
+    public NotificationPollingWorker(@Assisted @NonNull Context context, @Assisted @NonNull WorkerParameters parameters, NotificationPollingClient pollingClient) {
         super(context, parameters);
         this.pollingClient = pollingClient;
     }
