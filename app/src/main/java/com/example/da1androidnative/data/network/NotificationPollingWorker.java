@@ -40,8 +40,8 @@ public class NotificationPollingWorker extends Worker {
     @Override
     @NonNull
     public Result doWork() {
-        try {
-            Response response = pollingClient.executePoll();
+        //try-with-resources basicamente cierra el recurso al terminar el try y no se pisan las conexiones.
+        try (Response response = pollingClient.executePoll()) {
 
             if (response.isSuccessful()) {
                 //Jordi aca va lo tuyo
