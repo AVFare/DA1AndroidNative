@@ -13,10 +13,15 @@ import androidx.work.WorkerParameters;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
 import okhttp3.Response;
 
+@AndroidEntryPoint
 public class NotificationPollingWorker extends Worker {
     private final String nombreTrabajoUnico = "notificationPolling";
+    @Inject
     private final NotificationPollingClient pollingClient;
 
     public NotificationPollingWorker(@NonNull Context context, @NonNull WorkerParameters parameters, NotificationPollingClient pollingClient) {
