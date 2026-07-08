@@ -103,7 +103,6 @@ public class OtpEmailChangeFragment extends Fragment {
                 });
     }
 
-
     private void resendCode() {
         apiService.initiateEmailChange(new InitiateEmailChangeRequest(newEmail))
                 .enqueue(new Callback<Void>() {

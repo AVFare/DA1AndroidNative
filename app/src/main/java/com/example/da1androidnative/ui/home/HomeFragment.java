@@ -15,7 +15,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import com.example.da1androidnative.ui.util.ToastHelper;
 
 import androidx.activity.result.ActivityResultLauncher;
