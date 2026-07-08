@@ -63,6 +63,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     @Inject ApiService apiService;
     @Inject TokenManager tokenManager;
     @Inject FavoritesManager favoritesManager;
+
     private ActivityAdapter adapter;
     private TextView tvOfflineBanner;
     private TextView tvPageNumber;
