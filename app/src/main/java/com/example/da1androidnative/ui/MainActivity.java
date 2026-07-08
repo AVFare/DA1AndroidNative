@@ -9,16 +9,8 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.work.BackoffPolicy;
-import androidx.work.ExistingWorkPolicy;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
-
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.local.TokenManager;
-import com.example.da1androidnative.data.network.NotificationPollingWorker;
-
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -41,12 +33,13 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        tokenManager.resumeNotificationsIfSessionActive();
+
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
 
         if (navHostFragment != null) {
             navController = navHostFragment.getNavController();
         }
-        tokenManager.resumeNotificationsIfSessionActive();
     }
 
     //Logica para permitir que el boton de "atras" use navController
