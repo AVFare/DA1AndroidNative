@@ -109,15 +109,11 @@ public class ChangePasswordFragment extends Fragment {
                     }
                 });
     }
-    private void disableNotifications(){
-        WorkManager.getInstance(requireContext()).cancelUniqueWork("notification_polling");
-    }
 
     private void performLogout() {
         tokenManager.clearToken();
         tokenManager.clearCredentials();
         NavHostFragment.findNavController(this)
                 .navigate(R.id.action_global_to_auth);
-        disableNotifications();
     }
 }

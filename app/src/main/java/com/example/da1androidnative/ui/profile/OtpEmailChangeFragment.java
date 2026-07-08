@@ -88,7 +88,6 @@ public class OtpEmailChangeFragment extends Fragment {
                             tokenManager.clearCredentials();
                             NavHostFragment.findNavController(OtpEmailChangeFragment.this)
                                     .navigate(R.id.action_global_to_auth);
-                            disableNotifications();
                         } else if (response.code() == 400) {
                             ToastHelper.show(getContext(), "Código inválido o expirado");
                         } else if (response.code() == 409) {
@@ -105,9 +104,6 @@ public class OtpEmailChangeFragment extends Fragment {
                 });
     }
 
-    private void disableNotifications(){
-        WorkManager.getInstance(requireContext()).cancelUniqueWork("notification_polling");
-    }
 
     private void resendCode() {
         apiService.initiateEmailChange(new InitiateEmailChangeRequest(newEmail))

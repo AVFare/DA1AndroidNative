@@ -126,7 +126,6 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         loadFilterOptions();
         loadActivities();
         setupNavigationButtons(view);
-        enableNotifications();
     }
 
     @Override
@@ -139,12 +138,6 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         if (progressIndicator != null) {
             progressIndicator.setVisibility(loading ? View.VISIBLE : View.GONE);
         }
-    }
-
-    private void enableNotifications() {
-        OneTimeWorkRequest inicial = new OneTimeWorkRequest.Builder(NotificationPollingWorker.class).setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS).build();
-
-        WorkManager.getInstance(requireContext()).enqueueUniqueWork("notificationPolling", ExistingWorkPolicy.REPLACE, inicial);
     }
 
     private void setupNavigationButtons(View view) {
