@@ -9,14 +9,25 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.work.BackoffPolicy;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import com.example.da1androidnative.R;
+import com.example.da1androidnative.data.local.TokenManager;
+import com.example.da1androidnative.data.network.NotificationPollingWorker;
+
+import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 
+    @Inject TokenManager tokenManager;
     private NavController navController;
 
     @Override
@@ -35,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         if (navHostFragment != null) {
             navController = navHostFragment.getNavController();
         }
-
+        tokenManager.resumeNotificationsIfSessionActive();
     }
 
     //Logica para permitir que el boton de "atras" use navController

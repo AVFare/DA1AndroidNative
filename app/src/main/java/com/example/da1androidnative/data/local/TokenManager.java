@@ -35,6 +35,7 @@ public class TokenManager {
 
     public void saveToken(String token) {
         sharedPreferences.edit().putString(KEY_TOKEN, token).apply();
+        enableNotifications();
     }
 
     public String getToken() {
@@ -51,6 +52,7 @@ public class TokenManager {
 
     public void clearToken() {
         sharedPreferences.edit().remove(KEY_TOKEN).remove(KEY_USER_ID).apply();
+        disableNotifications();
     }
 
     public void setBiometricEnabled(boolean enabled) {
@@ -66,7 +68,12 @@ public class TokenManager {
                 .putString(KEY_SAVED_EMAIL, email)
                 .putString(KEY_SAVED_PASSWORD, password)
                 .apply();
-        enableNotifications();
+    }
+
+    public void resumeNotificationsIfSessionActive() {
+        if (this.getToken() != null) {
+            enableNotifications();
+        }
     }
 
     private void enableNotifications() {
@@ -92,6 +99,5 @@ public class TokenManager {
                 .remove(KEY_SAVED_EMAIL)
                 .remove(KEY_SAVED_PASSWORD)
                 .apply();
-        disableNotifications();
     }
 }
