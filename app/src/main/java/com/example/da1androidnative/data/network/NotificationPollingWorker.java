@@ -23,7 +23,7 @@ import okhttp3.Response;
 
 @HiltWorker
 public class NotificationPollingWorker extends Worker {
-    private final String nombreTrabajoUnico = "notificationPolling";
+    public static final String nombreTrabajoUnico = "notificationPolling";
     private final NotificationPollingClient pollingClient;
 
     @AssistedInject

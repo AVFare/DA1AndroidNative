@@ -79,11 +79,11 @@ public class TokenManager {
     private void enableNotifications() {
         OneTimeWorkRequest inicial = new OneTimeWorkRequest.Builder(NotificationPollingWorker.class).setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS).build();
 
-        WorkManager.getInstance(this.context).enqueueUniqueWork("notificationPolling", ExistingWorkPolicy.REPLACE, inicial);
+        WorkManager.getInstance(this.context).enqueueUniqueWork(NotificationPollingWorker.nombreTrabajoUnico, ExistingWorkPolicy.REPLACE, inicial);
     }
 
     private void disableNotifications(){
-        WorkManager.getInstance(this.context).cancelUniqueWork("notificationPolling");
+        WorkManager.getInstance(this.context).cancelUniqueWork(NotificationPollingWorker.nombreTrabajoUnico);
     }
 
     public String getSavedEmail() {
