@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black">
@@ -36,7 +37,73 @@
             android:text="Dar permiso" />
     </LinearLayout>
 
-    <!-- Overlay de error / QR mal formado -->
+    <LinearLayout
+        android:id="@+id/loadingOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#CC000000"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:indeterminate="true"
+            app:indicatorColor="@android:color/white"
+            app:trackColor="#55FFFFFF" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="Confirmando asistencia..."
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/successOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="#DFF7E8"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Asistencia confirmada"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:textColor="#116B35"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/successMessageText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:textColor="#116B35"
+            tools:text="Asistencia confirmada" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBackToVoucher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="#116B35"
+            android:text="Volver al voucher"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/errorOverlay"
         android:layout_width="match_parent"
@@ -44,19 +111,28 @@
         android:layout_gravity="bottom"
         android:orientation="vertical"
         android:gravity="center"
-        android:background="?attr/colorErrorContainer"
+        android:background="#FDE7E9"
         android:padding="24dp"
         android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="No se pudo confirmar"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:textColor="#8C1D18"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/errorMessageText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:gravity="center"
-            android:textColor="?attr/colorOnErrorContainer"
             android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-            tools:text="QR inválido o mal formado"
-            xmlns:tools="http://schemas.android.com/tools" />
+            android:textColor="#8C1D18"
+            tools:text="QR inválido o mal formado" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRescan"
