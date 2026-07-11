@@ -102,19 +102,25 @@
                     android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
                     android:textColor="?attr/colorOnSurface" />
 
-                <EditText
-                    android:id="@+id/commentEditText"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="128dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:background="?attr/colorSurface"
-                    android:gravity="top|start"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                     android:hint="@string/review_comment_hint"
-                    android:inputType="textMultiLine|textCapSentences"
-                    android:maxLength="300"
-                    android:padding="12dp"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textColorHint="?attr/colorOnSurfaceVariant" />
+                    app:boxCornerRadiusBottomEnd="14dp"
+                    app:boxCornerRadiusBottomStart="14dp"
+                    app:boxCornerRadiusTopEnd="14dp"
+                    app:boxCornerRadiusTopStart="14dp">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/commentEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="128dp"
+                        android:gravity="top|start"
+                        android:inputType="textMultiLine|textCapSentences"
+                        android:maxLength="300" />
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
                     android:id="@+id/commentCounterText"
