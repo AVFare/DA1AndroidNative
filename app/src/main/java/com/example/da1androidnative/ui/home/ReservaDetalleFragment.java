@@ -25,7 +25,6 @@ import com.example.da1androidnative.data.model.ReservaCancelledResponse;
 import com.example.da1androidnative.data.model.ReservaDetalleResponse;
 import com.example.da1androidnative.data.network.ApiService;
 import com.example.da1androidnative.data.network.NetworkUtils;
-import com.example.da1androidnative.ui.util.DateUtils;
 import com.example.da1androidnative.ui.util.ToastHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -40,6 +39,7 @@ import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -217,7 +217,10 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         reservationStatusText.setText(valueOrFallback(detalle.getStatus()));
         reservationDestinationText.setText(String.format("Destino: %s", valueOrFallback(detalle.getDestination())));
         reservationIdText.setText(getString(R.string.reservation_item_id_label, detalle.getReservationId()));
-        reservationDateText.setText(String.format("Fecha: %s", DateUtils.formatDate(detalle.getDate())));
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy", new Locale("es", "AR"));
+        reservationDateText.setText(String.format("Fecha: %s", (detalle.getDate() != null ? formatter.format(detalle.getDate()) : "N/A")));
+
         reservationTimeText.setText(String.format("Hora: %s", valueOrFallback(detalle.getTime())));
         reservationParticipantsText.setText(String.format("Participantes: %d", detalle.getParticipantsCount()));
         reservationMeetingPointText.setText(String.format("Punto de encuentro: %s", valueOrFallback(detalle.getMeetingPoint())));

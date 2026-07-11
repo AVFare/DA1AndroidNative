@@ -2,6 +2,16 @@ package com.example.da1androidnative.data.local;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
+import androidx.work.BackoffPolicy;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
+import com.example.da1androidnative.data.network.NotificationPollingWorker;
+
+import java.util.concurrent.TimeUnit;
+
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -14,16 +24,18 @@ public class TokenManager {
     private static final String KEY_BIOMETRIC_ENABLED = "biometric_enabled";
     private static final String KEY_SAVED_EMAIL = "saved_email";
     private static final String KEY_SAVED_PASSWORD = "saved_password";
-
+    private final Context context;
     private final SharedPreferences sharedPreferences;
 
     @Inject
     public TokenManager(@ApplicationContext Context context) {
         this.sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        this.context = context;
     }
 
     public void saveToken(String token) {
         sharedPreferences.edit().putString(KEY_TOKEN, token).apply();
+        enableNotifications();
     }
 
     public String getToken() {
@@ -40,6 +52,7 @@ public class TokenManager {
 
     public void clearToken() {
         sharedPreferences.edit().remove(KEY_TOKEN).remove(KEY_USER_ID).apply();
+        disableNotifications();
     }
 
     public void setBiometricEnabled(boolean enabled) {
@@ -55,6 +68,22 @@ public class TokenManager {
                 .putString(KEY_SAVED_EMAIL, email)
                 .putString(KEY_SAVED_PASSWORD, password)
                 .apply();
+    }
+
+    public void resumeNotificationsIfSessionActive() {
+        if (this.getToken() != null) {
+            enableNotifications();
+        }
+    }
+
+    private void enableNotifications() {
+        OneTimeWorkRequest inicial = new OneTimeWorkRequest.Builder(NotificationPollingWorker.class).setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 30, TimeUnit.SECONDS).build();
+
+        WorkManager.getInstance(this.context).enqueueUniqueWork(NotificationPollingWorker.nombreTrabajoUnico, ExistingWorkPolicy.REPLACE, inicial);
+    }
+
+    private void disableNotifications(){
+        WorkManager.getInstance(this.context).cancelUniqueWork(NotificationPollingWorker.nombreTrabajoUnico);
     }
 
     public String getSavedEmail() {
