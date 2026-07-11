@@ -48,39 +48,41 @@
         </LinearLayout>
 
         <!-- Cambiar contraseña -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnChangePassword"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Cambiar contraseña"
             android:layout_marginBottom="16dp" />
 
         <!-- Cambiar email -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnChangeEmail"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Cambiar correo electrónico"
             android:layout_marginBottom="16dp" />
 
         <!-- Cerrar sesión -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLogout"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Cerrar sesión"
             android:layout_marginBottom="16dp" />
 
         <!-- Eliminar cuenta -->
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDeleteAccount"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Eliminar cuenta"
-            android:backgroundTint="#B00020" />
+            android:textColor="#B00020"
+            app:strokeColor="#B00020" />
 
     </LinearLayout>
 

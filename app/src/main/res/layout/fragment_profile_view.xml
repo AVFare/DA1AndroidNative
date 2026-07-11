@@ -255,8 +255,9 @@
                     android:textAllCaps="false"/>
 
                 <!-- Botón configuración de acceso -->
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAccessSettings"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Configuración de acceso" />
