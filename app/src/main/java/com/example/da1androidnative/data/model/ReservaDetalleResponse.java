@@ -17,6 +17,8 @@ public class ReservaDetalleResponse extends ReservaResponse {
     private String cancellationPolicy;
     @SerializedName("itineraries")
     private List<ItineraryResponse> itineraries;
+    @SerializedName("guideName")
+    private String guideName;
 
     public static ReservaDetalleResponse fromSummary(ReservaResponse reservation) {
         ReservaDetalleResponse detail = new ReservaDetalleResponse();
@@ -78,5 +80,13 @@ public class ReservaDetalleResponse extends ReservaResponse {
 
     public void setItineraries(List<ItineraryResponse> itineraries) {
         this.itineraries = itineraries;
+    }
+
+    public String getGuideName() {
+        return guideName;
+    }
+
+    public void setGuideName(String guideName) {
+        this.guideName = guideName;
     }
 }
