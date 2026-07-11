@@ -104,31 +104,31 @@
                 android:textSize="16sp"
                 android:layout_marginBottom="8dp"/>
 
-            <CheckBox
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/cbAventura"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Aventura" />
 
-            <CheckBox
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/cbCultura"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Cultura" />
 
-            <CheckBox
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/cbGastronomia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Gastronomía" />
 
-            <CheckBox
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/cbNaturaleza"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Naturaleza" />
 
-            <CheckBox
+            <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@+id/cbRelax"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
