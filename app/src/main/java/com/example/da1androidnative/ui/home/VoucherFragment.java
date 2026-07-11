@@ -18,6 +18,7 @@ import com.example.da1androidnative.data.local.OfflineReservationStorage;
 import com.example.da1androidnative.data.model.ReservaDetalleResponse;
 import com.example.da1androidnative.data.network.ApiService;
 import com.example.da1androidnative.data.network.NetworkUtils;
+import com.example.da1androidnative.ui.util.DateUtils;
 import com.example.da1androidnative.ui.util.ToastHelper;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
@@ -27,9 +28,6 @@ import dagger.hilt.android.AndroidEntryPoint;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 @AndroidEntryPoint
 public class VoucherFragment extends Fragment {
@@ -171,14 +169,7 @@ public class VoucherFragment extends Fragment {
     private void bindDetalle(ReservaDetalleResponse detalle) {
         reservationActivityNameText.setText(valueOrFallback(detalle.getActivityName()));
 
-        SimpleDateFormat formatter =
-                new SimpleDateFormat("dd MMM yyyy", new Locale("es", "AR"));
-
-        reservationDateText.setText(
-                detalle.getDate() != null
-                        ? formatter.format(detalle.getDate())
-                        : "N/A"
-        );
+        reservationDateText.setText(DateUtils.formatDate(detalle.getDate()));
 
         reservationTimeText.setText(valueOrFallback(detalle.getTime()));
 

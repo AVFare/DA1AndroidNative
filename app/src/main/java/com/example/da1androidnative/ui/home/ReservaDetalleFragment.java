@@ -25,6 +25,7 @@ import com.example.da1androidnative.data.model.ReservaCancelledResponse;
 import com.example.da1androidnative.data.model.ReservaDetalleResponse;
 import com.example.da1androidnative.data.network.ApiService;
 import com.example.da1androidnative.data.network.NetworkUtils;
+import com.example.da1androidnative.ui.util.DateUtils;
 import com.example.da1androidnative.ui.util.ToastHelper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -216,12 +217,12 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         reservationStatusText.setText(valueOrFallback(detalle.getStatus()));
         reservationDestinationText.setText(String.format("Destino: %s", valueOrFallback(detalle.getDestination())));
         reservationIdText.setText(getString(R.string.reservation_item_id_label, detalle.getReservationId()));
-        reservationDateText.setText(String.format("Fecha: %s", (detalle.getDate() != null ? detalle.getDate().toString() : "N/A")));
+        reservationDateText.setText(String.format("Fecha: %s", DateUtils.formatDate(detalle.getDate())));
         reservationTimeText.setText(String.format("Hora: %s", valueOrFallback(detalle.getTime())));
         reservationParticipantsText.setText(String.format("Participantes: %d", detalle.getParticipantsCount()));
         reservationMeetingPointText.setText(String.format("Punto de encuentro: %s", valueOrFallback(detalle.getMeetingPoint())));
         reservationVoucherCodeText.setText(String.format("Voucher: %s", valueOrFallback(detalle.getVoucherCode())));
-        reservationTotalPriceText.setText(detalle.getTotalPrice() > 0
+        reservationTotalPriceText.setText(detalle.getTotalPrice() >= 0
                 ? String.format(Locale.getDefault(), "Total: $%.2f", detalle.getTotalPrice())
                 : "Total: No disponible sin conexion");
         reservationCancellationPolicyText.setText(valueOrFallback(detalle.getCancellationPolicy()));
