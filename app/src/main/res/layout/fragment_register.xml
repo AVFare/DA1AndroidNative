@@ -32,9 +32,8 @@
                 android:id="@+id/logoImage"
                 android:layout_width="84dp"
                 android:layout_height="84dp"
-                android:src="@mipmap/ic_launcher_round"
-                android:contentDescription="Logo"
-                app:tint="?attr/colorPrimary"/>
+                android:src="@drawable/logo_mark_transparente"
+                android:contentDescription="Logo" />
 
             <!-- Título -->
             <TextView

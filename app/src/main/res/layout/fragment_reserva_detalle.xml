@@ -44,8 +44,7 @@
                     android:layout_height="64dp"
                     android:layout_gravity="center_horizontal"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_launcher_round"
-                    app:tint="?attr/colorPrimary" />
+                    android:src="@drawable/logo_mark_transparente" />
 
                 <TextView
                     android:id="@+id/reservationDetailTitle"

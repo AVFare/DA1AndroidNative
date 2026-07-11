@@ -29,8 +29,7 @@
                 android:layout_width="84dp"
                 android:layout_height="84dp"
                 android:contentDescription="@string/app_name"
-                android:src="@mipmap/ic_launcher_round"
-                app:tint="?attr/colorPrimary" />
+                android:src="@drawable/logo_mark_transparente" />
 
             <TextView
                 android:id="@+id/otpTitleText"
