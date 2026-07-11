@@ -5,6 +5,8 @@ import com.example.da1androidnative.data.model.ActivityFilterOptionsResponse;
 import com.example.da1androidnative.data.model.ActivityHistoryDetailResponse;
 import com.example.da1androidnative.data.model.ActivityHistoryResponse;
 import com.example.da1androidnative.data.model.AuthResponse;
+import com.example.da1androidnative.data.model.CheckInScanRequest;
+import com.example.da1androidnative.data.model.CheckInScanResponse;
 import com.example.da1androidnative.data.model.ConfirmChangePasswordRequest;
 import com.example.da1androidnative.data.model.ConfirmChangePasswordResponse;
 import com.example.da1androidnative.data.model.ConfirmEmailChangeRequest;
@@ -100,6 +102,9 @@ public interface ApiService {
 
     @DELETE("reservations/{reservationId}")
     Call<ReservaCancelledResponse> cancelReserva(@Path("reservationId") long reservationId);
+
+    @POST("checkin/scan")
+    Call<CheckInScanResponse> scanCheckIn(@Body CheckInScanRequest request);
 
     @POST("auth/otp/request")
     Call<OtpChallengeResponse> requestOtp(@Body OtpRequest request);
