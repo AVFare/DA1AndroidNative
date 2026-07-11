@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.ReviewableReservationResponse;
+import com.example.da1androidnative.ui.util.DateUtils;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -47,8 +48,8 @@ public class ReviewableReservationsAdapter extends RecyclerView.Adapter<Reviewab
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ReviewableReservationResponse reservation = reservations.get(position);
         holder.activityNameText.setText(reservation.getActivityName());
-        holder.dateText.setText("Finalizada: " + formatDateTime(reservation.getCompletedAt()));
-        holder.deadlineText.setText("Disponible hasta: " + formatDateTime(reservation.getExpiresAt()));
+        holder.dateText.setText("Finalizada: " + DateUtils.formatDateTime(reservation.getCompletedAt()));
+        holder.deadlineText.setText("Disponible hasta: " + DateUtils.formatDateTime(reservation.getExpiresAt()));
         holder.reviewButton.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onReviewClick(reservation);
@@ -74,12 +75,5 @@ public class ReviewableReservationsAdapter extends RecyclerView.Adapter<Reviewab
             deadlineText = itemView.findViewById(R.id.reviewableDeadlineText);
             reviewButton = itemView.findViewById(R.id.reviewableButton);
         }
-    }
-
-    private String formatDateTime(String value) {
-        if (value == null || value.trim().isEmpty()) {
-            return "-";
-        }
-        return value.replace("T", " ");
     }
 }

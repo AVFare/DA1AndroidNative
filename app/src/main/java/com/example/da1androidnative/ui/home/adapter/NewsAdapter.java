@@ -13,15 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.NewsResponse;
+import com.example.da1androidnative.ui.util.DateUtils;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {
 
@@ -57,7 +54,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
         holder.newsTitle.setText(news.getTitle());
         holder.newsSummary.setText(news.getSummary());
-        holder.newsDate.setText(formatDate(news.getPublishedAt()));
+        holder.newsDate.setText(DateUtils.formatDate(news.getPublishedAt()));
 
         Glide.with(holder.itemView)
                 .load(news.getImageUrl())
@@ -75,19 +72,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
     @Override
     public int getItemCount() {
         return newsList != null ? newsList.size() : 0;
-    }
-
-    private String formatDate(String rawDate) {
-        if (rawDate == null || rawDate.isEmpty()) return "";
-        try {
-            String dateOnly = rawDate.contains("T") ? rawDate.split("T")[0] : rawDate;
-            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            SimpleDateFormat outputFormat = new SimpleDateFormat("dd 'de' MMMM, yyyy", new Locale("es", "ES"));
-            Date date = inputFormat.parse(dateOnly);
-            return (date != null) ? outputFormat.format(date) : rawDate;
-        } catch (ParseException e) {
-            return rawDate;
-        }
     }
 
     static class NewsViewHolder extends RecyclerView.ViewHolder {
