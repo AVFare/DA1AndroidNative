@@ -39,6 +39,7 @@ import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -216,7 +217,10 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         reservationStatusText.setText(valueOrFallback(detalle.getStatus()));
         reservationDestinationText.setText(String.format("Destino: %s", valueOrFallback(detalle.getDestination())));
         reservationIdText.setText(getString(R.string.reservation_item_id_label, detalle.getReservationId()));
-        reservationDateText.setText(String.format("Fecha: %s", (detalle.getDate() != null ? detalle.getDate().toString() : "N/A")));
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy", new Locale("es", "AR"));
+        reservationDateText.setText(String.format("Fecha: %s", (detalle.getDate() != null ? formatter.format(detalle.getDate()) : "N/A")));
+
         reservationTimeText.setText(String.format("Hora: %s", valueOrFallback(detalle.getTime())));
         reservationParticipantsText.setText(String.format("Participantes: %d", detalle.getParticipantsCount()));
         reservationMeetingPointText.setText(String.format("Punto de encuentro: %s", valueOrFallback(detalle.getMeetingPoint())));
