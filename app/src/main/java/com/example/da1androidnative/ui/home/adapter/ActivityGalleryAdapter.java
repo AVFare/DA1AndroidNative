@@ -42,8 +42,8 @@ public class ActivityGalleryAdapter extends RecyclerView.Adapter<ActivityGallery
 
         Glide.with(holder.itemView)
                 .load(fullUrl)
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_background)
+                .placeholder(R.drawable.image_placeholder)
+                .error(R.drawable.image_placeholder)
                 .centerCrop()
                 .into(holder.galleryImage);
     }

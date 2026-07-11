@@ -67,8 +67,8 @@ public class ActivityAdapter extends RecyclerView.Adapter<ActivityAdapter.Activi
 
         Glide.with(holder.itemView)
                 .load(activity.getFirstImageUrl())
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_background)
+                .placeholder(R.drawable.image_placeholder)
+                .error(R.drawable.image_placeholder)
                 .into(holder.activityImage);
 
         // Favoritos

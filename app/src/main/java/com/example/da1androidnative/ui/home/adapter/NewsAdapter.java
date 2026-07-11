@@ -61,8 +61,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
         Glide.with(holder.itemView)
                 .load(news.getImageUrl())
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_background)
+                .placeholder(R.drawable.image_placeholder)
+                .error(R.drawable.image_placeholder)
                 .centerCrop()
                 .into(holder.newsImage);
 
