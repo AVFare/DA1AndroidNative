@@ -221,7 +221,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
         reservationParticipantsText.setText(String.format("Participantes: %d", detalle.getParticipantsCount()));
         reservationMeetingPointText.setText(String.format("Punto de encuentro: %s", valueOrFallback(detalle.getMeetingPoint())));
         reservationVoucherCodeText.setText(String.format("Voucher: %s", valueOrFallback(detalle.getVoucherCode())));
-        reservationTotalPriceText.setText(detalle.getTotalPrice() > 0
+        reservationTotalPriceText.setText(detalle.getTotalPrice() >= 0
                 ? String.format(Locale.getDefault(), "Total: $%.2f", detalle.getTotalPrice())
                 : "Total: No disponible sin conexion");
         reservationCancellationPolicyText.setText(valueOrFallback(detalle.getCancellationPolicy()));
