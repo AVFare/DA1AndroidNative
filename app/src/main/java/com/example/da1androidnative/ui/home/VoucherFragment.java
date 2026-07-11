@@ -185,8 +185,15 @@ public class VoucherFragment extends Fragment {
                 valueOrFallback(detalle.getVoucherCode())
         );
 
-        reservationGuideText.setText("A confirmar");
+        String guideName = detalle.getGuideName();
+
+        reservationGuideText.setText(
+                guideName != null && !guideName.isBlank()
+                        ? guideName
+                        : "A confirmar"
+        );
     }
+
     private String valueOrFallback(String value) {
         return value == null || value.trim().isEmpty()
                 ? "No disponible sin conexión"
