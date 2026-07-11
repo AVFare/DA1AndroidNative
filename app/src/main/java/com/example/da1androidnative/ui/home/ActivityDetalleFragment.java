@@ -42,6 +42,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.maps.model.RoundCap;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import java.util.Collections;
 import java.util.List;
@@ -77,6 +78,7 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
     private TextView languageText;
     private Button btnReservar;
     private MaterialButton btnHowToGet;
+    private LinearProgressIndicator progressIndicator;
     private GoogleMap mMap;
 
     @Nullable
@@ -132,6 +134,8 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
         btnReservar = view.findViewById(R.id.btnReservar);
         btnHowToGet = view.findViewById(R.id.btnHowToGetActivity);
 
+        progressIndicator = view.findViewById(R.id.progressIndicator);
+
         btnFavoriteDetail.setOnClickListener(v -> toggleFavoriteDetail());
     }
 
@@ -159,9 +163,12 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
     private void loadDetalleActividad() {
         if (this.activityId == -1L) return;
 
+        if (progressIndicator != null) progressIndicator.setVisibility(View.VISIBLE);
+
         apiService.getDetalleActivity(activityId).enqueue(new Callback<ActivityDetalleResponse>() {
             @Override
             public void onResponse(@NonNull Call<ActivityDetalleResponse> call, @NonNull Response<ActivityDetalleResponse> response) {
+                if (progressIndicator != null) progressIndicator.setVisibility(View.GONE);
                 if (response.isSuccessful() && response.body() != null) {
                     currentDetalle = response.body();
                     bindDetalle(currentDetalle);
@@ -172,6 +179,7 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
             }
             @Override
             public void onFailure(@NonNull Call<ActivityDetalleResponse> call, @NonNull Throwable t) {
+                if (progressIndicator != null) progressIndicator.setVisibility(View.GONE);
                 ToastHelper.show(getContext(), "Error de conexion: " + t.getMessage());
             }
         });
