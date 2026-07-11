@@ -27,4 +27,19 @@ public class DateUtils {
         SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy", new Locale("es", "AR"));
         return formatter.format(date);
     }
+
+    public static String formatDate(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return "";
+        }
+        try {
+            String dateOnly = value.contains("T") ? value.split("T")[0] : value;
+            SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            Date date = parser.parse(dateOnly);
+            SimpleDateFormat formatter = new SimpleDateFormat("dd 'de' MMMM, yyyy", new Locale("es", "ES"));
+            return date != null ? formatter.format(date) : value;
+        } catch (Exception e) {
+            return value;
+        }
+    }
 }

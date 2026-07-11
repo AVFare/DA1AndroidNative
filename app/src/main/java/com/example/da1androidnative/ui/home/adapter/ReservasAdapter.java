@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.ReservaResponse;
+import com.example.da1androidnative.ui.util.DateUtils;
 import com.google.android.material.card.MaterialCardView;
 
 import androidx.annotation.NonNull;
@@ -85,7 +86,7 @@ public class ReservasAdapter extends RecyclerView.Adapter<ReservasAdapter.Reserv
         holder.reservationActivityName.setText(valueOrFallback(reserva.getActivityName()));
         holder.reservationStatus.setText(valueOrFallback(reserva.getStatus()));
         holder.reservationDestination.setText(valueOrFallback(reserva.getDestination()));
-        holder.reservationDate.setText(reserva.getDate() != null ? reserva.getDate().toString() : "Fecha no disponible");
+        holder.reservationDate.setText(DateUtils.formatDate(reserva.getDate()));
         holder.reservationTime.setText(valueOrFallback(reserva.getTime()));
         holder.reservationParticipants.setText(String.format("Cantidad de Participantes: %d", reserva.getParticipantsCount()));
         holder.reservationVoucherCode.setText(valueOrFallback(reserva.getVoucherCode()));

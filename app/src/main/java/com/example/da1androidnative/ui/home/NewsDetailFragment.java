@@ -18,14 +18,10 @@ import com.bumptech.glide.Glide;
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.NewsDetailResponse;
 import com.example.da1androidnative.data.network.ApiService;
+import com.example.da1androidnative.ui.util.DateUtils;
 import com.example.da1androidnative.ui.util.ToastHelper;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -66,7 +62,7 @@ public class NewsDetailFragment extends Fragment {
             newsId = args.getLong("newsId", -1L);
             tvDetailTitle.setText(args.getString("title", ""));
             tvDetailSummary.setText(args.getString("summary", ""));
-            tvDetailDate.setText(formatDate(args.getString("date", "")));
+            tvDetailDate.setText(DateUtils.formatDate(args.getString("date", "")));
 
             String imageUrl = args.getString("imageUrl", "");
             if (!TextUtils.isEmpty(imageUrl)) {
@@ -119,7 +115,7 @@ public class NewsDetailFragment extends Fragment {
 
     private void bindFullDetail(NewsDetailResponse news) {
         tvDetailTitle.setText(news.getTitle());
-        tvDetailDate.setText(formatDate(news.getPublishedAt()));
+        tvDetailDate.setText(DateUtils.formatDate(news.getPublishedAt()));
         tvDetailSummary.setText(news.getShortDescription());
 
         String fullContent = news.getFullDescription();
@@ -134,16 +130,4 @@ public class NewsDetailFragment extends Fragment {
         }
     }
 
-    private String formatDate(String rawDate) {
-        if (rawDate == null || rawDate.isEmpty()) return "";
-        try {
-            String dateStr = rawDate.contains("T") ? rawDate.split("T")[0] : rawDate;
-            SimpleDateFormat input = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-            SimpleDateFormat output = new SimpleDateFormat("dd 'de' MMMM, yyyy", new Locale("es", "ES"));
-            Date date = input.parse(dateStr);
-            return date != null ? output.format(date) : rawDate;
-        } catch (ParseException e) {
-            return rawDate;
-        }
-    }
 }
