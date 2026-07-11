@@ -9,14 +9,17 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-
 import com.example.da1androidnative.R;
+import com.example.da1androidnative.data.local.TokenManager;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
 
+    @Inject TokenManager tokenManager;
     private NavController navController;
 
     @Override
@@ -30,12 +33,13 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        tokenManager.resumeNotificationsIfSessionActive();
+
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
 
         if (navHostFragment != null) {
             navController = navHostFragment.getNavController();
         }
-
     }
 
     //Logica para permitir que el boton de "atras" use navController
