@@ -30,6 +30,7 @@ import retrofit2.Response;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Objects;
 
 @AndroidEntryPoint
 public class VoucherFragment extends Fragment {
@@ -195,6 +196,17 @@ public class VoucherFragment extends Fragment {
         );
 
         reservationGuideText.setText("A confirmar");
+
+        if (Objects.equals(detalle.getStatus(), "COMPLETED")
+                || Objects.equals(detalle.getStatus(), "CANCELLED")) {
+            btnScanQr.setText("Check-in no disponible");
+            btnScanQr.setEnabled(false);
+            btnScanQr.setAlpha(0.5f);
+        } else {
+            btnScanQr.setText("Escanear Código QR");
+            btnScanQr.setEnabled(true);
+            btnScanQr.setAlpha(1.0f);
+        }
     }
     private String valueOrFallback(String value) {
         return value == null || value.trim().isEmpty()
