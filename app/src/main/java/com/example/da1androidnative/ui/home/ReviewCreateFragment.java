@@ -20,6 +20,7 @@ import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.ReviewRequest;
 import com.example.da1androidnative.data.model.ReviewResponse;
 import com.example.da1androidnative.data.network.ApiService;
+import com.example.da1androidnative.ui.util.DateUtils;
 import com.example.da1androidnative.ui.util.ToastHelper;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
@@ -90,8 +91,8 @@ public class ReviewCreateFragment extends Fragment {
 
         reservationId = args.getLong("reservationId", -1L);
         ((TextView) view.findViewById(R.id.reviewCreateActivityText)).setText(args.getString("activityName", ""));
-        ((TextView) view.findViewById(R.id.reviewCreateDateText)).setText("Finalizada: " + formatDateTime(args.getString("completedAt", "")));
-        ((TextView) view.findViewById(R.id.reviewCreateDeadlineText)).setText("Disponible hasta: " + formatDateTime(args.getString("expiresAt", "")));
+        ((TextView) view.findViewById(R.id.reviewCreateDateText)).setText("Finalizada: " + DateUtils.formatDateTime(args.getString("completedAt", "")));
+        ((TextView) view.findViewById(R.id.reviewCreateDeadlineText)).setText("Disponible hasta: " + DateUtils.formatDateTime(args.getString("expiresAt", "")));
 
         if (reservationId == -1L) {
             ToastHelper.show(getContext(), "Reserva invalida");
@@ -155,12 +156,5 @@ public class ReviewCreateFragment extends Fragment {
                 ToastHelper.show(getContext(), "Error de red: " + t.getMessage());
             }
         });
-    }
-
-    private String formatDateTime(String value) {
-        if (value == null || value.trim().isEmpty()) {
-            return "-";
-        }
-        return value.replace("T", " ");
     }
 }
