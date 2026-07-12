@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:text="Necesitamos acceso a la cámara para escanear el QR"
             android:textColor="@android:color/white"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
             android:gravity="center" />
 
         <com.google.android.material.button.MaterialButton
@@ -60,7 +60,7 @@
             android:layout_marginTop="20dp"
             android:gravity="center"
             android:text="Confirmando asistencia..."
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
             android:textColor="@android:color/white" />
     </LinearLayout>
 
@@ -80,7 +80,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="Asistencia confirmada"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
             android:textColor="#116B35"
             android:textStyle="bold" />
 
@@ -90,7 +90,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
             android:textColor="#116B35"
             tools:text="Asistencia confirmada" />
 
@@ -120,7 +120,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="No se pudo confirmar"
-            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
             android:textColor="#8C1D18"
             android:textStyle="bold" />
 
@@ -130,7 +130,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
             android:textColor="#8C1D18"
             tools:text="QR inválido o mal formado" />
 

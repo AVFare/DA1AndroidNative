@@ -34,5 +34,21 @@
 
         <item name="colorOutline">@color/text_secondary</item>
         <item name="colorOutlineVariant">#FFD0DCDD</item>
+
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.XploreNow.DisplayLarge</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.XploreNow.DisplayMedium</item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.XploreNow.DisplaySmall</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.XploreNow.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.XploreNow.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.XploreNow.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.XploreNow.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.XploreNow.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.XploreNow.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.XploreNow.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.XploreNow.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.XploreNow.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.XploreNow.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.XploreNow.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.XploreNow.LabelSmall</item>
     </style>
 </resources>
