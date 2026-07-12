@@ -48,6 +48,7 @@ public class VoucherFragment extends Fragment {
     private TextView reservationMeetingPointText;
     private TextView reservationVoucherCodeText;
     private TextView reservationGuideText;
+    private TextView tvAttendanceStatus;
 
     private Button btnScanQr;
     private Button btnBackToDetail;
@@ -74,8 +75,6 @@ public class VoucherFragment extends Fragment {
             reservationId = args.getLong("reservationId", -1L);
         }
 
-        loadDetalleReserva();
-
         btnBackToDetail.setOnClickListener(v ->
                 NavHostFragment.findNavController(this).navigateUp()
         );
@@ -86,6 +85,12 @@ public class VoucherFragment extends Fragment {
             NavHostFragment.findNavController(this)
                     .navigate(R.id.action_voucherFragment_to_qrScannerFragment, scanArgs);
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadDetalleReserva();
     }
 
     private void initViews(View view) {
@@ -99,6 +104,7 @@ public class VoucherFragment extends Fragment {
         reservationVoucherCodeText = view.findViewById(R.id.reservationVoucherCodeText);
 
         reservationGuideText = view.findViewById(R.id.reservationGuideText);
+        tvAttendanceStatus = view.findViewById(R.id.tvAttendanceStatus);
 
         btnScanQr = view.findViewById(R.id.btnScanQr);
         btnBackToDetail = view.findViewById(R.id.btnBackToDetail);
@@ -122,8 +128,13 @@ public class VoucherFragment extends Fragment {
     private void loadDetalleReserva() {
         if (reservationId == -1L) return;
 
+        ReservaDetalleResponse cached = offlineStorage.getSavedReservationDetailOrSummary(reservationId);
+        if (cached != null) {
+            bindDetalle(cached);
+        }
+
         if (!NetworkUtils.isNetworkAvailable(getContext())) {
-            bindSavedDetalle();
+            if (cached == null) bindSavedDetalle();
             return;
         }
 
@@ -141,7 +152,7 @@ public class VoucherFragment extends Fragment {
                     offlineStorage.saveReservationDetail(detalle);
                     bindDetalle(detalle);
                 } else {
-                    bindSavedDetalleOrShowError("Error al cargar voucher");
+                    if (cached == null) bindSavedDetalleOrShowError("Error al cargar voucher");
                 }
             }
 
@@ -197,15 +208,23 @@ public class VoucherFragment extends Fragment {
                         : "A confirmar"
         );
 
-        if (Objects.equals(detalle.getStatus(), "COMPLETED")
-                || Objects.equals(detalle.getStatus(), "CANCELLED")) {
-            btnScanQr.setText("Check-in no disponible");
-            btnScanQr.setEnabled(false);
-            btnScanQr.setAlpha(0.5f);
+        String status = detalle.getStatus();
+        if ("COMPLETED".equalsIgnoreCase(status)) {
+            btnScanQr.setVisibility(View.GONE);
+            tvAttendanceStatus.setVisibility(View.VISIBLE);
         } else {
-            btnScanQr.setText("Escanear Código QR");
-            btnScanQr.setEnabled(true);
-            btnScanQr.setAlpha(1.0f);
+            tvAttendanceStatus.setVisibility(View.GONE);
+            btnScanQr.setVisibility(View.VISIBLE);
+
+            if ("CANCELLED".equalsIgnoreCase(status)) {
+                btnScanQr.setText("Check-in no disponible");
+                btnScanQr.setEnabled(false);
+                btnScanQr.setAlpha(0.5f);
+            } else {
+                btnScanQr.setText("Escanear Código QR");
+                btnScanQr.setEnabled(true);
+                btnScanQr.setAlpha(1.0f);
+            }
         }
     }
     private String valueOrFallback(String value) {

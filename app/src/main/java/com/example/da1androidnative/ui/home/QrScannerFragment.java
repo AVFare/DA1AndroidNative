@@ -26,6 +26,7 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.example.da1androidnative.R;
+import com.example.da1androidnative.data.local.OfflineReservationStorage;
 import com.example.da1androidnative.data.model.CheckInScanRequest;
 import com.example.da1androidnative.data.model.CheckInScanResponse;
 import com.example.da1androidnative.data.network.ApiService;
@@ -58,6 +59,7 @@ public class QrScannerFragment extends Fragment {
             Pattern.compile("^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$");
 
     @Inject ApiService apiService;
+    @Inject OfflineReservationStorage offlineStorage;
 
     private long reservationId;
 
@@ -211,6 +213,7 @@ public class QrScannerFragment extends Fragment {
                         if (!isAdded()) return;
 
                         if (response.isSuccessful() && response.body() != null) {
+                            offlineStorage.updateReservationStatus(reservationId, "COMPLETED");
                             bindScanResponse(response.body());
                         } else {
                             mostrarError(extractErrorMessage(
