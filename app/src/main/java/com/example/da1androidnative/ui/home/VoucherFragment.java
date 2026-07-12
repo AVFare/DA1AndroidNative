@@ -196,7 +196,6 @@ public class VoucherFragment extends Fragment {
                         ? guideName
                         : "A confirmar"
         );
-        reservationGuideText.setText("A confirmar");
 
         if (Objects.equals(detalle.getStatus(), "COMPLETED")
                 || Objects.equals(detalle.getStatus(), "CANCELLED")) {
