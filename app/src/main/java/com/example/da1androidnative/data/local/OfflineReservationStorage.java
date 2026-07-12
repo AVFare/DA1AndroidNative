@@ -40,6 +40,14 @@ public class OfflineReservationStorage {
     public void saveReservation(ReservaResponse reservation) {
         if (reservation == null) return;
         List<ReservaResponse> currentReservations = getSavedReservations();
+        
+        // Protección: Si ya está completada localmente, mantener ese estado
+        ReservaDetalleResponse detail = getSavedReservationDetail(reservation.getReservationId());
+        if (detail != null && "COMPLETED".equalsIgnoreCase(detail.getStatus())
+                && !"COMPLETED".equalsIgnoreCase(reservation.getStatus())) {
+            reservation.setStatus("COMPLETED");
+        }
+
         currentReservations.removeIf(r -> r.getReservationId() == reservation.getReservationId());
         currentReservations.add(reservation);
         updateReservations(currentReservations);
@@ -48,6 +56,16 @@ public class OfflineReservationStorage {
     // Guarda o actualiza la lista completa de reservas (resumen)
     public void updateReservations(List<ReservaResponse> reservations) {
         if (reservations == null) reservations = new ArrayList<>();
+        
+        Map<Long, ReservaDetalleResponse> details = getSavedDetailsMap();
+        for (ReservaResponse r : reservations) {
+            ReservaDetalleResponse existing = details.get(r.getReservationId());
+            if (existing != null && "COMPLETED".equalsIgnoreCase(existing.getStatus())
+                    && !"COMPLETED".equalsIgnoreCase(r.getStatus())) {
+                r.setStatus("COMPLETED");
+            }
+        }
+
         String json = gson.toJson(reservations);
         sharedPreferences.edit().putString(KEY_RESERVATIONS, json).apply();
     }
@@ -80,6 +98,14 @@ public class OfflineReservationStorage {
     public void saveReservationDetail(ReservaDetalleResponse detail) {
         if (detail == null) return;
         Map<Long, ReservaDetalleResponse> details = getSavedDetailsMap();
+        
+        // Protección: No permitir que el servidor revierta el estado COMPLETED local
+        ReservaDetalleResponse existing = details.get(detail.getReservationId());
+        if (existing != null && "COMPLETED".equalsIgnoreCase(existing.getStatus())
+                && !"COMPLETED".equalsIgnoreCase(detail.getStatus())) {
+            detail.setStatus("COMPLETED");
+        }
+
         details.put(detail.getReservationId(), detail);
         saveDetailsMap(details);
     }
