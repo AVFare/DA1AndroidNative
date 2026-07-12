@@ -3,7 +3,6 @@ package com.example.da1androidnative.data.network;
 import com.example.da1androidnative.data.model.ActivityDetalleResponse;
 import com.example.da1androidnative.data.model.ActivityFilterOptionsResponse;
 import com.example.da1androidnative.data.model.ActivityHistoryDetailResponse;
-import com.example.da1androidnative.data.model.ActivityHistoryResponse;
 import com.example.da1androidnative.data.model.AuthResponse;
 import com.example.da1androidnative.data.model.CheckInScanRequest;
 import com.example.da1androidnative.data.model.CheckInScanResponse;
@@ -21,7 +20,7 @@ import com.example.da1androidnative.data.model.PaginatedActivityHistoryResponse;
 import com.example.da1androidnative.data.model.PaginatedReservasResponse;
 import com.example.da1androidnative.data.model.PaginatedSchedulesResponse;
 import com.example.da1androidnative.data.model.RegisterRequest;
-import com.example.da1androidnative.data.model.ActivityResponse;
+import com.example.da1androidnative.data.model.Notification;
 import com.example.da1androidnative.data.model.PaginatedActivitiesResponse;
 import com.example.da1androidnative.data.model.ReservaCancelledResponse;
 import com.example.da1androidnative.data.model.ReservaDetalleResponse;
@@ -157,4 +156,10 @@ public interface ApiService {
 
     @GET("news/{newsId}")
     Call<NewsDetailResponse> getNewsDetail(@Path("newsId") long newsId);
+
+    @POST("notifications/poll")
+    Call<List<Notification>> getPendingNotifications();
+
+    @POST("notifications/{id}/ack")
+    Call<Void> markAsRead(@Path("id") Long id);
 }
