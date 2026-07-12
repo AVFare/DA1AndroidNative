@@ -2,6 +2,7 @@
 <resources>
     <color name="teal_primary">#FF2F6F73</color>
     <color name="teal_dark">#FF255A5E</color>
+    <color name="badge_background">#1A2F6F73</color>
     <color name="terracotta">#C2A05B</color>
     <color name="background">#FFF4F6F6</color>
     <color name="surface">#FFFFFFFF</color>

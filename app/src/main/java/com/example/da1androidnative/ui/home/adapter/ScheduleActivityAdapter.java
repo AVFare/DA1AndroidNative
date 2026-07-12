@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.ReservaResponse;
 import com.example.da1androidnative.data.model.ScheduleResponse;
+import com.example.da1androidnative.ui.util.DateUtils;
 import com.google.android.material.card.MaterialCardView;
 
 import java.util.ArrayList;
@@ -74,7 +75,7 @@ public class ScheduleActivityAdapter extends RecyclerView.Adapter<ScheduleActivi
 
         ScheduleResponse horario = horarios.get(position);
 
-        holder.scheduleDateText.setText(horario.getDate().toString());
+        holder.scheduleDateText.setText(DateUtils.formatDate(horario.getDate()));
         holder.scheduleTimeText.setText(horario.getTime().toString());
         holder.availableSpotsText.setText(String.format("Lugares Disponibles: %d", horario.getAvailableSpots()));
 

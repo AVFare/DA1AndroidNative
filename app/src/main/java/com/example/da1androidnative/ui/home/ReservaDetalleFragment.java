@@ -214,7 +214,7 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
 
     private void bindDetalle(ReservaDetalleResponse detalle) {
         reservationActivityNameText.setText(valueOrFallback(detalle.getActivityName()));
-        reservationStatusText.setText(valueOrFallback(detalle.getStatus()));
+        reservationStatusText.setText(translateStatus(detalle.getStatus()));
         reservationDestinationText.setText(String.format("Destino: %s", valueOrFallback(detalle.getDestination())));
         reservationIdText.setText(getString(R.string.reservation_item_id_label, detalle.getReservationId()));
 
@@ -272,6 +272,22 @@ public class ReservaDetalleFragment extends Fragment implements OnMapReadyCallba
 
     private String valueOrFallback(String value) {
         return value == null || value.trim().isEmpty() ? "No disponible sin conexion" : value;
+    }
+
+    private String translateStatus(String status) {
+        if (status == null || status.trim().isEmpty()) return "No disponible sin conexion";
+        switch (status.toUpperCase()) {
+            case "CONFIRMED":
+                return "Confirmado";
+            case "COMPLETED":
+                return "Completado";
+            case "CANCELLED":
+                return "Cancelado";
+            case "PENDING":
+                return "Pendiente";
+            default:
+                return status;
+        }
     }
 
     private void bindHistoryRating(ActivityHistoryDetailResponse detail) {
