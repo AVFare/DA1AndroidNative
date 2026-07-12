@@ -84,7 +84,7 @@ public class ReservasAdapter extends RecyclerView.Adapter<ReservasAdapter.Reserv
         ReservaResponse reserva = reservas.get(position);
 
         holder.reservationActivityName.setText(valueOrFallback(reserva.getActivityName()));
-        holder.reservationStatus.setText(valueOrFallback(reserva.getStatus()));
+        holder.reservationStatus.setText(translateStatus(reserva.getStatus()));
         holder.reservationDestination.setText(valueOrFallback(reserva.getDestination()));
         holder.reservationDate.setText(DateUtils.formatDate(reserva.getDate()));
         holder.reservationTime.setText(valueOrFallback(reserva.getTime()));
@@ -102,12 +102,20 @@ public class ReservasAdapter extends RecyclerView.Adapter<ReservasAdapter.Reserv
     private String valueOrFallback(String value) {
         return value == null || value.trim().isEmpty() ? "No disponible" : value;
     }
-
-
-
-
-
-
-
+    private String translateStatus(String status) {
+        if (status == null || status.trim().isEmpty()) return "No disponible";
+        switch (status.toUpperCase()) {
+            case "CONFIRMED":
+                return "Confirmado";
+            case "COMPLETED":
+                return "Completado";
+            case "CANCELLED":
+                return "Cancelado";
+            case "PENDING":
+                return "Pendiente";
+            default:
+                return status;
+        }
+    }
 
 }

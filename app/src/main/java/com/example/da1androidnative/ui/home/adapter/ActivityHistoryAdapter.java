@@ -102,7 +102,7 @@ public class ActivityHistoryAdapter extends RecyclerView.Adapter<ActivityHistory
                     colorRes = android.R.color.holo_green_dark;
                     break;
                 case "COMPLETED":
-                    displayStatus = "Completo";
+                    displayStatus = "Completado";
                     colorRes = android.R.color.holo_blue_dark;
                     break;
                 case "CANCELLED":
