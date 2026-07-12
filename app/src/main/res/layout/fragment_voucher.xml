@@ -241,6 +241,21 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <!-- Botones de Acción -->
+                <TextView
+                    android:id="@+id/tvAttendanceStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:gravity="center"
+                    android:padding="12dp"
+                    android:text="Asistencia ya registrada"
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
+                    android:textColor="#116B35"
+                    android:textStyle="bold"
+                    android:background="#DFF7E8"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnScanQr"
                     android:layout_width="match_parent"
