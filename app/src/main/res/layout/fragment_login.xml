@@ -35,8 +35,7 @@
                     android:layout_width="84dp"
                     android:layout_height="84dp"
                     android:contentDescription="Logo de la app"
-                    android:src="@mipmap/ic_launcher_round"
-                    app:tint="?attr/colorPrimary" />
+                    android:src="@drawable/logo_mark_transparente" />
 
                 <TextView
                     android:id="@+id/titleText"
@@ -44,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
                     android:text="Bienvenido"
-                    android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+                    android:textAppearance="?attr/textAppearanceHeadlineMedium"
                     android:textColor="?attr/colorOnSurface" />
 
                 <TextView
@@ -55,7 +54,7 @@
                     android:gravity="center"
                     android:maxWidth="280dp"
                     android:text="Inicia sesion para acceder a tu cuenta"
-                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textColor="?attr/colorOnSurfaceVariant" />
 
                 <com.google.android.material.card.MaterialCardView
@@ -80,7 +79,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Acceso"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                            android:textAppearance="?attr/textAppearanceTitleMedium"
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
@@ -89,7 +88,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
                             android:text="Ingresa tu correo y contrasena"
-                            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                            android:textAppearance="?attr/textAppearanceBodySmall"
                             android:textColor="?attr/colorOnSurfaceVariant" />
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -179,7 +178,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="12dp"
                                 android:text="o"
-                                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                                android:textAppearance="?attr/textAppearanceBodySmall"
                                 android:textColor="?attr/colorOnSurfaceVariant" />
 
                             <View
@@ -209,7 +208,7 @@
                     android:gravity="center"
                     android:maxWidth="300dp"
                     android:text="Derechos Reservados"
-                    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
                     android:textColor="?attr/colorOnSurfaceVariant" />
 
             </LinearLayout>

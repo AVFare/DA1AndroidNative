@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,7 +37,7 @@ public class NewsFragment extends Fragment {
     ApiService apiService;
 
     private NewsAdapter adapter;
-    private ProgressBar progressNews;
+    private LinearProgressIndicator progressNews;
     private View errorStateNews;
     private TextView tvErrorTitle, tvErrorSubtitle;
     private Button btnRetryNews;

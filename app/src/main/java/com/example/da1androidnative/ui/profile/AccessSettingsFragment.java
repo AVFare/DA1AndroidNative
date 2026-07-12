@@ -14,7 +14,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricManager.Authenticators;
 import androidx.biometric.BiometricPrompt;
@@ -181,7 +181,7 @@ public class AccessSettingsFragment extends Fragment {
     // — Cerrar sesión —
 
     private void confirmLogout() {
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Cerrar sesión")
                 .setMessage("¿Querés cerrar la sesión?")
                 .setPositiveButton("Cerrar sesión", (dialog, which) -> performLogout())
@@ -190,7 +190,7 @@ public class AccessSettingsFragment extends Fragment {
     }
 
     private void initiateChangePassword() {
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Cambiar Contraseña")
                 .setMessage("¿Queres Cambiar tu Contraseña? Te enviaremos un OTP a tu mail registrado!")
                 .setPositiveButton("Cambiar Contraseña", (dialog, which) -> performPasswordChangeInitialization())
@@ -231,7 +231,7 @@ public class AccessSettingsFragment extends Fragment {
     // — Eliminar cuenta —
 
     private void confirmDeleteAccount() {
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Eliminar cuenta")
                 .setMessage("Esta acción es permanente. Se eliminarán todos tus datos y reservas. ¿Querés continuar?")
                 .setPositiveButton("Eliminar", (dialog, which) -> performDeleteAccount())

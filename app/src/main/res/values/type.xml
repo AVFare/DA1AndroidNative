@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <!-- Fraunces: display -->
+        <style name="TextAppearance.XploreNow.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge">
+            <item name="fontFamily">@font/fraunces_semibold</item>
+            <item name="android:fontFamily">@font/fraunces_semibold</item>
+        </style>
+        <style name="TextAppearance.XploreNow.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium">
+            <item name="fontFamily">@font/fraunces_semibold</item>
+            <item name="android:fontFamily">@font/fraunces_semibold</item>
+        </style>
+        <style name="TextAppearance.XploreNow.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall">
+            <item name="fontFamily">@font/fraunces_semibold</item>
+            <item name="android:fontFamily">@font/fraunces_semibold</item>
+        </style>
+
+        <!-- Fraunces: headline -->
+        <style name="TextAppearance.XploreNow.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+            <item name="fontFamily">@font/fraunces_semibold</item>
+            <item name="android:fontFamily">@font/fraunces_semibold</item>
+        </style>
+        <style name="TextAppearance.XploreNow.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+            <item name="fontFamily">@font/fraunces_semibold</item>
+            <item name="android:fontFamily">@font/fraunces_semibold</item>
+        </style>
+        <style name="TextAppearance.XploreNow.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+            <item name="fontFamily">@font/fraunces_semibold</item>
+            <item name="android:fontFamily">@font/fraunces_semibold</item>
+        </style>
+
+        <!-- Fraunces: title -->
+        <style name="TextAppearance.XploreNow.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+            <item name="fontFamily">@font/fraunces_regular</item>
+            <item name="android:fontFamily">@font/fraunces_regular</item>
+        </style>
+        <style name="TextAppearance.XploreNow.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+            <item name="fontFamily">@font/fraunces_regular</item>
+            <item name="android:fontFamily">@font/fraunces_regular</item>
+        </style>
+        <style name="TextAppearance.XploreNow.TitleSmall" parent="TextAppearance.Material3.TitleSmall">
+            <item name="fontFamily">@font/fraunces_regular</item>
+            <item name="android:fontFamily">@font/fraunces_regular</item>
+        </style>
+
+        <!-- Inter: body -->
+        <style name="TextAppearance.XploreNow.BodyLarge" parent="TextAppearance.Material3.BodyLarge">
+            <item name="fontFamily">@font/inter_regular</item>
+            <item name="android:fontFamily">@font/inter_regular</item>
+        </style>
+        <style name="TextAppearance.XploreNow.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+            <item name="fontFamily">@font/inter_regular</item>
+            <item name="android:fontFamily">@font/inter_regular</item>
+        </style>
+        <style name="TextAppearance.XploreNow.BodySmall" parent="TextAppearance.Material3.BodySmall">
+            <item name="fontFamily">@font/inter_regular</item>
+            <item name="android:fontFamily">@font/inter_regular</item>
+        </style>
+
+        <!-- Inter: label -->
+        <style name="TextAppearance.XploreNow.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+            <item name="fontFamily">@font/inter_medium</item>
+            <item name="android:fontFamily">@font/inter_medium</item>
+        </style>
+        <style name="TextAppearance.XploreNow.LabelMedium" parent="TextAppearance.Material3.LabelMedium">
+            <item name="fontFamily">@font/inter_medium</item>
+            <item name="android:fontFamily">@font/inter_medium</item>
+        </style>
+        <style name="TextAppearance.XploreNow.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+            <item name="fontFamily">@font/inter_medium</item>
+            <item name="android:fontFamily">@font/inter_medium</item>
+        </style>
+    </resources>

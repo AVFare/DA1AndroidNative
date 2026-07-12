@@ -32,9 +32,8 @@
                 android:id="@+id/logoImage"
                 android:layout_width="84dp"
                 android:layout_height="84dp"
-                android:src="@mipmap/ic_launcher_round"
-                android:contentDescription="Logo"
-                app:tint="?attr/colorPrimary"/>
+                android:src="@drawable/logo_mark_transparente"
+                android:contentDescription="Logo" />
 
             <!-- Título -->
             <TextView
@@ -43,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
                 android:text="Crear cuenta"
-                android:textAppearance="@style/TextAppearance.Material3.HeadlineMedium"
+                android:textAppearance="?attr/textAppearanceHeadlineMedium"
                 android:textColor="?attr/colorOnSurface"/>
 
             <TextView
@@ -52,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:text="Completa los datos para registrarte"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:textColor="?attr/colorOnSurfaceVariant"
                 android:gravity="center"
                 android:maxWidth="280dp"/>
@@ -79,7 +78,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Registro"
-                        android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+                        android:textAppearance="?attr/textAppearanceTitleMedium"
                         android:textColor="?attr/colorOnSurface"/>
 
 

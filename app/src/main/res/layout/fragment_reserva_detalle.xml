@@ -44,8 +44,7 @@
                     android:layout_height="64dp"
                     android:layout_gravity="center_horizontal"
                     android:contentDescription="@string/app_name"
-                    android:src="@mipmap/ic_launcher_round"
-                    app:tint="?attr/colorPrimary" />
+                    android:src="@drawable/logo_mark_transparente" />
 
                 <TextView
                     android:id="@+id/reservationDetailTitle"
@@ -54,7 +53,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp"
                     android:text="@string/reservation_detail_title"
-                    android:textAppearance="@style/TextAppearance.Material3.HeadlineSmall"
+                    android:textAppearance="?attr/textAppearanceHeadlineSmall"
                     android:textColor="?attr/colorOnSurface" />
 
                 <com.google.android.material.card.MaterialCardView
@@ -83,7 +82,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                                android:textAppearance="?attr/textAppearanceTitleLarge"
                                 android:textColor="?attr/colorOnSurface"
                                 android:textStyle="bold"
                                 tools:text="Tour por la ciudad" />
@@ -95,7 +94,7 @@
                                 android:background="?attr/colorSurfaceVariant"
                                 android:paddingHorizontal="12dp"
                                 android:paddingVertical="6dp"
-                                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                                android:textAppearance="?attr/textAppearanceLabelLarge"
                                 android:textColor="?attr/colorOnSurface"
                                 tools:text="PENDING" />
                         </LinearLayout>
@@ -105,7 +104,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             tools:text="Destino: Buenos Aires" />
 
@@ -114,7 +113,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                            android:textAppearance="?attr/textAppearanceLabelMedium"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             tools:text="Reserva #15" />
 
@@ -129,7 +128,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
                             android:text="Ubicación y Recorrido"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                            android:textAppearance="?attr/textAppearanceTitleSmall"
                             android:textColor="?attr/colorOnSurface" />
 
                         <com.google.android.material.card.MaterialCardView
@@ -161,7 +160,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="12dp"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             tools:text="Punto de encuentro: Terminal central" />
 
@@ -176,7 +175,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
                             android:text="@string/reservation_detail_section_data"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                            android:textAppearance="?attr/textAppearanceTitleSmall"
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
@@ -184,7 +183,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             tools:text="Fecha: 2026-04-23" />
 
@@ -193,7 +192,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             tools:text="Hora: 10:00" />
 
@@ -202,7 +201,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             tools:text="Participantes: 2" />
 
@@ -211,7 +210,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
+                            android:textAppearance="?attr/textAppearanceLabelMedium"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             tools:text="Voucher: ABC123" />
 
@@ -220,7 +219,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             tools:text="Total: $120.00" />
 
@@ -235,7 +234,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
                             android:text="@string/reservation_detail_cancellation_policy"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                            android:textAppearance="?attr/textAppearanceTitleSmall"
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
@@ -243,7 +242,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             tools:text="Se puede cancelar hasta 24 horas antes de la actividad sin penalización." />
 
@@ -258,7 +257,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
                             android:text="Calificaciones"
-                            android:textAppearance="@style/TextAppearance.Material3.TitleSmall"
+                            android:textAppearance="?attr/textAppearanceTitleSmall"
                             android:textColor="?attr/colorOnSurface" />
 
                         <TextView
@@ -266,7 +265,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             tools:text="Calificación enviada." />
 
@@ -275,7 +274,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             tools:text="Actividad: 4/5" />
 
@@ -284,7 +283,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             tools:text="Guía: 5/5" />
 
@@ -293,7 +292,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                            android:textAppearance="?attr/textAppearanceBodyMedium"
                             android:textColor="?attr/colorOnSurfaceVariant"
                             tools:text="Comentario: Muy buena experiencia." />
 
