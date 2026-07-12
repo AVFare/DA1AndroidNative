@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.model.ActivityHistoryResponse;
+import com.example.da1androidnative.ui.util.DateUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +74,7 @@ public class ActivityHistoryAdapter extends RecyclerView.Adapter<ActivityHistory
         public void bind(ActivityHistoryResponse activity, OnActivityClickListener listener) {
             tvName.setText(activity.getActivityName());
             tvDestination.setText(activity.getDestination());
-            tvDate.setText("Fecha: " + activity.getDate());
+            tvDate.setText("Fecha: " + DateUtils.formatDate(activity.getDate()));
             tvGuide.setText("Guía: " + activity.getGuideName());
             tvDuration.setText("Duración: " + formatDuration(activity.getDurationMinutes()));
             if (activity.isHasRating() && activity.getRating() != null) {
