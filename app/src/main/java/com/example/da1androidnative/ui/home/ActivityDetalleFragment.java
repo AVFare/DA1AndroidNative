@@ -72,6 +72,7 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
     private ViewPager2.OnPageChangeCallback galleryPageChangeCallback;
     private TextView activityNameText;
     private TextView priceText;
+    private TextView durationText;
     private TextView fullDescriptionText;
     private TextView meetingPointText;
     private TextView guideNameText;
@@ -125,6 +126,7 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
 
         activityNameText = view.findViewById(R.id.activityNameText);
         priceText = view.findViewById(R.id.priceText);
+        durationText = view.findViewById(R.id.durationText);
         fullDescriptionText = view.findViewById(R.id.fullDescriptionText);
         meetingPointText = view.findViewById(R.id.meetingPointText);
         guideNameText = view.findViewById(R.id.guideNameText);
@@ -188,6 +190,7 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
     private void bindDetalle(ActivityDetalleResponse detalle) {
         activityNameText.setText(detalle.getName());
         priceText.setText(String.format(Locale.getDefault(), "Precio: %s %.2f", detalle.getCurrency(), detalle.getBasePrice()));
+        durationText.setText("Duración: " + formatDuration(detalle.getDurationMinutes()));
         fullDescriptionText.setText(detalle.getFullDescription());
         meetingPointText.setText("Punto de encuentro: " + detalle.getMeetingPoint());
         guideNameText.setText("Guía: " + detalle.getGuideName());
@@ -220,6 +223,25 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
                 ToastHelper.show(getContext(), "Ubicacion no disponible");
             }
         });
+    }
+
+    private String formatDuration(int minutes) {
+        if (minutes <= 0) {
+            return "A confirmar";
+        }
+
+        int hours = minutes / 60;
+        int remainingMinutes = minutes % 60;
+
+        if (hours > 0 && remainingMinutes > 0) {
+            return hours + " h " + remainingMinutes + " min";
+        }
+
+        if (hours > 0) {
+            return hours + " h";
+        }
+
+        return remainingMinutes + " min";
     }
 
     private void setupGalleryDots(int count) {
