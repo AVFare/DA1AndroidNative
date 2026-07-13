@@ -94,10 +94,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     }
 
     public void removeNotification(Notification novedad) {
-        int position = notifications.indexOf(novedad);
-        if (position != -1) {
-            notifications.remove(position);
-            notifyItemRemoved(position);
+        if (novedad == null || novedad.getId() == null) return;
+        for (int i = 0; i < notifications.size(); i++) {
+            Notification current = notifications.get(i);
+            if (current != null && novedad.getId().equals(current.getId())) {
+                notifications.remove(i);
+                notifyItemRemoved(i);
+                return;
+            }
         }
     }
 
