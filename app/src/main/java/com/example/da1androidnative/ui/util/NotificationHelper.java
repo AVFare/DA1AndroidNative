@@ -67,7 +67,13 @@ public class NotificationHelper {
         } else if (type.equals("RESCHEDULED") || payload.contains("reprogramada")) {
             titulo = "🕒 CAMBIO DE HORARIO";
             color = android.R.color.holo_orange_dark;
-        } else {
+
+        }
+        else if (type.equals("REMINDER") || payload.contains("mañana") || payload.contains("24 horas")) {
+            // recordatorio de 24hs
+            titulo = "📅 ¡TU ACTIVIDAD ES MAÑANA!";
+            color = R.color.teal_primary;}
+        else {
             titulo = "Aviso de XploreNow";
             color = R.color.teal_primary;
         }
