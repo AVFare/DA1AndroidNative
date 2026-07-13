@@ -27,21 +27,43 @@
                 android:paddingTop="20dp"
                 android:paddingBottom="16dp">
 
-                <!-- Campanita de Notificaciones elegante -->
-                <ImageView
-                    android:id="@+id/btnNotificationsBell"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:padding="4dp"
-                    android:src="@android:drawable/ic_popup_reminder"
-                    android:contentDescription="Notificaciones"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    app:tint="@android:color/white"
+                <!-- Contenedor de la Campanita con Indicador -->
+                <FrameLayout
+                    android:id="@+id/layoutNotificationsBell"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/tvAppTitle"
-                    app:layout_constraintBottom_toBottomOf="@id/tvAppTitle" />
+                    app:layout_constraintBottom_toBottomOf="@id/tvAppTitle">
+
+                    <ImageView
+                        android:id="@+id/btnNotificationsBell"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:padding="6dp"
+                        android:src="@android:drawable/ic_popup_reminder"
+                        android:contentDescription="Notificaciones"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        app:tint="@android:color/white" />
+
+                    <TextView
+                        android:id="@+id/tvNotificationBadge"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="2dp"
+                        android:background="@drawable/bg_notification_badge"
+                        android:gravity="center"
+                        android:textColor="@android:color/white"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"
+                        tools:text="3"
+                        tools:visibility="visible" />
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/tvAppTitle"
@@ -54,7 +76,7 @@
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="@+id/btnMisDatos"
                     app:layout_constraintEnd_toStartOf="@+id/btnMisDatos"
-                    app:layout_constraintStart_toEndOf="@id/btnNotificationsBell"
+                    app:layout_constraintStart_toEndOf="@id/layoutNotificationsBell"
                     app:layout_constraintTop_toTopOf="@+id/btnMisDatos" />
 
                 <com.google.android.material.button.MaterialButton

@@ -4,12 +4,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,7 +41,7 @@ public class NotificationsFragment extends Fragment {
     
     private RecyclerView rvNotifications;
     private NotificationAdapter adapter;
-    private TextView tvEmptyState;
+    private View emptyStateContainer;
 
     @Nullable
     @Override
@@ -51,8 +52,12 @@ public class NotificationsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        
+        Toolbar toolbar = view.findViewById(R.id.toolbarNotifications);
+        toolbar.setNavigationOnClickListener(v -> NavHostFragment.findNavController(this).navigateUp());
+
         rvNotifications = view.findViewById(R.id.rvNotifications);
-        tvEmptyState = view.findViewById(R.id.tvEmptyNotifications);
+        emptyStateContainer = view.findViewById(R.id.tvEmptyNotifications);
         
         rvNotifications.setLayoutManager(new LinearLayoutManager(getContext()));
         
@@ -77,8 +82,8 @@ public class NotificationsFragment extends Fragment {
         List<Notification> saved = notificationStorage.getNotifications(userId);
         adapter.setNotifications(saved);
         
-        if (tvEmptyState != null) {
-            tvEmptyState.setVisibility(saved.isEmpty() ? View.VISIBLE : View.GONE);
+        if (emptyStateContainer != null) {
+            emptyStateContainer.setVisibility(saved.isEmpty() ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -118,8 +123,8 @@ public class NotificationsFragment extends Fragment {
         notificationStorage.removeNotification(userId, novedad.getId());
         adapter.removeNotification(novedad);
         
-        if (adapter.getItemCount() == 0 && tvEmptyState != null) {
-            tvEmptyState.setVisibility(View.VISIBLE);
+        if (adapter.getItemCount() == 0 && emptyStateContainer != null) {
+            emptyStateContainer.setVisibility(View.VISIBLE);
         }
 
         apiService.markAsRead(novedad.getId()).enqueue(new Callback<Void>() {
