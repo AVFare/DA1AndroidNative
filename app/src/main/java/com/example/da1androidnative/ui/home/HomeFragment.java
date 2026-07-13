@@ -3,6 +3,7 @@ package com.example.da1androidnative.ui.home;
 import android.app.DatePickerDialog;
 import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.os.Build;
@@ -22,6 +23,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricManager.Authenticators;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -98,6 +100,16 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
                 }
             });
 
+    private final ActivityResultLauncher<String> notificationPermissionLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.RequestPermission(),
+                    isGranted -> {
+                        if (!isGranted) {
+                            ToastHelper.show(getContext(),
+                                    "Sin permiso no se mostrarán las notificaciones.");
+                        }
+                    });
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_home, container, false);
@@ -119,6 +131,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         loadFilterOptions();
         loadActivities();
         setupNavigationButtons(view);
+        requestNotificationPermission();
     }
 
     @Override
@@ -140,6 +153,22 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         view.findViewById(R.id.btnCalificaciones).setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_home_to_reviewsFragment));
         view.findViewById(R.id.btnMisDatos).setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_home_to_profileFragment));
         view.findViewById(R.id.btnNoticias).setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_home_to_news));
+        
+        // Campanita de notificaciones en el header
+        View btnNotificationsBell = view.findViewById(R.id.btnNotificationsBell);
+        if (btnNotificationsBell != null) {
+            btnNotificationsBell.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_home_to_notifications));
+        }
+    }
+
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
     }
 
     private void setupBiometricSwitch() {
