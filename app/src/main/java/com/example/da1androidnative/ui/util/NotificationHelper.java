@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -58,22 +59,19 @@ public class NotificationHelper {
         String titulo;
         int color;
         String type = novedad.getType() != null ? novedad.getType().toUpperCase() : "INFO";
+        String payload = novedad.getPayload() != null ? novedad.getPayload() : "Sin detalle";
 
-        switch (type) {
-            case "CANCEL":
-                titulo = "⚠️ ACTIVIDAD CANCELADA";
-                color = android.R.color.holo_red_dark;
-                break;
-            case "RESCHEDULE":
-                titulo = "🕒 CAMBIO DE HORARIO";
-                color = android.R.color.holo_orange_dark;
-                break;
-            default:
-                titulo = "Aviso de XploreNow";
-                color = R.color.teal_primary;
-                break;
+        if (type.equals("CANCELLED") || (payload.contains("cancelad") && payload.contains("actividad"))){
+            titulo = "⚠️ ACTIVIDAD CANCELADA";
+            color = android.R.color.holo_red_dark;
+        } else if (type.equals("RESCHEDULED") || payload.contains("reprogramada")) {
+            titulo = "🕒 CAMBIO DE HORARIO";
+            color = android.R.color.holo_orange_dark;
+        } else {
+            titulo = "Aviso de XploreNow";
+            color = R.color.teal_primary;
         }
-
+        Log.d("DEBUG", "type recibido: " + novedad.getType());
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(titulo)
