@@ -52,7 +52,7 @@ public class NotificationHelper {
 
         PendingIntent pendingIntent = new NavDeepLinkBuilder(context)
                 .setComponentName(MainActivity.class)
-                .setGraph(R.navigation.home_nav_graph)
+                .setGraph(R.navigation.nav_graph)
                 .setDestination(R.id.notificationsFragment)
                 .createPendingIntent();
 
