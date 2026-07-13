@@ -1,6 +1,7 @@
 package com.example.da1androidnative.data.network;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.hilt.work.HiltWorker;
@@ -12,55 +13,100 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
-import java.io.IOException;
+import com.example.da1androidnative.data.local.NotificationStorage;
+import com.example.da1androidnative.data.local.TokenManager;
+import com.example.da1androidnative.data.model.Notification;
+import com.example.da1androidnative.ui.util.NotificationHelper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-import javax.inject.Inject;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import dagger.assisted.Assisted;
 import dagger.assisted.AssistedInject;
-import dagger.hilt.android.AndroidEntryPoint;
 import okhttp3.Response;
 
 @HiltWorker
 public class NotificationPollingWorker extends Worker {
+    private static final String TAG = "POLLING_WORKER";
     public static final String nombreTrabajoUnico = "notificationPolling";
     private final NotificationPollingClient pollingClient;
+    private final NotificationStorage notificationStorage;
+    private final Gson gson;
+
+    private final TokenManager tokenManager;
 
     @AssistedInject
-    public NotificationPollingWorker(@Assisted @NonNull Context context, @Assisted @NonNull WorkerParameters parameters, NotificationPollingClient pollingClient) {
+    public NotificationPollingWorker(@Assisted @NonNull Context context, @Assisted @NonNull WorkerParameters parameters,
+                                     NotificationPollingClient pollingClient,
+                                     NotificationStorage notificationStorage,
+                                     TokenManager tokenManager) {
         super(context, parameters);
         this.pollingClient = pollingClient;
+        this.notificationStorage = notificationStorage;
+        this.gson = new Gson();
+        this.tokenManager = tokenManager;
     }
 
     private void enqueueNextPoll() {
-        OneTimeWorkRequest siguiente = new OneTimeWorkRequest.Builder(NotificationPollingWorker.class).setConstraints(new Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()).build();
-        WorkManager.getInstance(getApplicationContext()).enqueueUniqueWork(nombreTrabajoUnico, ExistingWorkPolicy.REPLACE, siguiente);
+        OneTimeWorkRequest siguiente = new OneTimeWorkRequest.Builder(NotificationPollingWorker.class)
+                .setConstraints(new Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build())
+                .setInitialDelay(1, TimeUnit.SECONDS)
+                .build();
+        
+        WorkManager.getInstance(getApplicationContext()).enqueueUniqueWork(
+                nombreTrabajoUnico, 
+                ExistingWorkPolicy.REPLACE, 
+                siguiente
+        );
     }
 
     @Override
     @NonNull
     public Result doWork() {
-        //try-with-resources basicamente cierra el recurso al terminar el try y no se pisan las conexiones.
         try (Response response = pollingClient.executePoll()) {
-
+            long userId= tokenManager.getUserId();
             if (response.isSuccessful()) {
-                //Jordi aca va lo tuyo
-                //mostrarNotificacion(parametros);
-                //TODO: Mostrar Notificacion
+                if (response.code() == 200 && response.body() != null) {
+                    String json = response.body().string();
+                    
+                    // Usamos el modelo Notification unificado
+                    Type listType = new TypeToken<List<Notification>>() {}.getType();
+                    List<Notification> novedades = gson.fromJson(json, listType);
 
+                    if (novedades != null && !novedades.isEmpty()) {
+                        for (Notification n : novedades) {
+                            // 1. Guardar localmente (esto ahora usa el UserID internamente)
+                            boolean esNueva = notificationStorage.saveNotification(userId,n);
+                            
+                            if (esNueva) {
+                                // 2. Mostrar pop-up solo si no existía para este usuario
+                                NotificationHelper.mostrar(getApplicationContext(), n);
+                            }
+                            
+                            // 3. Confirmar al servidor
+                            pollingClient.sendAck(n.getId());
+                        }
+                    }
+                }
+                
                 enqueueNextPoll();
                 return Result.success();
             }
 
-            if (response.code() == 401) {
-                return Result.failure();
-            }
+            if (response.code() == 401) return Result.failure();
+            
+            enqueueNextPoll();
+            return Result.success();
 
-            return Result.retry();
-
-        }
-        catch (IOException exception) {
-            return Result.retry();
+        } catch (IOException exception) {
+            enqueueNextPoll();
+            return Result.success();
         }
     }
 }

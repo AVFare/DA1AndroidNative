@@ -35,7 +35,16 @@
             android:id="@+id/action_home_to_news"
             app:destination="@id/newsFragment" />
 
+        <action
+            android:id="@+id/action_home_to_notifications"
+            app:destination="@id/notificationsFragment" />
+
     </fragment>
+
+    <fragment
+        android:id="@+id/notificationsFragment"
+        android:name="com.example.da1androidnative.ui.home.NotificationsFragment"
+        android:label="Notificaciones" />
 
     <fragment
         android:id="@+id/reservasFragment"

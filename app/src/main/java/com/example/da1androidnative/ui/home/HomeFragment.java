@@ -3,6 +3,7 @@ package com.example.da1androidnative.ui.home;
 import android.app.DatePickerDialog;
 import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.os.Build;
@@ -22,6 +23,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricManager.Authenticators;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -29,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.local.FavoritesManager;
+import com.example.da1androidnative.data.local.NotificationStorage;
 import com.example.da1androidnative.data.local.TokenManager;
 import com.example.da1androidnative.data.model.ActivityFilterOptionsResponse;
 import com.example.da1androidnative.data.model.ActivityResponse;
@@ -63,6 +66,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     @Inject ApiService apiService;
     @Inject TokenManager tokenManager;
     @Inject FavoritesManager favoritesManager;
+    @Inject NotificationStorage notificationStorage;
 
     private ActivityAdapter adapter;
     private TextView tvOfflineBanner;
@@ -71,6 +75,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     private Button btnNextPage;
     private Button btnOpenFilters;
     private TextView tvFilterSummary;
+    private TextView tvNotificationBadge;
     private SwitchMaterial biometricSwitch;
     private LinearProgressIndicator progressIndicator;
     private ConnectivityManager.NetworkCallback networkCallback;
@@ -98,6 +103,16 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
                 }
             });
 
+    private final ActivityResultLauncher<String> notificationPermissionLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.RequestPermission(),
+                    isGranted -> {
+                        if (!isGranted) {
+                            ToastHelper.show(getContext(),
+                                    "Sin permiso no se mostrarán las notificaciones.");
+                        }
+                    });
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_home, container, false);
@@ -109,6 +124,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         tvOfflineBanner = view.findViewById(R.id.tvOfflineBanner);
         biometricSwitch = view.findViewById(R.id.biometricSwitch);
         progressIndicator = view.findViewById(R.id.progressIndicator);
+        tvNotificationBadge = view.findViewById(R.id.tvNotificationBadge);
 
         setupRecyclerView(view);
         setupPagination(view);
@@ -119,12 +135,33 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         loadFilterOptions();
         loadActivities();
         setupNavigationButtons(view);
+        requestNotificationPermission();
+        setupNotificationObserver();
+    }
+
+    private void setupNotificationObserver() {
+        if (tvNotificationBadge == null) return;
+        
+        // Observar el LiveData del Storage para actualizaciones en tiempo real
+        notificationStorage.getNotificationCount().observe(getViewLifecycleOwner(), count -> {
+            if (count != null && count > 0) {
+                tvNotificationBadge.setText(String.valueOf(count));
+                tvNotificationBadge.setVisibility(View.VISIBLE);
+            } else {
+                tvNotificationBadge.setVisibility(View.GONE);
+            }
+        });
+        
+        // Forzar carga inicial
+        notificationStorage.refreshCount(tokenManager.getUserId());
     }
 
     @Override
     public void onResume() {
         super.onResume();
         updateOfflineBanner();
+        // Asegurar que el contador esté al día al volver de Notificaciones (donde se borran)
+        notificationStorage.refreshCount(tokenManager.getUserId());
     }
 
     private void setLoading(boolean loading) {
@@ -140,6 +177,22 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         view.findViewById(R.id.btnCalificaciones).setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_home_to_reviewsFragment));
         view.findViewById(R.id.btnMisDatos).setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_home_to_profileFragment));
         view.findViewById(R.id.btnNoticias).setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_home_to_news));
+        
+        // Campanita de notificaciones en el header
+        View btnNotificationsBell = view.findViewById(R.id.btnNotificationsBell);
+        if (btnNotificationsBell != null) {
+            btnNotificationsBell.setOnClickListener(v -> NavHostFragment.findNavController(this).navigate(R.id.action_home_to_notifications));
+        }
+    }
+
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
     }
 
     private void setupBiometricSwitch() {

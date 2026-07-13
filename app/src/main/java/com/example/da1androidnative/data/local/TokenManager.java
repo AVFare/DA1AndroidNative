@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 @Singleton
@@ -26,11 +27,13 @@ public class TokenManager {
     private static final String KEY_SAVED_PASSWORD = "saved_password";
     private final Context context;
     private final SharedPreferences sharedPreferences;
+    private final Provider<NotificationStorage> notificationStorageProvider;
 
     @Inject
-    public TokenManager(@ApplicationContext Context context) {
+    public TokenManager(@ApplicationContext Context context, Provider<NotificationStorage> notificationStorageProvider) {
         this.sharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         this.context = context;
+        this.notificationStorageProvider = notificationStorageProvider;
     }
 
     public void saveToken(String token) {
@@ -51,8 +54,12 @@ public class TokenManager {
     }
 
     public void clearToken() {
+        long userId = getUserId();
         sharedPreferences.edit().remove(KEY_TOKEN).remove(KEY_USER_ID).apply();
         disableNotifications();
+        if (userId != -1) {
+            notificationStorageProvider.get().clearAll(userId); //se cierra la sesion de notificaciones
+        }
     }
 
     public void setBiometricEnabled(boolean enabled) {
