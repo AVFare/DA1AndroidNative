@@ -74,6 +74,8 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
     private TextView priceText;
     private TextView durationText;
     private TextView fullDescriptionText;
+    private TextView inclusionsText;
+    private TextView cancellationPolicyText;
     private TextView meetingPointText;
     private TextView guideNameText;
     private TextView languageText;
@@ -128,6 +130,8 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
         priceText = view.findViewById(R.id.priceText);
         durationText = view.findViewById(R.id.durationText);
         fullDescriptionText = view.findViewById(R.id.fullDescriptionText);
+        inclusionsText = view.findViewById(R.id.inclusionsText);
+        cancellationPolicyText = view.findViewById(R.id.cancellationPolicyText);
         meetingPointText = view.findViewById(R.id.meetingPointText);
         guideNameText = view.findViewById(R.id.guideNameText);
         languageText = view.findViewById(R.id.languageText);
@@ -192,6 +196,8 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
         priceText.setText(String.format(Locale.getDefault(), "Precio: %s %.2f", detalle.getCurrency(), detalle.getBasePrice()));
         durationText.setText("Duración: " + formatDuration(detalle.getDurationMinutes()));
         fullDescriptionText.setText(detalle.getFullDescription());
+        inclusionsText.setText(valueOrFallback(detalle.getInclusions(), "No hay inclusiones detalladas para esta actividad."));
+        cancellationPolicyText.setText(valueOrFallback(detalle.getCancellationPolicy(), "No hay una política de cancelación disponible para esta actividad."));
         meetingPointText.setText("Punto de encuentro: " + detalle.getMeetingPoint());
         guideNameText.setText("Guía: " + detalle.getGuideName());
         languageText.setText("Idioma: " + detalle.getLanguage());
@@ -242,6 +248,13 @@ public class ActivityDetalleFragment extends Fragment implements ScheduleActivit
         }
 
         return remainingMinutes + " min";
+    }
+
+    private String valueOrFallback(String value, String fallback) {
+        if (value == null || value.trim().isEmpty()) {
+            return fallback;
+        }
+        return value.trim();
     }
 
     private void setupGalleryDots(int count) {
