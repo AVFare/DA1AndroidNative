@@ -18,6 +18,7 @@ import com.example.da1androidnative.data.local.NotificationStorage;
 import com.example.da1androidnative.data.model.Notification;
 import com.example.da1androidnative.data.network.ApiService;
 import com.example.da1androidnative.ui.home.adapter.NotificationAdapter;
+import com.example.da1androidnative.ui.util.NotificationHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,7 @@ public class NotificationsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         rvNotifications = view.findViewById(R.id.rvNotifications);
-        tvEmptyState = view.findViewById(R.id.tvEmptyNotifications); // Necesitaremos agregar esto al XML
+        tvEmptyState = view.findViewById(R.id.tvEmptyNotifications);
         
         rvNotifications.setLayoutManager(new LinearLayoutManager(getContext()));
         
@@ -83,10 +84,15 @@ public class NotificationsFragment extends Fragment {
             public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     List<Notification> serverNotifs = response.body();
+                    boolean updated = false;
                     for (Notification n : serverNotifs) {
-                        notificationStorage.saveNotification(n);
+                        boolean isNew = notificationStorage.saveNotification(n);
+                        if (isNew) {
+                            // notificaciones de inmediato
+                            NotificationHelper.mostrar(requireContext(), n);
+                            updated = true;}
                     }
-                    updateUI();
+                    if (updated) updateUI();
                 }
             }
 
@@ -98,7 +104,6 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void handleMarkAsRead(Notification novedad) {
-        // 1. Eliminar de la persistencia local inmediatamente
         notificationStorage.removeNotification(novedad.getId());
         adapter.removeNotification(novedad);
         
@@ -106,7 +111,6 @@ public class NotificationsFragment extends Fragment {
             tvEmptyState.setVisibility(View.VISIBLE);
         }
 
-        // 2. Avisar al servidor
         apiService.markAsRead(novedad.getId()).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -117,7 +121,6 @@ public class NotificationsFragment extends Fragment {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                // Si falla el servidor, al menos ya se quitó de la vista del usuario
             }
         });
     }

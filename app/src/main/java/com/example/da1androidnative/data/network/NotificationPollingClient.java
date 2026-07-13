@@ -3,6 +3,7 @@ package com.example.da1androidnative.data.network;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkCapabilities;
+import android.os.Build;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -18,7 +19,6 @@ import okhttp3.Response;
 
 @Singleton
 public class NotificationPollingClient {
-    private static final String BASE_URL = "http://10.0.2.2:8080/api/v1/notifications";
     private final OkHttpClient client;
     private final Context context;
 
@@ -26,10 +26,27 @@ public class NotificationPollingClient {
     public NotificationPollingClient(@ApplicationContext Context context, AuthInterceptor authInterceptor) {
         this.context = context;
         this.client = new OkHttpClient.Builder()
-                .readTimeout(65, TimeUnit.SECONDS)
+                .readTimeout(70, TimeUnit.SECONDS)
                 .connectTimeout(15, TimeUnit.SECONDS)
                 .addInterceptor(authInterceptor)
                 .build();
+    }
+
+    private String getBaseUrl() {
+        if (Build.FINGERPRINT.contains("generic")
+                || Build.FINGERPRINT.contains("unknown")
+                || Build.MODEL.contains("google_sdk")
+                || Build.MODEL.contains("Emulator")
+                || Build.MODEL.contains("Android SDK built for x86")
+                || Build.MANUFACTURER.contains("Genymotion")
+                || (Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic"))
+                || "google_sdk".equals(Build.PRODUCT)
+                || Build.PRODUCT.contains("sdk")) {
+
+            return "http://10.0.2.2:8080/api/v1/notifications";
+        } else {
+            return "http://192.168.1.2:8080/api/v1/notifications";
+        }
     }
 
     public Response executePoll() throws IOException {
@@ -38,7 +55,7 @@ public class NotificationPollingClient {
         }
 
         Request request = new Request.Builder()
-                .url(BASE_URL + "/poll")
+                .url(getBaseUrl() + "/poll")
                 .post(RequestBody.create("", null))
                 .build();
 
@@ -49,7 +66,7 @@ public class NotificationPollingClient {
         if (!isNetworkAvailable()) return;
 
         Request request = new Request.Builder()
-                .url(BASE_URL + "/" + notificationId + "/ack")
+                .url(getBaseUrl() + "/" + notificationId + "/ack")
                 .post(RequestBody.create("", null))
                 .build();
 
@@ -67,7 +84,6 @@ public class NotificationPollingClient {
         if (network == null) return false;
         NetworkCapabilities caps = cm.getNetworkCapabilities(network);
         return caps != null && (caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
-                caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET));
+                caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR));
     }
 }

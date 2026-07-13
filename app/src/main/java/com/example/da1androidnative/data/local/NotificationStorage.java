@@ -24,17 +24,17 @@ public class NotificationStorage {
         this.prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         this.gson = new Gson();
     }
-
-    public synchronized void saveNotification(Notification novedad) {
-        if (novedad == null || novedad.getId() == null) return;
+    public synchronized boolean saveNotification(Notification notification) {
+        if (notification == null || notification.getId() == null) return false;
         List<Notification> list = getNotifications();
         
         for (Notification n : list) {
-            if (novedad.getId().equals(n.getId())) return;
+            if (notification.getId().equals(n.getId())) return false;
         }
         
-        list.add(0, novedad); // la mas reciente es la ultima
+        list.add(0, notification); // la mas reciente al principio
         saveList(list);
+        return true;
     }
 
     public synchronized List<Notification> getNotifications() {
@@ -42,15 +42,17 @@ public class NotificationStorage {
         if (json == null) return new ArrayList<>();
         Type type = new TypeToken<List<Notification>>() {}.getType();
         try {
-            return gson.fromJson(json, type);
+            List<Notification> list = gson.fromJson(json, type);
+            return list != null ? list : new ArrayList<>();
         } catch (Exception e) {
             return new ArrayList<>();
         }
     }
 
     public synchronized void removeNotification(Long id) {
+        if (id == null) return;
         List<Notification> list = getNotifications();
-        list.removeIf(n -> n.getId().equals(id));
+        list.removeIf(n -> id.equals(n.getId()));
         saveList(list);
     }
 

@@ -64,21 +64,22 @@ public class NotificationPollingWorker extends Worker {
     @Override
     @NonNull
     public Result doWork() {
-        //try-with-resources basicamente cierra el recurso al terminar el try y no se pisan las conexiones.
         try (Response response = pollingClient.executePoll()) {
-
             if (response.isSuccessful()) {
                 if (response.code() == 200 && response.body() != null) {
                     String json = response.body().string();
+                    Log.d(TAG, "Worker: Recibido -> " + json);
+                    
                     Type listType = new TypeToken<List<Notification>>() {}.getType();
                     List<Notification> novedades = gson.fromJson(json, listType);
 
                     if (novedades != null && !novedades.isEmpty()) {
                         for (Notification n : novedades) {
-                            // guarda localmente
-                            notificationStorage.saveNotification(n);
-                            // pop up
-                            NotificationHelper.mostrar(getApplicationContext(), n);
+                            // verificar si es nueva
+                            boolean esNueva = notificationStorage.saveNotification(n);
+
+                            if (esNueva) {NotificationHelper.mostrar(getApplicationContext(), n);
+                            }
                             pollingClient.sendAck(n.getId());
                         }
                     }
