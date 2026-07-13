@@ -14,6 +14,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.example.da1androidnative.data.local.NotificationStorage;
+import com.example.da1androidnative.data.local.TokenManager;
 import com.example.da1androidnative.data.model.Notification;
 import com.example.da1androidnative.ui.util.NotificationHelper;
 import com.google.gson.Gson;
@@ -36,14 +37,18 @@ public class NotificationPollingWorker extends Worker {
     private final NotificationStorage notificationStorage;
     private final Gson gson;
 
+    private final TokenManager tokenManager;
+
     @AssistedInject
-    public NotificationPollingWorker(@Assisted @NonNull Context context, @Assisted @NonNull WorkerParameters parameters, 
-                                   NotificationPollingClient pollingClient,
-                                   NotificationStorage notificationStorage) {
+    public NotificationPollingWorker(@Assisted @NonNull Context context, @Assisted @NonNull WorkerParameters parameters,
+                                     NotificationPollingClient pollingClient,
+                                     NotificationStorage notificationStorage,
+                                     TokenManager tokenManager) {
         super(context, parameters);
         this.pollingClient = pollingClient;
         this.notificationStorage = notificationStorage;
         this.gson = new Gson();
+        this.tokenManager = tokenManager;
     }
 
     private void enqueueNextPoll() {
@@ -65,37 +70,41 @@ public class NotificationPollingWorker extends Worker {
     @NonNull
     public Result doWork() {
         try (Response response = pollingClient.executePoll()) {
+            long userId= tokenManager.getUserId();
             if (response.isSuccessful()) {
                 if (response.code() == 200 && response.body() != null) {
                     String json = response.body().string();
-                    Log.d(TAG, "Worker: Recibido -> " + json);
                     
+                    // Usamos el modelo Notification unificado
                     Type listType = new TypeToken<List<Notification>>() {}.getType();
                     List<Notification> novedades = gson.fromJson(json, listType);
 
                     if (novedades != null && !novedades.isEmpty()) {
                         for (Notification n : novedades) {
-                            // verificar si es nueva
-                            boolean esNueva = notificationStorage.saveNotification(n);
-
-                            if (esNueva) {NotificationHelper.mostrar(getApplicationContext(), n);
+                            // 1. Guardar localmente (esto ahora usa el UserID internamente)
+                            boolean esNueva = notificationStorage.saveNotification(userId,n);
+                            
+                            if (esNueva) {
+                                // 2. Mostrar pop-up solo si no existía para este usuario
+                                NotificationHelper.mostrar(getApplicationContext(), n);
                             }
+                            
+                            // 3. Confirmar al servidor
                             pollingClient.sendAck(n.getId());
                         }
                     }
                 }
+                
                 enqueueNextPoll();
                 return Result.success();
             }
 
-            if (response.code() == 401) {
-                return Result.failure();
-            }
-
-            return Result.retry();
+            if (response.code() == 401) return Result.failure();
+            
+            enqueueNextPoll();
+            return Result.success();
 
         } catch (IOException exception) {
-            Log.e(TAG, "Worker: Error de red -> " + exception.getMessage());
             enqueueNextPoll();
             return Result.success();
         }

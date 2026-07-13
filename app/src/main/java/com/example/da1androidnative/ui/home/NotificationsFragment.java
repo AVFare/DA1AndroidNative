@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.local.NotificationStorage;
+import com.example.da1androidnative.data.local.TokenManager;
 import com.example.da1androidnative.data.model.Notification;
 import com.example.da1androidnative.data.network.ApiService;
 import com.example.da1androidnative.ui.home.adapter.NotificationAdapter;
@@ -35,6 +36,7 @@ public class NotificationsFragment extends Fragment {
 
     @Inject ApiService apiService;
     @Inject NotificationStorage notificationStorage;
+    @Inject TokenManager tokenManager;
     
     private RecyclerView rvNotifications;
     private NotificationAdapter adapter;
@@ -69,7 +71,10 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void updateUI() {
-        List<Notification> saved = notificationStorage.getNotifications();
+        long userId = tokenManager.getUserId();
+        if (userId == -1) return;
+
+        List<Notification> saved = notificationStorage.getNotifications(userId);
         adapter.setNotifications(saved);
         
         if (tvEmptyState != null) {
@@ -78,6 +83,9 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void syncWithServer() {
+        long userId = tokenManager.getUserId();
+        if (userId == -1) return;
+
         // Consultar al servidor por si hay notificaciones que el Worker aún no procesó
         apiService.getPendingNotifications().enqueue(new Callback<List<Notification>>() {
             @Override
@@ -86,7 +94,7 @@ public class NotificationsFragment extends Fragment {
                     List<Notification> serverNotifs = response.body();
                     boolean updated = false;
                     for (Notification n : serverNotifs) {
-                        boolean isNew = notificationStorage.saveNotification(n);
+                        boolean isNew = notificationStorage.saveNotification(userId, n);
                         if (isNew) {
                             // notificaciones de inmediato
                             NotificationHelper.mostrar(requireContext(), n);
@@ -104,7 +112,10 @@ public class NotificationsFragment extends Fragment {
     }
 
     private void handleMarkAsRead(Notification novedad) {
-        notificationStorage.removeNotification(novedad.getId());
+        long userId = tokenManager.getUserId();
+        if (userId == -1) return;
+
+        notificationStorage.removeNotification(userId, novedad.getId());
         adapter.removeNotification(novedad);
         
         if (adapter.getItemCount() == 0 && tvEmptyState != null) {
