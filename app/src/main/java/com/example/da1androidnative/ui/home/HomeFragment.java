@@ -31,6 +31,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.da1androidnative.R;
 import com.example.da1androidnative.data.local.FavoritesManager;
+import com.example.da1androidnative.data.local.NotificationStorage;
 import com.example.da1androidnative.data.local.TokenManager;
 import com.example.da1androidnative.data.model.ActivityFilterOptionsResponse;
 import com.example.da1androidnative.data.model.ActivityResponse;
@@ -65,6 +66,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     @Inject ApiService apiService;
     @Inject TokenManager tokenManager;
     @Inject FavoritesManager favoritesManager;
+    @Inject NotificationStorage notificationStorage;
 
     private ActivityAdapter adapter;
     private TextView tvOfflineBanner;
@@ -73,6 +75,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
     private Button btnNextPage;
     private Button btnOpenFilters;
     private TextView tvFilterSummary;
+    private TextView tvNotificationBadge;
     private SwitchMaterial biometricSwitch;
     private LinearProgressIndicator progressIndicator;
     private ConnectivityManager.NetworkCallback networkCallback;
@@ -121,6 +124,7 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         tvOfflineBanner = view.findViewById(R.id.tvOfflineBanner);
         biometricSwitch = view.findViewById(R.id.biometricSwitch);
         progressIndicator = view.findViewById(R.id.progressIndicator);
+        tvNotificationBadge = view.findViewById(R.id.tvNotificationBadge);
 
         setupRecyclerView(view);
         setupPagination(view);
@@ -132,12 +136,32 @@ public class HomeFragment extends Fragment implements ActivityAdapter.OnActivity
         loadActivities();
         setupNavigationButtons(view);
         requestNotificationPermission();
+        setupNotificationObserver();
+    }
+
+    private void setupNotificationObserver() {
+        if (tvNotificationBadge == null) return;
+        
+        // Observar el LiveData del Storage para actualizaciones en tiempo real
+        notificationStorage.getNotificationCount().observe(getViewLifecycleOwner(), count -> {
+            if (count != null && count > 0) {
+                tvNotificationBadge.setText(String.valueOf(count));
+                tvNotificationBadge.setVisibility(View.VISIBLE);
+            } else {
+                tvNotificationBadge.setVisibility(View.GONE);
+            }
+        });
+        
+        // Forzar carga inicial
+        notificationStorage.refreshCount(tokenManager.getUserId());
     }
 
     @Override
     public void onResume() {
         super.onResume();
         updateOfflineBanner();
+        // Asegurar que el contador esté al día al volver de Notificaciones (donde se borran)
+        notificationStorage.refreshCount(tokenManager.getUserId());
     }
 
     private void setLoading(boolean loading) {

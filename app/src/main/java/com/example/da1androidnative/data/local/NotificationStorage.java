@@ -2,6 +2,10 @@ package com.example.da1androidnative.data.local;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.example.da1androidnative.data.model.Notification;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -18,11 +22,20 @@ public class NotificationStorage {
     private static final String KEY_NOTIFS = "saved_notifications";
     private final SharedPreferences prefs;
     private final Gson gson;
+    private final MutableLiveData<Integer> _notificationCount = new MutableLiveData<>(0);
 
     @Inject
     public NotificationStorage(@ApplicationContext Context context) {
         this.prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
         this.gson = new Gson();
+    }
+
+    public LiveData<Integer> getNotificationCount() {
+        return _notificationCount;
+    }
+
+    public void refreshCount(long userId) {
+        _notificationCount.postValue(getNotifications(userId).size());
     }
 
     private String getUserKey(long userId) {
@@ -41,6 +54,7 @@ public class NotificationStorage {
         
         list.add(0, notification); // la mas reciente al principio
         saveList(userId,list);
+        _notificationCount.postValue(list.size());
         return true;
     }
 
@@ -63,10 +77,12 @@ public class NotificationStorage {
         List<Notification> list = getNotifications(userId);
         list.removeIf(n -> id.equals(n.getId()));
         saveList(userId,list);
+        _notificationCount.postValue(list.size());
     }
 
     public synchronized void clearAll(long userId) {
         prefs.edit().remove(getUserKey(userId)).apply();
+        _notificationCount.postValue(0);
     }
 
     private void saveList(long userId, List<Notification> list) {
