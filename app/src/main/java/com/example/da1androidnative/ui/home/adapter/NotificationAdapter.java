@@ -44,17 +44,23 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
 
         switch (type) {
-            case "CANCEL":
+            case "CANCELLED":
                 holder.tvTitle.setText("ACTIVIDAD CANCELADA");
                 holder.tvTitle.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_red_dark));
                 holder.ivIcon.setImageResource(android.R.drawable.ic_delete);
                 holder.ivIcon.setColorFilter(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_red_dark));
                 break;
-            case "RESCHEDULE":
+            case "RESCHEDULED":
                 holder.tvTitle.setText("CAMBIO DE HORARIO");
                 holder.tvTitle.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_orange_dark));
                 holder.ivIcon.setImageResource(android.R.drawable.ic_popup_reminder);
                 holder.ivIcon.setColorFilter(ContextCompat.getColor(holder.itemView.getContext(), android.R.color.holo_orange_dark));
+                break;
+            case "REMINDER":
+                holder.tvTitle.setText("¡TU ACTIVIDAD ES MAÑANA!");
+                holder.tvTitle.setTextColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.teal_primary));
+                holder.ivIcon.setImageResource(android.R.drawable.ic_popup_reminder);
+                holder.ivIcon.setColorFilter(ContextCompat.getColor(holder.itemView.getContext(), R.color.teal_primary));
                 break;
             default:
                 holder.tvTitle.setText("Aviso de XploreNow");
